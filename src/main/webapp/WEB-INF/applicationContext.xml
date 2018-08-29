@@ -1,0 +1,60 @@
+<!--<?xml version="1.0" encoding="UTF-8"?>-->
+<!--&lt;!&ndash;suppress SpringFacetInspection &ndash;&gt;-->
+<!--<beans xmlns="http://www.springframework.org/schema/beans"-->
+       <!--xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
+       <!--xmlns:mvc="http://www.springframework.org/schema/mvc"-->
+       <!--xmlns:context="http://www.springframework.org/schema/context"-->
+       <!--xsi:schemaLocation="http://www.springframework.org/schema/beans-->
+       <!--http://www.springframework.org/schema/beans/spring-beans.xsd-->
+       <!--http://www.springframework.org/schema/mvc-->
+	   <!--http://www.springframework.org/schema/mvc/spring-mvc.xsd-->
+	   <!--http://www.springframework.org/schema/context-->
+	   <!--http://www.springframework.org/schema/context/spring-context.xsd">-->
+
+    <!--<mvc:annotation-driven />-->
+    <!--&lt;!&ndash;<context:annotation-config/>&ndash;&gt;-->
+
+    <!--<context:component-scan base-package="com.gerasimchuk"/>-->
+
+
+    <!--&lt;!&ndash; Static Resources Configuration (get access to static sources such as CSS and JavaScript files) &ndash;&gt;-->
+    <!--&lt;!&ndash;<mvc:resources mapping="/resources/**" location="/resources/" />&ndash;&gt;-->
+    <!--&lt;!&ndash; themes can be put in different folder such as-->
+        <!--<mvc:resources mapping="/resources/**" location="/resources/themeBlue" />-->
+        <!--<mvc:resources mapping="/resources/**" location="/resources/themeGreen" />-->
+     <!--&ndash;&gt;-->
+
+
+
+    <!--&lt;!&ndash;<bean id="sessionFactory"&ndash;&gt;-->
+          <!--&lt;!&ndash;class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">&ndash;&gt;-->
+        <!--&lt;!&ndash;<property name="dataSource"&ndash;&gt;-->
+                  <!--&lt;!&ndash;ref="dataSource"/>&ndash;&gt;-->
+        <!--&lt;!&ndash;<property name="packagesToScan"&ndash;&gt;-->
+                  <!--&lt;!&ndash;value="com.gerasimchuk.entities"/>&ndash;&gt;-->
+        <!--&lt;!&ndash;<property name="hibernateProperties">&ndash;&gt;-->
+            <!--&lt;!&ndash;<props>&ndash;&gt;-->
+                <!--&lt;!&ndash;<prop key="hibernate.hbm2ddl.auto">&ndash;&gt;-->
+                    <!--&lt;!&ndash;update&ndash;&gt;-->
+                <!--&lt;!&ndash;</prop>&ndash;&gt;-->
+                <!--&lt;!&ndash;<prop key="hibernate.dialect">&ndash;&gt;-->
+                    <!--&lt;!&ndash;org.hibernate.dialect.MySQL57Dialect&ndash;&gt;-->
+                <!--&lt;!&ndash;</prop>&ndash;&gt;-->
+            <!--&lt;!&ndash;</props>&ndash;&gt;-->
+        <!--&lt;!&ndash;</property>&ndash;&gt;-->
+    <!--&lt;!&ndash;</bean>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<bean id="dataSource"&ndash;&gt;-->
+          <!--&lt;!&ndash;class="org.springframework.jdbc.datasource.DriverManagerDataSource">&ndash;&gt;-->
+        <!--&lt;!&ndash;<property name="driverClassName" value="com.mysql.jdbc.Driver"/>&ndash;&gt;-->
+        <!--&lt;!&ndash;<property name="url" value="jdbc:mysql://localhost:3306/logisticon3000?useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC"/>&ndash;&gt;-->
+        <!--&lt;!&ndash;<property name="username" value="root"/>&ndash;&gt;-->
+        <!--&lt;!&ndash;<property name="password" value="root"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;</bean>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<bean id="txManager"&ndash;&gt;-->
+          <!--&lt;!&ndash;class="org.springframework.orm.hibernate5.HibernateTransactionManager">&ndash;&gt;-->
+        <!--&lt;!&ndash;<property name="sessionFactory" ref="sessionFactory"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;</bean>&ndash;&gt;-->
+
+<!--</beans>-->
