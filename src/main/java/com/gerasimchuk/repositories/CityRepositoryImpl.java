@@ -48,6 +48,6 @@ public class CityRepositoryImpl implements CityRepository {
     @Transactional
     public void remove(int id) {
         City removed = sessionFactory.getCurrentSession().get(City.class, id);
-        sessionFactory.getCurrentSession().delete(removed);
+        sessionFactory.getCurrentSession().remove(removed);
     }
 }
