@@ -21,7 +21,7 @@ public class MainController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index() {
-        cityRepository.create("City1", true);
+
         log.info("In method index of main controller");
 
         return "/login/login";
