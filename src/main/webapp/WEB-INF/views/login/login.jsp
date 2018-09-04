@@ -37,14 +37,14 @@
 		<div align="center" >
 			<h1 class="text-primary">Welcome to logistic system!</h1>
 			<br>
-			<form action="#">
+			<form action="j_spring_security_check" method="post">
     				<div class="form-group">
       					<label class="text-primary"  for="text">Personal number:</label>
-      					<input style="width: 40%" type="text" class="form-control" id="text" placeholder="Enter your personal number" name="pnumber">
+      					<input style="width: 40%" type="text" class="form-control" id="text" placeholder="Enter your personal number" name="j_username" value="">
     				</div>
     				<div class="form-group">
       					<label class="text-primary" for="pwd">Password:</label>
-      					<input style="width: 40% "type="password" class="form-control" id="pwd" placeholder="Enter password" name="pwd">
+      					<input style="width: 40% "type="password" class="form-control" id="pwd" placeholder="Enter password" name="j_password">
     				</div>
     				<div class="checkbox">
       					<label class="text-primary"><input type="checkbox" name="remember"> Remember me</label>

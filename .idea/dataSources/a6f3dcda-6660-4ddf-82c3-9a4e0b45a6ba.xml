@@ -1425,7 +1425,7 @@
     </column>
     <column id="335" parent="246" name="password">
       <Position>6</Position>
-      <DataType>varchar(50)|0s</DataType>
+      <DataType>varchar(60)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
