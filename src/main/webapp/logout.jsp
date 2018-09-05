@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" >
 <head>
-  <title>Login</title>
+  <title>Logout</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
@@ -38,19 +38,9 @@
 			<h1 class="text-primary">Welcome to logistic system!</h1>
 			<br>
 			<form action="#">
-    				<div class="form-group">
-      					<label class="text-primary"  for="text">Personal number:</label>
-      					<input style="width: 40%" type="text" class="form-control" id="text" placeholder="Enter your personal number" name="pnumber">
-    				</div>
-    				<div class="form-group">
-      					<label class="text-primary" for="pwd">Password:</label>
-      					<input style="width: 40% "type="password" class="form-control" id="pwd" placeholder="Enter password" name="pwd">
-    				</div>
-    				<div class="checkbox">
-      					<label class="text-primary"><input type="checkbox" name="remember"> Remember me</label>
-				</div>
+
 				<div>
-    					<button type="submit" class="btn btn-primary">Login</button>
+    					<button type="submit" class="btn btn-primary">Log out</button>
 				</div>
   			</form>
 		</div>

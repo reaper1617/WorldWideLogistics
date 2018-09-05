@@ -1,60 +1,62 @@
-<!--<?xml version="1.0" encoding="UTF-8"?>-->
-<!--&lt;!&ndash;suppress SpringFacetInspection &ndash;&gt;-->
-<!--<beans xmlns="http://www.springframework.org/schema/beans"-->
-       <!--xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
-       <!--xmlns:mvc="http://www.springframework.org/schema/mvc"-->
-       <!--xmlns:context="http://www.springframework.org/schema/context"-->
-       <!--xsi:schemaLocation="http://www.springframework.org/schema/beans-->
-       <!--http://www.springframework.org/schema/beans/spring-beans.xsd-->
-       <!--http://www.springframework.org/schema/mvc-->
-	   <!--http://www.springframework.org/schema/mvc/spring-mvc.xsd-->
-	   <!--http://www.springframework.org/schema/context-->
-	   <!--http://www.springframework.org/schema/context/spring-context.xsd">-->
+<?xml version="1.0" encoding="UTF-8"?>
+<b:beans xmlns="http://www.springframework.org/schema/security"
+         xmlns:b="http://www.springframework.org/schema/beans"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+	http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security.xsd
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!--<mvc:annotation-driven />-->
-    <!--&lt;!&ndash;<context:annotation-config/>&ndash;&gt;-->
+    <!--<http realm="JavaStudy example" use-expressions="true">-->
+        <!--<intercept-url pattern="/" access="isFullyAuthenticated() or isAnonymous()"/>-->
+        <!--<intercept-url pattern="/login.jsp*" access="isFullyAuthenticated() or isAnonymous()"/>-->
+        <!--<intercept-url pattern="/admin" access="hasRole('ADMIN')"/>-->
+        <!--<intercept-url pattern="/exitUser*" access="isFullyAuthenticated() or isAnonymous()"/>-->
+        <!--<intercept-url pattern="/**" access="hasRole('USER')"/>-->
 
-    <!--<context:component-scan base-package="com.gerasimchuk"/>-->
+        <!--<form-login login-page="/login.jsp"-->
+                    <!--authentication-failure-url="/login.jsp?login_error=1"/>-->
+        <!--<access-denied-handler error-page="/accessDenied.jsp"/>-->
+        <!--<http-basic/>-->
+        <!--<logout logout-success-url="/exitUser.jsp"/>-->
+        <!--<remember-me />-->
+        <!--<headers/>-->
+        <!--<csrf/>-->
+    <!--</http>-->
+
+    <http auto-config="true" use-expressions="true">
+        <intercept-url pattern="/" access="isFullyAuthenticated() or isAnonymous()"/>
+        <!--<intercept-url pattern="/error.jsp" access="IS_AUTHENTICATED_ANONYMOUSLY"/>-->
+        <intercept-url pattern="/login.jsp" access="isFullyAuthenticated() or isAnonymous()"/>
+        <intercept-url pattern="/logged.jsp" access="isFullyAuthenticated()"/>
+        <intercept-url pattern="/logout.jsp" access="isFullyAuthenticated()"/>
+        <intercept-url pattern="/**" access="isFullyAuthenticated()"/>
 
 
-    <!--&lt;!&ndash; Static Resources Configuration (get access to static sources such as CSS and JavaScript files) &ndash;&gt;-->
-    <!--&lt;!&ndash;<mvc:resources mapping="/resources/**" location="/resources/" />&ndash;&gt;-->
-    <!--&lt;!&ndash; themes can be put in different folder such as-->
-        <!--<mvc:resources mapping="/resources/**" location="/resources/themeBlue" />-->
-        <!--<mvc:resources mapping="/resources/**" location="/resources/themeGreen" />-->
-     <!--&ndash;&gt;-->
+        <form-login login-page="/login.jsp" authentication-failure-url="/login/login.jsp?login_error=1"/>
+                    <!--default-target-url="/login/logged.jsp"-->
+         <access-denied-handler error-page="/error.jsp"/>
+
+        <logout logout-success-url="/logout.jsp"/>
+
+        <csrf disabled="true"/>
+    </http>
+
+    <b:bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+        <b:constructor-arg name="strength" value="4"></b:constructor-arg>
+    </b:bean>
+
+    <authentication-manager>
+        <authentication-provider user-service-ref="customUserDetailsService">
+            <password-encoder ref="encoder"/>
+        </authentication-provider>
+    </authentication-manager>
+
+    <b:bean id="customUserDetailsService" class="com.gerasimchuk.services.CustomUserDetailsService">
+        <!--<b:constructor-arg ref="customUserDetailsService"/>-->
+    </b:bean>
 
 
 
-    <!--&lt;!&ndash;<bean id="sessionFactory"&ndash;&gt;-->
-          <!--&lt;!&ndash;class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">&ndash;&gt;-->
-        <!--&lt;!&ndash;<property name="dataSource"&ndash;&gt;-->
-                  <!--&lt;!&ndash;ref="dataSource"/>&ndash;&gt;-->
-        <!--&lt;!&ndash;<property name="packagesToScan"&ndash;&gt;-->
-                  <!--&lt;!&ndash;value="com.gerasimchuk.entities"/>&ndash;&gt;-->
-        <!--&lt;!&ndash;<property name="hibernateProperties">&ndash;&gt;-->
-            <!--&lt;!&ndash;<props>&ndash;&gt;-->
-                <!--&lt;!&ndash;<prop key="hibernate.hbm2ddl.auto">&ndash;&gt;-->
-                    <!--&lt;!&ndash;update&ndash;&gt;-->
-                <!--&lt;!&ndash;</prop>&ndash;&gt;-->
-                <!--&lt;!&ndash;<prop key="hibernate.dialect">&ndash;&gt;-->
-                    <!--&lt;!&ndash;org.hibernate.dialect.MySQL57Dialect&ndash;&gt;-->
-                <!--&lt;!&ndash;</prop>&ndash;&gt;-->
-            <!--&lt;!&ndash;</props>&ndash;&gt;-->
-        <!--&lt;!&ndash;</property>&ndash;&gt;-->
-    <!--&lt;!&ndash;</bean>&ndash;&gt;-->
-
-    <!--&lt;!&ndash;<bean id="dataSource"&ndash;&gt;-->
-          <!--&lt;!&ndash;class="org.springframework.jdbc.datasource.DriverManagerDataSource">&ndash;&gt;-->
-        <!--&lt;!&ndash;<property name="driverClassName" value="com.mysql.jdbc.Driver"/>&ndash;&gt;-->
-        <!--&lt;!&ndash;<property name="url" value="jdbc:mysql://localhost:3306/logisticon3000?useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC"/>&ndash;&gt;-->
-        <!--&lt;!&ndash;<property name="username" value="root"/>&ndash;&gt;-->
-        <!--&lt;!&ndash;<property name="password" value="root"/>&ndash;&gt;-->
-    <!--&lt;!&ndash;</bean>&ndash;&gt;-->
-
-    <!--&lt;!&ndash;<bean id="txManager"&ndash;&gt;-->
-          <!--&lt;!&ndash;class="org.springframework.orm.hibernate5.HibernateTransactionManager">&ndash;&gt;-->
-        <!--&lt;!&ndash;<property name="sessionFactory" ref="sessionFactory"/>&ndash;&gt;-->
-    <!--&lt;!&ndash;</bean>&ndash;&gt;-->
-
-<!--</beans>-->
+</b:beans>
