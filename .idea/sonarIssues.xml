@@ -253,6 +253,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/main/webapp/login.jsp">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/webapp/WEB-INF/dispatcher-servlet.xml">
           <value>
             <set />
