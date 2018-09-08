@@ -51,6 +51,15 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Transactional
+    public User getByPersonalNumber(String personalNumber) {
+        Collection<User> users = sessionFactory.getCurrentSession().createQuery("from Users", User.class).getResultList();
+        for(User u: users){
+            if (u.getPersonalNumber().equals(personalNumber)) return u;
+        }
+        return null;
+    }
+
+    @Transactional
     public Collection<User> getAll() {
         return sessionFactory.getCurrentSession().createQuery("from Users", User.class).getResultList();
     }
