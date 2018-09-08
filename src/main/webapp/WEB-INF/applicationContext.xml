@@ -53,10 +53,14 @@
         </authentication-provider>
     </authentication-manager>
 
+
+
     <b:bean id="customUserDetailsService" class="com.gerasimchuk.services.CustomUserDetailsService">
         <!--<b:constructor-arg ref="customUserDetailsService"/>-->
     </b:bean>
 
+    <b:bean id="authenticationManager" class="org.springframework.security.config.authentication.AuthenticationManagerFactoryBean">
 
+    </b:bean>
 
 </b:beans>

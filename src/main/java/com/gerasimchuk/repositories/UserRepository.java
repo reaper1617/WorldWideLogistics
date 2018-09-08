@@ -30,6 +30,8 @@ public interface UserRepository {
 
     User getById(int id);
 
+    User getByPersonalNumber(String personalNumber);
+
     Collection<User> getAll();
 
     void remove(int id);

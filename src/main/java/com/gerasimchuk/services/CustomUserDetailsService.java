@@ -30,10 +30,15 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Transactional
     public UserDetails loadUserByUsername(String personalNumber) throws UsernameNotFoundException {
         //now just for tests we will get user by id
-        User user = userRepository.getById(2);
+        User user = userRepository.getByPersonalNumber(personalNumber);
         String username = user.getPersonalNumber();
         String password = user.getPassword();
-        GrantedAuthority auth = new SimpleGrantedAuthority("MANAGER");
+        // role???
+        String role = null;
+        if (user.getDriver()!=null) role="DRIVER";
+        if (user.getManager()!=null) role="MANAGER";
+        if (user.getAdmin()!=null) role = "ADMIN";
+        GrantedAuthority auth = new SimpleGrantedAuthority(role);
         Set<GrantedAuthority> set = new HashSet<GrantedAuthority>();
         set.add(auth);
         UserDetails details = new org.springframework.security.core.userdetails.User(username,password,set);
