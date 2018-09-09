@@ -41,6 +41,15 @@ public class CityRepositoryImpl implements CityRepository {
     }
 
     @Transactional
+    public City getByName(String name) {
+        Collection<City> cities = sessionFactory.getCurrentSession().createQuery("from Cities", City.class).getResultList();
+        for(City c: cities){
+            if (c.getName().equals(name)) return c;
+        }
+        return null;
+    }
+
+    @Transactional
     public Collection<City> getAll() {
         return sessionFactory.getCurrentSession().createQuery("from Cities", City.class).getResultList();
     }

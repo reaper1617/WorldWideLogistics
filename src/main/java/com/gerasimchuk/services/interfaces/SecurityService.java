@@ -1,4 +1,4 @@
-package com.gerasimchuk.services;
+package com.gerasimchuk.services.interfaces;
 
 /**
  * Service for security

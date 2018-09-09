@@ -1,4 +1,4 @@
-package com.gerasimchuk.services;
+package com.gerasimchuk.services.impls;
 
 import com.gerasimchuk.entities.User;
 import com.gerasimchuk.repositories.UserRepository;

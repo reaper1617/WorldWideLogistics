@@ -24,14 +24,14 @@ public class DriverRepositoryImpl implements DriverRepository {
     }
 
     @Transactional
-    public Driver create(int hoursWorked, DriverStatus status, City currentCity, Truck currentTruck) {
+    public Driver create(double hoursWorked, DriverStatus status, City currentCity, Truck currentTruck) {
         Driver driver = new Driver(hoursWorked,status,currentCity,currentTruck);
         sessionFactory.getCurrentSession().persist(driver);
         return driver;
     }
 
     @Transactional
-    public Driver update(int id, int hoursWorked, DriverStatus status, City currentCity, Truck currentTruck) {
+    public Driver update(int id, double hoursWorked, DriverStatus status, City currentCity, Truck currentTruck) {
         Driver updated = sessionFactory.getCurrentSession().get(Driver.class,id);
         updated.setHoursWorked(hoursWorked);
         updated.setStatus(status);

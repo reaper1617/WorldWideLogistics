@@ -9,7 +9,7 @@ import javax.persistence.*;
 public class Driver {
 
     private int id;
-    private int hoursWorked;
+    private double hoursWorked;
     private DriverStatus status;
     private City currentCity;
     private Truck currentTruck;
@@ -19,7 +19,7 @@ public class Driver {
     public Driver() {
     }
 
-    public Driver(int hoursWorked, DriverStatus status, City currentCity, Truck currentTruck) {
+    public Driver(double hoursWorked, DriverStatus status, City currentCity, Truck currentTruck) {
         this.hoursWorked = hoursWorked;
         this.status = status;
         this.currentCity = currentCity;
@@ -39,11 +39,11 @@ public class Driver {
 
 
     @Column(name = "hours_worked", nullable = false)
-    public int getHoursWorked() {
+    public double getHoursWorked() {
         return hoursWorked;
     }
 
-    public void setHoursWorked(int hoursWorked) {
+    public void setHoursWorked(double hoursWorked) {
         this.hoursWorked = hoursWorked;
     }
 
@@ -95,19 +95,25 @@ public class Driver {
         Driver driver = (Driver) o;
 
         if (id != driver.id) return false;
-        if (hoursWorked != driver.hoursWorked) return false;
+        if (Double.compare(driver.hoursWorked, hoursWorked) != 0) return false;
         if (status != driver.status) return false;
         if (!currentCity.equals(driver.currentCity)) return false;
-        return currentTruck != null ? currentTruck.equals(driver.currentTruck) : driver.currentTruck == null;
+        if (currentTruck != null ? !currentTruck.equals(driver.currentTruck) : driver.currentTruck != null)
+            return false;
+        return user != null ? user.equals(driver.user) : driver.user == null;
     }
 
     @Override
     public int hashCode() {
-        int result = id;
-        result = 31 * result + hoursWorked;
+        int result;
+        long temp;
+        result = id;
+        temp = Double.doubleToLongBits(hoursWorked);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + status.hashCode();
         result = 31 * result + currentCity.hashCode();
         result = 31 * result + (currentTruck != null ? currentTruck.hashCode() : 0);
+        result = 31 * result + (user != null ? user.hashCode() : 0);
         return result;
     }
 }

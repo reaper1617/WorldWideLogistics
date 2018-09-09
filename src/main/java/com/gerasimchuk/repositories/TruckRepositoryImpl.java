@@ -47,6 +47,16 @@ public class TruckRepositoryImpl implements TruckRepository {
     }
 
     @Transactional
+    public Truck getByRegistrationNumber(String registrationNumber) {
+        if (registrationNumber==null) return null;
+        Collection<Truck> trucks = sessionFactory.getCurrentSession().createQuery("from Trucks", Truck.class).getResultList();
+        for(Truck t: trucks){
+            if (t.getRegistrationNumber().equals(registrationNumber)) return t;
+        }
+        return null;
+    }
+
+    @Transactional
     public Collection<Truck> getAll() {
         return sessionFactory.getCurrentSession().createQuery("from Trucks", Truck.class).getResultList();
     }
