@@ -30,6 +30,10 @@ public interface UserRepository {
 
     User getById(int id);
 
+    User getByDriverId(int driverId);
+    User getByManagerId(int managerId);
+    User getByAdminId(int adminId);
+
     User getByPersonalNumber(String personalNumber);
 
     Collection<User> getAll();

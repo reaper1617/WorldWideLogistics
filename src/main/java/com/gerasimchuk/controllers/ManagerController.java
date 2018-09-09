@@ -1,9 +1,15 @@
 package com.gerasimchuk.controllers;
 
 
+import com.gerasimchuk.entities.Cargo;
+import com.gerasimchuk.repositories.CargoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.Collection;
 
 /** Manager Controller
  * @author Reaper
@@ -15,9 +21,18 @@ public class ManagerController {
 
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ManagerController.class);
 
+    private CargoRepository cargoRepository;
+
+    @Autowired
+    public ManagerController(CargoRepository cargoRepository) {
+        this.cargoRepository = cargoRepository;
+    }
+
     @RequestMapping(value = "/managermainpage", method = RequestMethod.GET)
-    String managerMainPage(){
+    String managerMainPage(Model ui){
         log.info("Controller: ManagerController, metod = managerMainPage,  action = \"/managermainpage\", request = GET");
+        Collection<Cargo> cargos = cargoRepository.getAll();
+        ui.addAttribute("cargoList", cargos);
         return "/manager/managermainpage";
     }
 

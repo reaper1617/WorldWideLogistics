@@ -55,7 +55,7 @@
 
 
 
-    <b:bean id="customUserDetailsService" class="com.gerasimchuk.services.CustomUserDetailsService">
+    <b:bean id="customUserDetailsService" class="com.gerasimchuk.services.impls.CustomUserDetailsService">
         <!--<b:constructor-arg ref="customUserDetailsService"/>-->
     </b:bean>
 

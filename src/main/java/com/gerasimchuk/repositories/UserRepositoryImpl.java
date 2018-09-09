@@ -51,6 +51,37 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Transactional
+    public User getByDriverId(int driverId) {
+        Collection<User> users = sessionFactory.getCurrentSession().createQuery("from Users", User.class).getResultList();
+        for(User u: users){
+            if (u.getDriver()!=null){
+                if (u.getDriver().getId() == driverId) return u;
+            }
+        }
+        return null;
+    }
+
+    public User getByManagerId(int managerId) {
+        Collection<User> users = sessionFactory.getCurrentSession().createQuery("from Users", User.class).getResultList();
+        for(User u: users){
+            if (u.getManager()!=null){
+                if (u.getManager().getId()==managerId) return u;
+            }
+        }
+        return null;
+    }
+
+    public User getByAdminId(int adminId) {
+        Collection<User> users = sessionFactory.getCurrentSession().createQuery("from Users", User.class).getResultList();
+        for(User u: users){
+            if (u.getAdmin()!=null){
+                if (u.getAdmin().getId()==adminId) return u;
+            }
+        }
+        return null;
+    }
+
+    @Transactional
     public User getByPersonalNumber(String personalNumber) {
         Collection<User> users = sessionFactory.getCurrentSession().createQuery("from Users", User.class).getResultList();
         for(User u: users){

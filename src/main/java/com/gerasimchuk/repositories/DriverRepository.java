@@ -8,8 +8,8 @@ import com.gerasimchuk.enums.DriverStatus;
 import java.util.Collection;
 
 public interface DriverRepository {
-    Driver create(int hoursWorked, DriverStatus status, City currentCity, Truck currentTruck);
-    Driver update(int id,int hoursWorked, DriverStatus status, City currentCity, Truck currentTruck);
+    Driver create(double hoursWorked, DriverStatus status, City currentCity, Truck currentTruck);
+    Driver update(int id,double hoursWorked, DriverStatus status, City currentCity, Truck currentTruck);
     Driver getById(int id);
     Collection<Driver> getAll();
     void remove(int id);

@@ -10,6 +10,7 @@ public interface TruckRepository {
     Truck create(String registrationNumber, int numOfDrivers, double capacity, TruckState state, City currentCity);
     Truck update(int id,String registrationNumber, int numOfDrivers, double capacity, TruckState state, City currentCity);
     Truck getById(int id);
+    Truck getByRegistrationNumber(String registrationNumber);
     Collection<Truck> getAll();
     void remove(int id);
 }
