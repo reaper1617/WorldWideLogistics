@@ -77,35 +77,49 @@
       							</tr>
 						</thead>
 							<tbody>
-								<tr>
-									<td>8396hg834</td>
-									<td>Descr</td>
-									<td>11-12-2018 23-12-22</td>
-									<td>Prepared</td>
-									<td>ry448</td>
-									<td>
-										<div class="dropdown">
-  											<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show assigned drivers
-  												<span class="caret"></span></button>
-  												<ul class="dropdown-menu">
-    													<li><a href="#">Ivan</a></li>
-    													<li><a href="#">Petr</a></li>
-    													<li><a href="#">Sidor</a></li>
-  												</ul>
-										</div>
-									</td>
-									<td>
-										<div class="dropdown">
-  											<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show route
-  												<span class="caret"></span></button>
-  												<ul class="dropdown-menu">
-    													<li><a href="#">Moscow</a></li>
-    													<li><a href="#">SPb</a></li>
-    													<li><a href="#">Ptz</a></li>
-  												</ul>
-										</div>
-									</td>
-								</tr>
+							<c:if test="${orderList != null}">
+								<c:forEach items="${orderList}" var="cell">
+									<tr>
+										<td>${cell.personalNumber}</td>
+										<td>${cell.description}</td>
+										<td>${cell.date}</td>
+										<td>${cell.status}</td>
+										<c:if test="${cell.assignedTruck != null}">
+											<td>${cell.assignedTruck.registrationNumber}</td>
+										</c:if>
+										<c:if test="${cell.assignedTruck == null}">
+											<td>No assigned truck</td>
+										</c:if>
+										<td>
+											<div class="dropdown">
+												<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show assigned drivers
+													<span class="caret"></span></button>
+													<ul class="dropdown-menu">
+														<c:if test="${cell.assignedTruck != null}">
+															<c:forEach items="${cell.assignedTruck.driversInTruck}" var="driverInTruck">
+																<li><a href="#">${driverInTruck.id}</a></li>
+															</c:forEach>
+														</c:if>
+														<c:if test="${cell.assignedTruck == null}">
+																<li><a href="#">No assistants</a></li>
+														</c:if>
+													</ul>
+											</div>
+										</td>
+										<td>
+											<div class="dropdown">
+												<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show route
+													<span class="caret"></span></button>
+													<ul class="dropdown-menu">
+														<c:forEach items="${routePoints}" var="cell">
+															<li><a href="#">${cell.name}</a></li>
+														</c:forEach>
+													</ul>
+											</div>
+										</td>
+									</tr>
+								</c:forEach>
+							</c:if>
 							</tbody>
     					
     					</table>
@@ -125,50 +139,51 @@
     						<thead>
       							<tr>
 								<th></th>
-        							<th>Registration number</th>
-        							<th>Number of drivers</th>
+        						<th>Registration number</th>
+        						<th>Number of drivers</th>
 								<th>Capacity</th>
 								<th>State</th>
-        							<th>Current city</th>
+        						<th>Current city</th>
 								<th>Assigned drivers</th>
-        							<th>Assigned order</th>
+        						<th>Assigned order</th>
       							</tr>
 						</thead>
 						<tbody>
-							
-								
-							
-							<tr>
-								<td>
-								
-									<div class="dropdown">
-  											<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Manage
-  												<span class="caret"></span></button>
-  												<ul class="dropdown-menu">
-    													<li><a href="#">Change</a></li>
-    													<li><a href="#">Delete</a></li>
-  												</ul>
-									</div>
-								
-								</td>
-        							<td>rr38473</td>
-        							<td>3</td>
-								<td>20</td>
-								<td>Ready</td>
-        							<td>Moscow</td>
+						<c:if test="${truckList != null}">
+							<c:forEach items="truckList" var="cell">
+                                <tr>
+                                    <td>
+                                        <form action="#" method="post" >
+                                            <button type="submit" class="btn btn-primary">Edit</button>
+                                            <input type="number" hidden name="chosenProductId">
+                                        </form>
+                                    </td>
+                                </td>
+        						<td>${cell.registrationNumber}</td>
+        						<td>${cell.numOfDrivers}</td>
+								<td>${cell.capacity}</td>
+								<td>${cell.state}</td>
+        						<td>${cell.currentCity.name}</td>
 								<td>
 									<div class="dropdown">
   											<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show drivers
   												<span class="caret"></span></button>
   												<ul class="dropdown-menu">
-    													<li><a href="#">Ivan</a></li>
-    													<li><a href="#">Petr</a></li>
-    													<li><a href="#">Sidor</a></li>
+													<c:if test="${cell.driversInTruck != null}">
+														<c:forEach items="${cell.driversInTruck}" var="driver">
+															<li><a href="#">${driver.id}</a></li>
+														</c:forEach>
+													</c:if>
+													<c:if test="${cell.driversInTruck == null}">
+															<li><a href="#">No assigned driver</a></li>
+													</c:if>
   												</ul>
 										</div>
 								</td>
         							<td>No assigned orders</td>
       							</tr>
+                            </c:forEach>
+						</c:if>
 						</tbody>
 							
     					</table>
@@ -185,43 +200,51 @@
     						<thead>
       							<tr>
 								<th></th>
-        							<th>Name</th>
-        							<th>Middle name</th>
+        						<th>First name</th>
+        						<th>Middle name</th>
 								<th>Last name</th>
 								<th>Personal number</th>
-        							<th>Hours worked</th>
+        						<th>Hours worked</th>
 								<th>Status</th>
-        							<th>Current city</th>
+        						<th>Current city</th>
 								<th>Current truck</th>
       							</tr>
 						</thead>	
 						<tbody>
-							<td>
-								<div class="dropdown">
-  											<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Manage
-  												<span class="caret"></span></button>
-  												<ul class="dropdown-menu">
-    													<li><a href="#">Change</a></li>
-    													<li><a href="#">Delete</a></li>
-  												</ul>
-								</div>
-							</td>
-        							<td>Ivan</td>
-        							<td>Petrovich</td>
-								<td>Sidorov</td>
-								<td>7748kshdg74</td>
-        							<td>10</td>
-								<td>Ready</td>
-        							<td>Moscow</td>
-								<td>rr48474</td>
+						<c:if test="${driverList != null}">
+                            <c:forEach items="${driverList}" var="cell">
+                                <tr>
+                                    <td>
+                                        <form action="#" method="post" >
+                                            <button type="submit" class="btn btn-primary">Edit</button>
+                                            <input type="number" hidden name="chosenProductId">
+                                        </form>
+                                    </td>
+                                    <td>${cell.name}</td>
+                                    <td>${cell.middleName}</td>
+                                    <td>${cell.lastName}</td>
+                                    <td>${cell.personalNumber}</td>
+                                    <td>${cell.driver.hoursWorked}</td>
+                                    <td>${cell.driver.status}</td>
+                                    <td>${cell.driver.currentCity.name}</td>
+									<c:if test="${cell.driver.currentTruck != null}">
+                                    	<td>${cell.driver.currentTruck.registrationNumber}</td>
+									</c:if>
+									<c:if test="${cell.driver.currentTruck == null}">
+										<td>No assigned truck</td>
+									</c:if>
+                                </tr>
+                            </c:forEach>
+						</c:if>
 						</tbody>				
     					</table>
 				</div>
   			</div>
 			<div id="managecargos" class="tab-pane fade">
-    				<div class = "sticky-top">
-				<h3>Cargos <button class = "btn btn-primary" type = "button">Add new</button></h3>
-    				
+				<div class = "sticky-top">
+					<form action="/addnewcargopage" method="get">
+						<h3>Cargos <button class = "btn btn-primary" type="submit">Add new</button></h3>
+					</form>
 				<div><input class="form-control" id="myInput4" type="text" placeholder="Search.."></div>
 				</div>
 				<div>
@@ -238,22 +261,24 @@
       							</tr>
 						</thead>	
 						<tbody>
-						<c:forEach items="${cargoList}" var="cell">
-							<tr>
-								<td>
-									<form action="#" method="post" >
-										<button type="submit" class="btn btn-primary">Edit</button>
-										<input type="number" hidden name="chosenProductId">
-									</form>
-								</td>
-								<td>${cell.personalNumber}</td>
-								<td>${cell.name}</td>
-								<td>${cell.weight}</td>
-								<td>${cell.route.cityFrom.name}</td>
-								<td>${cell.route.cityTo.name}</td>
-								<td>${cell.status}</td>
-							</tr>
-						</c:forEach>
+						<c:if test="${cargoList != null}">
+							<c:forEach items="${cargoList}" var="cell">
+								<tr>
+									<td>
+										<form action="#" method="post" >
+											<button type="submit" class="btn btn-primary">Edit</button>
+											<input type="number" hidden name="chosenProductId">
+										</form>
+									</td>
+									<td>${cell.personalNumber}</td>
+									<td>${cell.name}</td>
+									<td>${cell.weight}</td>
+									<td>${cell.route.cityFrom.name}</td>
+									<td>${cell.route.cityTo.name}</td>
+									<td>${cell.status}</td>
+								</tr>
+							</c:forEach>
+						</c:if>
 						</tbody>				
     					</table>
 				</div>

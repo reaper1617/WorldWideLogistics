@@ -9,6 +9,7 @@ public interface RouteRepository {
     Route create(City cityFrom, City cityTo, double distance);
     Route update(int id,City cityFrom, City cityTo, double distance);
     Route getById(int id);
+    Route getByCities(City cityFrom, City cityTo);
     Collection<Route> getAll();
     void remove(int id);
 }

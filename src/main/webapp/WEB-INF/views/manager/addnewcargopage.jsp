@@ -1,3 +1,6 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,7 +30,7 @@
 	<div class = "container-fluid fixed-top">
 		<h2>Fixed-top container</h2>
 		<nav class="nav nav-tabs bg-primary bg-light navbar-light fixed-top">
-			<a class="navbar-brand" href="#">Change cargo</a>
+			<a class="navbar-brand" href="#">Add new cargo</a>
 			<!-- Nav tabs -->
 		</nav>
  
@@ -41,38 +44,44 @@
 		      			<img src="img_avatar1.png" class="media-object" style="width:100px">
 				</div>
 				<div>
-					<form action="#">
+					<form action="/addnewcargopage" method="post" id="addNewCargoForm">
 						<div class="form-group">
 					      		<label for="cargo_name">Cargo name</label>
-      							<input type="text" class="form-control" id="cargo_name" placeholder="Enter cargo name" name="cargo_name" style="width:350px" required="required">
+      							<input type="text" class="form-control" id="cargo_name" placeholder="Enter cargo name" name="name" style="width:350px" required="required">
 						</div>
 						<div class="form-group">
 					      		<label for="weight">Cargo weight:</label>
-      							<input type="text" class="form-control" id="weight" placeholder="Enter cargo weight" name="cargo_weight" style="width:350px" required="required">
+      							<input type="text" class="form-control" id="weight" placeholder="Enter cargo weight" name="weight" style="width:350px" required="required">
 						</div>
 						<div class="form-group">
 							<label for="city_from">City from</label>
-							 <select class="form-control" id="city_from" required="required">
-        							<option>City1</option>
-        							<option>City2</option>
-        							<option>City3</option>
-        							<option>City4</option>
-        							<option>City5</option>
-      							</select>
+							 <select class="form-control" id="city_from" required="required" name="cityFrom">
+								 <c:if test="${citiesList != null}">
+									 <c:forEach items="${citiesList}" var="cell">
+										<option>${cell.name}</option>
+									 </c:forEach>
+								 </c:if>
+								 <c:if test="${citiesList == null}">
+										 <option>No cities available</option>
+								 </c:if>
+							 </select>
 						</div>
 						<div class="form-group">
 							<label for="city_to">City to</label>
-							 <select class="form-control" id="city_to" required="required">
-        							<option>City1</option>
-        							<option>City2</option>
-        							<option>City3</option>
-        							<option>City4</option>
-        							<option>City5</option>
+							 <select class="form-control" id="city_to" required="required" name="cityTo">
+								 <c:if test="${citiesList != null}">
+									 <c:forEach items="${citiesList}" var="cell">
+										 <option>${cell.name}</option>
+									 </c:forEach>
+								 </c:if>
+								 <c:if test="${citiesList == null}">
+									 <option>No cities available</option>
+								 </c:if>
       							</select>
 						</div>
 						<div>
-							<button type="submit" class="btn btn-primary">Save changes</button>
-							<button type="submit" class="btn btn-primary">Rollback changes</button>
+							<button type="submit" class="btn btn-primary" form="addNewCargoForm">Save changes</button>
+							<button type="reset" class="btn btn-primary" form="addNewCargoForm">Rollback changes</button>
 						</div>
 					</form>
 				</div>
