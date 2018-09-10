@@ -1,7 +1,10 @@
 package com.gerasimchuk.utils;
 
+import org.springframework.stereotype.Service;
+
 import java.util.Random;
 
+@Service
 public class PersonalNumberGenerator {
 
     public static String generate(int length){

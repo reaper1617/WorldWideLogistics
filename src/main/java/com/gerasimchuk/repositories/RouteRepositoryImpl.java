@@ -43,6 +43,15 @@ public class RouteRepositoryImpl implements RouteRepository {
         return sessionFactory.getCurrentSession().get(Route.class, id);
     }
 
+    @Transactional
+    public Route getByCities(City cityFrom, City cityTo) {
+        Collection<Route> routes = sessionFactory.getCurrentSession().createQuery("from Routes", Route.class).getResultList();
+        for(Route r: routes){
+            if (r.getCityFrom().getName().equals(cityFrom.getName()) && r.getCityTo().getName().equals(cityTo.getName())) return r;
+        }
+        return null;
+    }
+
     public Collection<Route> getAll() {
         return sessionFactory.getCurrentSession().createQuery("from Routes", Route.class).getResultList();
     }

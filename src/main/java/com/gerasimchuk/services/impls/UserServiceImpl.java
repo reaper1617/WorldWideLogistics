@@ -11,6 +11,7 @@ import com.gerasimchuk.utils.PersonalNumberGenerator;
 import com.gerasimchuk.validators.DTOValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 
@@ -19,6 +20,8 @@ import java.util.Collection;
  * @version 1.0
  */
 
+
+@Service
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
@@ -29,7 +32,7 @@ public class UserServiceImpl implements UserService {
     private TruckRepository truckRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private DTOValidator dtoValidator;
-
+    private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(UserServiceImpl.class);
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, DriverRepository driverRepository, ManagerRepository managerRepository, AdminRepository adminRepository, CityRepository cityRepository, TruckRepository truckRepository, BCryptPasswordEncoder bCryptPasswordEncoder, DTOValidator dtoValidator) {
@@ -44,7 +47,11 @@ public class UserServiceImpl implements UserService {
     }
 
     public boolean createDriver(DriverDTO driverDTO) {
-        if (!dtoValidator.validate(driverDTO)) return false;
+        logger.info("Service:"+ this.getClass().getName() + " invokated.");
+        if (!dtoValidator.validate(driverDTO)){
+            logger.error("Service:"+ this.getClass().getName() + " error: driver data transfer object is not valid.");
+            return false;
+        }
         double hoursWorkedVal = getHoursWorkedValFromDriverDTO(driverDTO);
         DriverStatus driverStatusVal = getDriverStatusValFromDriverDTO(driverDTO);
         City city = getCurrentCityFromDriverDTO(driverDTO);
@@ -61,6 +68,7 @@ public class UserServiceImpl implements UserService {
                 driver,
                 null,
                 null);
+        logger.info("Service:"+ this.getClass().getName() + ": driver" + user + "created successfully");
         return  true;
     }
 
@@ -172,19 +180,31 @@ public class UserServiceImpl implements UserService {
     }
 
     private double getHoursWorkedValFromDriverDTO(DriverDTO driverDTO){
-        return Double.parseDouble(driverDTO.getHoursWorked());
-
+        if (driverDTO == null) return 0;
+        if (driverDTO.getHoursWorked()!=null) {
+            return Double.parseDouble(driverDTO.getHoursWorked());
+        }
+        return 0;
     }
 
     private City getCurrentCityFromDriverDTO(DriverDTO driverDTO){
-        return cityRepository.getByName(driverDTO.getCurrentCityName());
+        if (driverDTO==null) return null;
+        if (driverDTO.getCurrentCityName()!=null) {
+            return cityRepository.getByName(driverDTO.getCurrentCityName());
+        }
+        return null;
     }
 
     private Truck getCurrentTruckFromDriverDTO(DriverDTO driverDTO){
-        return truckRepository.getByRegistrationNumber(driverDTO.getCurrentTruckRegistrationNumber());
+        if (driverDTO == null) return null;
+        if (driverDTO.getCurrentTruckRegistrationNumber()!=null) {
+            return truckRepository.getByRegistrationNumber(driverDTO.getCurrentTruckRegistrationNumber());
+        }
+        return null;
     }
 
     private int getIdValFromDTO(Object dto){
+        if (dto == null) return 0;
         if (dto instanceof AdminDTO)  return Integer.parseInt(((AdminDTO) dto).getId());
         if (dto instanceof DriverDTO) return Integer.parseInt(((DriverDTO) dto).getId());
         if (dto instanceof ManagerDTO) return Integer.parseInt(((ManagerDTO) dto).getId());

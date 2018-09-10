@@ -6,6 +6,7 @@ package com.gerasimchuk.dto;
  */
 
 public class CargoDTO {
+    private String id;
     private String personalNumber;
     private String name;
     private String weight;
@@ -16,13 +17,22 @@ public class CargoDTO {
     public CargoDTO() {
     }
 
-    public CargoDTO(String personalNumber, String name, String weight, String cityFrom, String cityTo, String status) {
+    public CargoDTO(String id, String personalNumber, String name, String weight, String cityFrom, String cityTo, String status) {
+        this.id = id;
         this.personalNumber = personalNumber;
         this.name = name;
         this.weight = weight;
         this.cityFrom = cityFrom;
         this.cityTo = cityTo;
         this.status = status;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getPersonalNumber() {
