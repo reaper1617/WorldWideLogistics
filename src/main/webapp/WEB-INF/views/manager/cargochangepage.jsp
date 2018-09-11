@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,61 +36,75 @@
 	<br>
 	<br>
 	<div class = "container-fluid" >
-		 <h2>Cargo cargo1954</h2>
+		<c:if test="${updatedCargoId != null}">
+			<h2>Cargo ${updatedCargoId} update:</h2>
+		</c:if>
+		<c:if test="${updatedCargoId == null}">
+			<h2>Something goes wrong...</h2>
+		</c:if>
 			<div class="media" >
 				<div class="media-left">
 		      			<img src="img_avatar1.png" class="media-object" style="width:100px">
 				</div>
 				<div>
-					<form action="#">
+					<form action="/cargochangepage" method="post">
+						<div>
+							<c:if test="${updatedCargoId != null}">
+								<input type="text" hidden name="id" value="${updatedCargoId}">
+							</c:if>
+							<c:if test="${updatedCargoId == null}">
+								<input type="text" hidden name="id" value="0">
+							</c:if>
+						</div>
     						<div class="form-group">
-					      		<label for="item_id">New cargo id:</label>
-      							<input type="text" class="form-control" id="item_id" placeholder="Enter new cargo id" name="cargo_id" style="width:350px">
+					      		<label for="item_id">New cargo personal number:</label>
+      							<input type="text" class="form-control" id="item_id" placeholder="Enter new cargo personal number" name="personalNumber" style="width:350px">
 						</div>
 						<div class="form-group">
 					      		<label for="cargo_name">New cargo name</label>
-      							<input type="text" class="form-control" id="cargo_name" placeholder="Enter new cargo name" name="cargo_name" style="width:350px">
+      							<input type="text" class="form-control" id="cargo_name" placeholder="Enter new cargo name" name="name" style="width:350px">
 						</div>
 						<div class="form-group">
 					      		<label for="weight">New weight</label>
-      							<input type="text" class="form-control" id="weight" placeholder="Enter new cargo weight" name="cargo_weight" style="width:350px">
+      							<input type="text" class="form-control" id="weight" placeholder="Enter new cargo weight" name="weight" style="width:350px">
 						</div>
 						<div class="form-group">
-				      			<label for="city_from">Change city from</label>
-							<div class="dropdown">
-  										<button id="city_from" class="btn dropdown-toggle" type="button" data-toggle="dropdown" style="width:350px">Moscow
-  										<span class="caret"></span></button>
-  										<ul class="dropdown-menu" style="width:350px">
-    											<li><a href="#">Saint-Petersburg</a></li>
-											<li><a href="#">Petrozavodsk</a></li>
-    											<li><a href="#">Pskov</a></li>
-    											<li><a href="#">Kazan</a></li>
-  										</ul>
-							</div>
+							<label for="city_from">City from</label>
+							<select class="form-control" id="city_from" name="cityFrom">
+								<c:if test="${citiesList != null}">
+									<option hidden>Not selected</option>
+									<c:forEach items="${citiesList}" var="cell">
+										<option>${cell.name}</option>
+									</c:forEach>
+								</c:if>
+								<c:if test="${citiesList == null}">
+									<option>No cities available</option>
+								</c:if>
+							</select>
 						</div>
 						<div class="form-group">
-				      			<label for="city_to">Change city to</label>
-							<div class="dropdown">
-  										<button id="city_to" class="btn dropdown-toggle" type="button" data-toggle="dropdown" style="width:350px">Moscow
-  										<span class="caret"></span></button>
-  										<ul class="dropdown-menu" style="width:350px">
-    											<li><a href="#">Saint-Petersburg</a></li>
-											<li><a href="#">Petrozavodsk</a></li>
-    											<li><a href="#">Pskov</a></li>
-    											<li><a href="#">Kazan</a></li>
-  										</ul>
-							</div>
+							<label for="city_to">City to</label>
+							<select class="form-control" id="city_to" name="cityTo">
+								<c:if test="${citiesList != null}">
+									<option hidden>Not selected</option>
+									<c:forEach items="${citiesList}" var="cell">
+										<option>${cell.name}</option>
+									</c:forEach>
+								</c:if>
+								<c:if test="${citiesList == null}">
+									<option>No cities available</option>
+								</c:if>
+							</select>
 						</div>
 						<div class="form-group">
-				      			<label for="current_status">Change status</label>
-							<div class="dropdown">
-  										<button id="current_status" class="btn dropdown-toggle" type="button" data-toggle="dropdown" style="width:350px">Prepared
-  										<span class="caret"></span></button>
-  										<ul class="dropdown-menu" style="width:350px">
-    											<li><a href="#">Loaded</a></li>
-											<li><a href="#">Unloaded</a></li>
-  										</ul>
-									</div>
+							<label for="status">Status</label>
+							<select class="form-control" id="status" name="status">
+								<option hidden>Not selected</option>
+								<option >Prepared</option>
+								<option >Loaded</option>
+								<option >Shipping</option>
+								<option >Delivered</option>
+							</select>
 						</div>
 						<div>
 							<button type="submit" class="btn btn-primary">Save changes</button>

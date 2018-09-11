@@ -155,7 +155,7 @@
                                     <td>
                                         <form action="#" method="post" >
                                             <button type="submit" class="btn btn-primary">Edit</button>
-                                            <input type="number" hidden name="chosenProductId">
+                                            <input type="text" hidden name="id" value="${cell.id}">
                                         </form>
                                     </td>
                                 </td>
@@ -178,10 +178,17 @@
 															<li><a href="#">No assigned driver</a></li>
 													</c:if>
   												</ul>
-										</div>
-								</td>
-        							<td>No assigned orders</td>
-      							</tr>
+									</div>
+									<c:if test="${cell.assignedOrder != null}">
+										</td>
+											<td>${cell.assignedOrder}</td>
+										</tr>
+									</c:if>
+									<c:if test="${cell.assignedOrder == null}">
+										</td>
+											<td>No assigned order</td>
+										</tr>
+									</c:if>
                             </c:forEach>
 						</c:if>
 						</tbody>
@@ -217,7 +224,7 @@
                                     <td>
                                         <form action="#" method="post" >
                                             <button type="submit" class="btn btn-primary">Edit</button>
-                                            <input type="number" hidden name="chosenProductId">
+                                            <input type="text" hidden name="id" value="${cell.id}">
                                         </form>
                                     </td>
                                     <td>${cell.name}</td>
@@ -265,9 +272,9 @@
 							<c:forEach items="${cargoList}" var="cell">
 								<tr>
 									<td>
-										<form action="#" method="post" >
+										<form action="/managermainpage/0" method="post" >
 											<button type="submit" class="btn btn-primary">Edit</button>
-											<input type="number" hidden name="chosenProductId">
+											<input type="text" hidden name="id" value="${cell.id}">
 										</form>
 									</td>
 									<td>${cell.personalNumber}</td>
