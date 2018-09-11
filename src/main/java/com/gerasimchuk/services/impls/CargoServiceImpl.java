@@ -58,9 +58,9 @@ public class CargoServiceImpl implements CargoService {
     public boolean updateCargo(CargoDTO cargoDTO) {
         if (!dtoValidator.validate(cargoDTO)) return false;
         if (cargoDTO.getId()!=null && cargoDTO.getId().length()!=0){
-
             int id = Integer.parseInt(cargoDTO.getId());
             Cargo updated = cargoRepository.getById(id);
+            if (updated.getOrder()!=null) return false;
             if (updated!=null){
                 updateCargoWithFieldsFromDTO(updated, cargoDTO);
                 return true;
@@ -77,21 +77,23 @@ public class CargoServiceImpl implements CargoService {
 
     private CargoStatus getCargoStatusFromCargoDTO(CargoDTO cargoDTO){
         if (cargoDTO.getStatus() != null) {
-            if (cargoDTO.getStatus().equals(CargoStatus.DELIVERED)) return CargoStatus.DELIVERED;
-            if (cargoDTO.getStatus().equals(CargoStatus.LOADED)) return CargoStatus.LOADED;
-            if (cargoDTO.getStatus().equals(CargoStatus.PREPARED)) return CargoStatus.PREPARED;
-            if (cargoDTO.getStatus().equals(CargoStatus.SHIPPING)) return CargoStatus.SHIPPING;
+            if (cargoDTO.getStatus().equals("Delivered")) return CargoStatus.DELIVERED;
+            if (cargoDTO.getStatus().equals("Loaded")) return CargoStatus.LOADED;
+            if (cargoDTO.getStatus().equals("Prepared")) return CargoStatus.PREPARED;
+            if (cargoDTO.getStatus().equals("Shipping")) return CargoStatus.SHIPPING;
         }
         return CargoStatus.PREPARED;
     }
 
     private void updateCargoWithFieldsFromDTO(Cargo updated, CargoDTO cargoDTO){
+        if (updated == null || cargoDTO == null) return;
         String personalNumber = null;
         String name= null;
         double weight = 0;
         City cityFrom = null;
         City cityTo = null;
         CargoStatus status = null;
+        Route route = null;
         if (cargoDTO.getPersonalNumber()!=null && cargoDTO.getPersonalNumber().length()!=0) personalNumber = cargoDTO.getPersonalNumber();
         else personalNumber = updated.getPersonalNumber();
         if (cargoDTO.getName()!=null && cargoDTO.getName().length()!=0) name = cargoDTO.getName();
@@ -102,11 +104,14 @@ public class CargoServiceImpl implements CargoService {
         else cityFrom = updated.getRoute().getCityFrom();
         if (cargoDTO.getCityTo()!=null && cargoDTO.getCityTo().length()!=0) cityTo = cityRepository.getByName(cargoDTO.getCityTo());
         else cityTo = updated.getRoute().getCityTo();
-        if (cargoDTO.getStatus()!=null && cargoDTO.getStatus().length()!=0) status = getCargoStatusFromCargoDTO(cargoDTO);
+        if (cargoDTO.getStatus()!=null && cargoDTO.getStatus().length()!=0 && !cargoDTO.getStatus().equals("Not selected")) status = getCargoStatusFromCargoDTO(cargoDTO);
         else status = updated.getStatus();
-        Route route = routeRepository.getByCities(cityFrom, cityTo);
-        if (route!=null){
-            cargoRepository.update(updated.getId(),personalNumber,name,weight,status,route);
+        if (cargoDTO.getCityFrom()!=null && cargoDTO.getCityFrom().length()!=0 && !cargoDTO.getCityFrom().equals("Not selected") && cargoDTO.getCityTo()!=null && cargoDTO.getCityTo().length()!=0 && !cargoDTO.getCityTo().equals("Not selected")) {
+            cityFrom = cityRepository.getByName(cargoDTO.getCityFrom());
+            cityTo = cityRepository.getByName(cargoDTO.getCityTo());
+            route = routeRepository.getByCities(cityFrom, cityTo);
         }
+        else route = updated.getRoute();
+        cargoRepository.update(updated.getId(),personalNumber,name,weight,status,route);
     }
 }

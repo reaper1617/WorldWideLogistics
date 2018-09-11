@@ -34,7 +34,7 @@
         <intercept-url pattern="/**" access="isFullyAuthenticated()"/>
 
 
-        <form-login login-page="/login.jsp" authentication-failure-url="/login/login.jsp?login_error=1"/>
+        <form-login login-page="/login.jsp" authentication-failure-url="/login.jsp?login_error=1"/>
                     <!--default-target-url="/login/logged.jsp"-->
          <access-denied-handler error-page="/error.jsp"/>
 
