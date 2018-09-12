@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /** Implementation for {@link UserService} interface
@@ -108,8 +109,8 @@ public class UserServiceImpl implements UserService {
         User updated = null;
         if (driverDTO.getId()!=null) {
             if (driverDTO.getId().length() != 0) {
-                if (getIdValFromDTO(driverDTO.getId()) != 0) {
-                    updated = userRepository.getByDriverId(getIdValFromDTO(driverDTO.getId()));
+                if (getIdValFromDTO(driverDTO) != 0) {
+                    updated = userRepository.getById(getIdValFromDTO(driverDTO));
                 }
             }
         }
@@ -166,17 +167,27 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
+    public Collection<User> getAllDrivers() {
+        Collection<User> users = userRepository.getAll();
+        Collection<User> drivers = new ArrayList<User>();
+        for(User u: users){
+            if (u.getDriver()!=null) drivers.add(u);
+        }
+        return drivers;
+    }
+
 
     // ** util methods
 
     private DriverStatus getDriverStatusValFromDriverDTO(DriverDTO driverDTO){
+        if (driverDTO.getDriverStatus() == null) return DriverStatus.FREE;
         String driverStatus = driverDTO.getDriverStatus();
-            if (driverStatus.equals("FREE")) return DriverStatus.FREE;
-            if (driverStatus.equals("RESTING")) return DriverStatus.RESTING;
-            if (driverStatus.equals("DRIVING")) return DriverStatus.DRIVING;
-            if (driverStatus.equals("SECOND_DRIVER")) return DriverStatus.SECOND_DRIVER;
-            if (driverStatus.equals("LOAD_UNLOAD_WORKS")) return DriverStatus.LOAD_UNLOAD_WORKS;
-            return null;
+            if (driverStatus.equals("Free")) return DriverStatus.FREE;
+            if (driverStatus.equals("Resting")) return DriverStatus.RESTING;
+            if (driverStatus.equals("Driving")) return DriverStatus.DRIVING;
+            if (driverStatus.equals("Second driver")) return DriverStatus.SECOND_DRIVER;
+            if (driverStatus.equals("Load/unload works")) return DriverStatus.LOAD_UNLOAD_WORKS;
+            return DriverStatus.FREE;
     }
 
     private double getHoursWorkedValFromDriverDTO(DriverDTO driverDTO){
@@ -233,11 +244,11 @@ public class UserServiceImpl implements UserService {
         else newPassword = updated.getPassword();
         if (driverDTO.getHoursWorked()!=null && driverDTO.getHoursWorked().length()!=0) newHoursWorked = Double.parseDouble(driverDTO.getHoursWorked());
         else newHoursWorked = updated.getDriver().getHoursWorked();
-        if (driverDTO.getDriverStatus()!=null && driverDTO.getDriverStatus().length()!=0) newDriverStatus = getDriverStatusValFromDriverDTO(driverDTO);
+        if (driverDTO.getDriverStatus()!=null && driverDTO.getDriverStatus().length()!=0 && !driverDTO.getDriverStatus().equals("Not selected")) newDriverStatus = getDriverStatusValFromDriverDTO(driverDTO);
         else newDriverStatus = updated.getDriver().getStatus();
-        if (driverDTO.getCurrentCityName()!=null && driverDTO.getCurrentCityName().length()!=0) newCity = cityRepository.getByName(driverDTO.getCurrentCityName());
+        if (driverDTO.getCurrentCityName()!=null && driverDTO.getCurrentCityName().length()!=0 && !driverDTO.getCurrentCityName().equals("Not selected") && !driverDTO.getCurrentCityName().equals("No cities available")) newCity = cityRepository.getByName(driverDTO.getCurrentCityName());
         else newCity = updated.getDriver().getCurrentCity();
-        if (driverDTO.getCurrentTruckRegistrationNumber()!=null && driverDTO.getCurrentTruckRegistrationNumber().length()!=0) newTruck = truckRepository.getByRegistrationNumber(driverDTO.getCurrentTruckRegistrationNumber());
+        if (driverDTO.getCurrentTruckRegistrationNumber()!=null && driverDTO.getCurrentTruckRegistrationNumber().length()!=0 && !driverDTO.getCurrentTruckRegistrationNumber().equals("Not selected") && !driverDTO.getCurrentTruckRegistrationNumber().equals("No trucks available")) newTruck = truckRepository.getByRegistrationNumber(driverDTO.getCurrentTruckRegistrationNumber());
         else newTruck = updated.getDriver().getCurrentTruck();
         Driver driver = driverRepository.update(updated.getDriver().getId(),newHoursWorked,newDriverStatus,newCity,newTruck);
         userRepository.update(updated.getId(),newFirstName,newMiddleName,newLastName,newPersonalNumber,newPassword,driver,null,null);

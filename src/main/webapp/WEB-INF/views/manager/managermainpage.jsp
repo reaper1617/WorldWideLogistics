@@ -198,8 +198,9 @@
   			</div>
   			<div id="managedrivers" class="tab-pane fade">
     				<div class = "sticky-top">
-				<h3>Drivers <button class = "btn btn-primary" type = "button">Add new</button></h3>
-    				
+						<form action="/addnewdriverpage" method="get">
+							<h3>Drivers <button class = "btn btn-primary" type = "submit">Add new</button></h3>
+						</form>
 				<div><input class="form-control" id="myInput3" type="text" placeholder="Search.."></div>
 				</div>
 				<div>
@@ -218,11 +219,11 @@
       							</tr>
 						</thead>	
 						<tbody>
-						<c:if test="${driverList != null}">
-                            <c:forEach items="${driverList}" var="cell">
+						<c:if test="${driversList != null}">
+                            <c:forEach items="${driversList}" var="cell">
                                 <tr>
                                     <td>
-                                        <form action="#" method="post" >
+                                        <form action="/managermainpage/1" method="post" >
                                             <button type="submit" class="btn btn-primary">Edit</button>
                                             <input type="text" hidden name="id" value="${cell.id}">
                                         </form>

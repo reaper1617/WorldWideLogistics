@@ -6,6 +6,7 @@ import com.gerasimchuk.dto.ManagerDTO;
 import com.gerasimchuk.entities.Admin;
 import com.gerasimchuk.entities.Driver;
 import com.gerasimchuk.entities.Manager;
+import com.gerasimchuk.entities.User;
 
 import java.util.Collection;
 
@@ -30,7 +31,7 @@ public interface UserService {
     boolean deleteAdmin(int userId);
 
 
-//    Collection<Driver> getAllDrivers();
+    Collection<User> getAllDrivers();
 //    Collection<Manager> getAllManagers();
 //    Collection<Admin> getAllAdmins();
 
