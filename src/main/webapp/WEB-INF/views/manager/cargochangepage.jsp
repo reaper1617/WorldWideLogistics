@@ -108,7 +108,7 @@
 						</div>
 						<div>
 							<button type="submit" class="btn btn-primary">Save changes</button>
-							<button type="submit" class="btn btn-primary">Rollback changes</button>
+							<button type="reset" class="btn btn-primary">Rollback changes</button>
 						</div>
 					</form>
 				</div>

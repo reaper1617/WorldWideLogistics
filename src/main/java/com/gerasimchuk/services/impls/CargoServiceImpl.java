@@ -70,6 +70,7 @@ public class CargoServiceImpl implements CargoService {
     }
 
     public boolean deleteCargo(int cargoId) {
+        // TODO: implement logics!
         return false;
     }
 

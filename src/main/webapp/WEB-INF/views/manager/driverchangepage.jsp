@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,114 +36,94 @@
 	<br>
 	<br>
 	<div class = "container-fluid" >
-		 <h2>Ivanov Petr Sidorovich</h2>
+		<c:if test="${updatedDriverId != null}">
+			<h2>Driver ${updatedDriverId} update:</h2>
+		</c:if>
 			<div class="media" >
 				<div class="media-left">
 		      			<img src="img_avatar1.png" class="media-object" style="width:100px">
 				</div>
 				<div>
-					<form action="#">
-    						<div class="form-group">
-					      		<label for="personal_number">New personal number:</label>
-      							<input type="text" class="form-control" id="personal_number" placeholder="Enter new personal number" name="personalnumber" style="width:350px">
-						</div>
-						<div class="form-group">
-				      			<label for="current_city">Change city</label>
-							<div class="dropdown">
-  										<button id="current_city" class="btn dropdown-toggle" type="button" data-toggle="dropdown" style="width:350px">Moscow
-  										<span class="caret"></span></button>
-  										<ul class="dropdown-menu" style="width:350px">
-    											<li><a href="#">Saint-Petersburg</a></li>
-											<li><a href="#">Petrozavodsk</a></li>
-    											<li><a href="#">Pskov</a></li>
-    											<li><a href="#">Kazan</a></li>
-  										</ul>
+					<form action="/driverchangepage" method="post">
+						<c:if test="${updatedDriverId != null}">
+							<div>
+								<input type="text" hidden name="id" value="${updatedDriverId}">
 							</div>
+						</c:if>
+						<div class="form-group">
+							<label for="driver_name">New name:</label>
+							<input type="text" class="form-control" id="driver_name" placeholder="Enter new driver name" name="firstName" style="width:350px">
 						</div>
 						<div class="form-group">
-				      			<label for="current_status">Change status</label>
-							<div class="dropdown">
-  										<button id="current_status" class="btn dropdown-toggle" type="button" data-toggle="dropdown" style="width:350px">Resting
-  										<span class="caret"></span></button>
-  										<ul class="dropdown-menu" style="width:350px">
-    											<li><a href="#">Driving</a></li>
-											<li><a href="#">Second driver</a></li>
-    											<li><a href="#">Loading/unloading works</a></li>
-    											<li><a href="#">Free</a></li>
-  										</ul>
-									</div>
+							<label for="driver_middle_name">New middle name:</label>
+							<input type="text" class="form-control" id="driver_middle_name" placeholder="Enter new middle name" name="middleName" style="width:350px">
 						</div>
 						<div class="form-group">
-				      			<h2>Manage assistants <button type="button" class="btn btn-primary">Add new</button></h2>
-							<table class="table table-bordered table-active table-hover">
-								<thead>
-									<tr>
-										<th></th>
-										<th>Name</th>
-										<th>Second name</th>
-										<th>Last name</th>
-										<th>Personal number</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>
-											<button type="button" class="btn btn-primary">Delete</button>
-										</td>
-										<td>Ivan</td>
-										<td>Fedorovich</td>
-										<td>Kot</td>
-										<td>77475gsdg74</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-				    		<div class="form-group">
-				      			<label for="current_truck">Change or <button type="button" class="btn btn-primary">delete</button> truck</label>
-							<div class="dropdown">
-  										<button id="current_truck" class="btn dropdown-toggle" type="button" data-toggle="dropdown" style="width:350px">rr46743
-  										<span class="caret"></span></button>
-  										<ul class="dropdown-menu" style="width:350px">
-    											<li><a href="#">ru57475</a></li>
-											<li><a href="#">ru59483</a></li>
-    											<li><a href="#">tt57543</a></li>
-    											<li><a href="#">uy74635</a></li>
-  										</ul>
-									</div>
+							<label for="driver_last_name">New last name:</label>
+							<input type="text" class="form-control" id="driver_last_name" placeholder="Enter new last name" name="lastName" style="width:350px">
 						</div>
 						<div class="form-group">
-				      			<label for="current_order">Change or <button type="button" class="btn btn-primary">delete</button> order</label>
-							<div class="dropdown">
-  										<button id="current_order" class="btn dropdown-toggle" type="button" data-toggle="dropdown" style="width:350px">Order1
-  										<span class="caret"></span></button>
-  										<ul class="dropdown-menu" style="width:350px">
-    											<li><a href="#">Order2</a></li>
-											<li><a href="#">Order3</a></li>
-    											<li><a href="#">Order4</a></li>
-    											<li><a href="#">Order5</a></li>
-  										</ul>
-									</div>
+							<label for="driver_personal_number">New personal number:</label>
+							<input type="text" class="form-control" id="driver_personal_number" placeholder="Enter new personal number" name="personalNumber" style="width:350px">
 						</div>
 						<div class="form-group">
-				      			<label for="current_order_state">Change order state</label>
-							<div class="dropup">
-  										<button id="current_order_state" class="btn dropdown-toggle" type="button" data-toggle="dropdown" style="width:350px">Ready
-  										<span class="caret"></span></button>
-  										<ul class="dropdown-menu" style="width:350px">
-    											<li><a href="#">Driving</a></li>
-											<li><a href="#">Second driver</a></li>
-    											<li><a href="#">Loading/unloading works</a></li>
-    											<li><a href="#">Free</a></li>
-  										</ul>
-									</div>
+							<label for="driver_password">New password:</label>
+							<input type="password" class="form-control" id="driver_password" placeholder="Enter new password" name="password" style="width:350px" >
 						</div>
-						<div>
+						<div class="form-group">
+							<label for="driver_status">New status:</label>
+							<select class="form-control" id="driver_status" name="driverStatus">
+								<option hidden>Not selected</option>
+								<option>Free</option>
+								<option>Resting</option>
+								<option>Driving</option>
+								<option>Second driver</option>
+								<option>Load/unload works</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="hours_worked">Hours worked:</label>
+							<input type="text" class="form-control" id="hours_worked" placeholder="Enter new number of hours worked" name="hoursWorked" style="width:350px">
+						</div>
+						<div class="form-group">
+							<label for="driver_current_city">Current city</label>
+							<select class="form-control" id="driver_current_city" name="currentCityName">
+								<option hidden>Not selected</option>
+								<c:if test="${citiesList != null}">
+									<c:forEach items="${citiesList}" var="city">
+										<option>${city.name}</option>
+									</c:forEach>
+								</c:if>
+								<c:if test="${citiesList == null}">
+									<c:forEach items="${citiesList}" var="city">
+										<option>No cities available</option>
+									</c:forEach>
+								</c:if>
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="driver_current_truck">Assign truck (if necessary):</label>
+							<select class="form-control" id="driver_current_truck" name="currentTruckRegistrationNumber">
+								<c:if test="${trucksList != null}">
+									<option hidden>Not selected</option>
+									<c:forEach items="${trucksList}" var="truck">
+										<option>${truck.registrationNumber}</option>
+									</c:forEach>
+								</c:if>
+								<c:if test="${trucksList == null}">
+									<option>No trucks available</option>
+								</c:if>
+							</select>
+						</div>
+						<div class="form-group">
 							<button type="submit" class="btn btn-primary">Save changes</button>
-							<button type="submit" class="btn btn-primary">Rollback changes</button>
+							<button type="reset" class="btn btn-primary">Rollback changes</button>
+							<br>
+							<br>
 						</div>
 					</form>
 				</div>
-			
+
 					
     			</div>
   			

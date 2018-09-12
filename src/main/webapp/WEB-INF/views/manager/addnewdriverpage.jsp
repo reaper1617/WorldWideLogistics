@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,44 +42,58 @@
 		      			<img src="img_avatar1.png" class="media-object" style="width:100px">
 				</div>
 				<div>
-					<form action="#">
+					<form action="/addnewdriverpage" method="post">
 						<div class="form-group">
 					      		<label for="driver_name">Name:</label>
-      							<input type="text" class="form-control" id="driver_name" placeholder="Enter driver name" name="name" style="width:350px" required="required">
+      							<input type="text" class="form-control" id="driver_name" placeholder="Enter driver name" name="firstName" style="width:350px" required="required">
 						</div>
 						<div class="form-group">
 					      		<label for="driver_middle_name">Middle name:</label>
-      							<input type="text" class="form-control" id="driver_middle_name" placeholder="Enter middle name" name="middlename" style="width:350px" required="required">
+      							<input type="text" class="form-control" id="driver_middle_name" placeholder="Enter middle name" name="middleName" style="width:350px" required="required">
 						</div>
 						<div class="form-group">
-					      		<label for="driver_last_name">Middle name:</label>
-      							<input type="text" class="form-control" id="driver_last_name" placeholder="Enter last name" name="lastname" style="width:350px" required="required">
+					      		<label for="driver_last_name">Last name:</label>
+      							<input type="text" class="form-control" id="driver_last_name" placeholder="Enter last name" name="lastName" style="width:350px" required="required">
+						</div>
+						<div class="form-group">
+							<label for="driver_password">Password:</label>
+							<input type="password" class="form-control" id="driver_password" placeholder="Enter password" name="password" style="width:350px" required="required">
 						</div>
 						<div class="form-group">
 					      		<label for="hours_worked">Hours worked:</label>
-      							<input type="text" class="form-control" id="hours_worked" placeholder="Enter number of hours worked" name="hoursworked" style="width:350px" required="required">
+      							<input type="text" class="form-control" id="hours_worked" placeholder="Enter number of hours worked" name="hoursWorked" style="width:350px" required="required">
 						</div>
 						<div class="form-group">
 							<label for="driver_current_city">Current city</label>
-							 <select class="form-control" id="driver_current_city" required="required">
-        							<option>City1</option>
-        							<option>City2</option>
-        							<option>City3</option>
-        							<option>City4</option>
-        							<option>City5</option>
+							 <select class="form-control" id="driver_current_city" required="required" name="currentCityName">
+								 <c:if test="${citiesList != null}">
+									 <c:forEach items="${citiesList}" var="city">
+        								<option>${city.name}</option>
+									 </c:forEach>
+								 </c:if>
+								 <c:if test="${citiesList == null}">
+									 <c:forEach items="${citiesList}" var="city">
+										 <option>No cities available</option>
+									 </c:forEach>
+								 </c:if>
       							</select>
 						</div>
 						<div class="form-group">
-							<label for="driver_current_truck">Assign truck:</label>
-							 <select class="form-control" id="driver_current_truck">
-        							<option>tt48574</option>
-        							<option>ur38475</option>
-        							<option>fj39485</option>
+							<label for="driver_current_truck">Assign truck (if necessary):</label>
+							 <select class="form-control" id="driver_current_truck" name="currentTruckRegistrationNumber">
+								 <c:if test="${trucksList != null}">
+									 <c:forEach items="${trucksList}" var="truck">
+        								<option>${truck.registrationNumber}</option>
+									 </c:forEach>
+								 </c:if>
+								 <c:if test="${trucksList == null}">
+										 <option>No trucks available</option>
+								 </c:if>
       							</select>
 						</div>
 						<div>
 							<button type="submit" class="btn btn-primary">Save changes</button>
-							<button type="submit" class="btn btn-primary">Rollback changes</button>
+							<button type="reset" class="btn btn-primary">Rollback changes</button>
 						</div>
 					</form>
 				</div>
