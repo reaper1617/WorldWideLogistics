@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,90 +36,125 @@
 	<br>
 	<br>
 	<div class = "container-fluid" >
-		 <h2>Truck tu58587</h2>
+		<c:if test="${updatedTruckId != null}">
+			<h2>Truck ${updatedTruckId} update:</h2>
+		</c:if>
 			<div class="media" >
 				<div class="media-left">
 		      			<img src="img_avatar1.png" class="media-object" style="width:100px">
 				</div>
 				<div>
-					<form action="#">
-    						<div class="form-group">
-					      		<label for="registration_number">New registration number:</label>
-      							<input type="text" class="form-control" id="registration_number" placeholder="Enter new registration number" name="registrationnumber" style="width:350px">
+					<form action="/truckchangepage" method="post">
+						<div>
+							<c:if test="${updatedTruckId != null}">
+								<input type="text" hidden name="id" value="${updatedTruckId}">
+							</c:if>
+							<c:if test="${updatedTruckId == null}">
+								<input type="text" hidden name="id" value="0">
+							</c:if>
 						</div>
 						<div class="form-group">
-					      		<label for="num_of_drivers">New shift size</label>
-      							<input type="text" class="form-control" id="num_of_drivers" placeholder="Enter new number of drivers" name="numberofdrivers" style="width:350px">
+					      		<label for="registration_number">New registration number:</label>
+      							<input type="text" class="form-control" id="registration_number" placeholder="Enter new registration number" name="registrationNumber" style="width:350px">
+						</div>
+						<div class="form-group">
+					      		<label for="num_of_drivers">New number of drivers:</label>
+      							<input type="text" class="form-control" id="num_of_drivers" placeholder="Enter new number of drivers" name="numberOfDrivers" style="width:350px">
 						</div>
 						<div class="form-group">
 					      		<label for="capacity">New capacity</label>
-      							<input type="text" class="form-control" id="capacity" placeholder="Enter new capacity" name="numberofdrivers" style="width:350px">
+      							<input type="text" class="form-control" id="capacity" placeholder="Enter new capacity" name="capacity" style="width:350px">
 						</div>
 						<div class="form-group">
-				      			<label for="current_status">Change status</label>
-							<div class="dropdown">
-  										<button id="current_status" class="btn dropdown-toggle" type="button" data-toggle="dropdown" style="width:350px">Ready
-  										<span class="caret"></span></button>
-  										<ul class="dropdown-menu" style="width:350px">
-    											<li><a href="#">Not ready</a></li>
-  										</ul>
-									</div>
+							<label for="truck_state">Status</label>
+							<select class="form-control" id="truck_state" name="state">
+								<option hidden>Not selected</option>
+								<option >Ready</option>
+								<option >Not ready</option>
+							</select>
 						</div>
 						<div class="form-group">
-				      			<label for="current_city">Change city</label>
-							<div class="dropdown">
-  										<button id="current_city" class="btn dropdown-toggle" type="button" data-toggle="dropdown" style="width:350px">Moscow
-  										<span class="caret"></span></button>
-  										<ul class="dropdown-menu" style="width:350px">
-    											<li><a href="#">Saint-Petersburg</a></li>
-											<li><a href="#">Petrozavodsk</a></li>
-    											<li><a href="#">Pskov</a></li>
-    											<li><a href="#">Kazan</a></li>
-  										</ul>
+							<label for="change_city">New current city:</label>
+							<select class="form-control" id="change_city"  name="currentCity">
+								<option hidden>Not selected</option>
+								<c:if test="${citiesList != null}">
+									<c:forEach items="${citiesList}" var="city">
+										<option>${city.name}</option>
+									</c:forEach>
+								</c:if>
+								<c:if test="${citiesList == null}">
+									<option>No cities available</option>
+								</c:if>
+							</select>
+						</div>
+						<%--<div class="form-group">--%>
+							<%--<label for="assign_drivers">Assign drivers</label>--%>
+							<%--<select class="form-control" id="assign_drivers" name="assignedDrivers" multiple>--%>
+								<%--<option hidden>Not selected</option>--%>
+								<%--<c:if test="${freeDrivers != null}">--%>
+									<%--<c:forEach items="${freeDrivers}" var="driver">--%>
+										<%--<option value="${driver.id}">${driver.name} ${driver.middleName} ${driver.lastName}</option>--%>
+									<%--</c:forEach>--%>
+								<%--</c:if>--%>
+								<%--<c:if test="${freeDrivers == null}">--%>
+									<%--<option>No drivers available</option>--%>
+								<%--</c:if>--%>
+							<%--</select>--%>
+						<%--</div>--%>
+						<div class="form-group">
+				      			<h2>Manage assigned drivers</h2>
+
+							<div class="form-group">
+								<label for="change_assigned_drivers">New assigned drivers:</label>
+								<select class="form-control" id="change_assigned_drivers"  name="assignedDrivers" multiple size="5">
+									<c:if test="${driversList != null}">
+										<c:if test="${ empty driversList}">
+											<option>No drivers available</option>
+										</c:if>
+										<c:if test="${not empty driversList}">
+											<option>Do nothing</option>
+											<c:forEach items="${driversList}" var="driver">
+												<option value="${driver.id}">${driver.name} ${driver.middleName} ${driver.lastName}</option>
+											</c:forEach>
+										</c:if>
+									</c:if>
+
+
+								</select>
 							</div>
-						</div>
-						
-						<div class="form-group">
-				      			<h2>Manage assigned drivers <button type="button" class="btn btn-primary">Add new</button></h2>
-							<table class="table table-bordered table-active table-hover">
-								<thead>
-									<tr>
-										<th></th>
-										<th>Name</th>
-										<th>Second name</th>
-										<th>Last name</th>
-										<th>Personal number</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>
-											<button type="button" class="btn btn-primary">Delete</button>
-										</td>
-										<td>Ivan</td>
-										<td>Fedorovich</td>
-										<td>Kot</td>
-										<td>77475gsdg74</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-						<div class="form-group">
-				      			<label for="current_order">Change or <button type="button" class="btn btn-primary">delete</button> assigned order</label>
-							<div class="dropdown">
-  										<button id="current_order" class="btn dropdown-toggle" type="button" data-toggle="dropdown" style="width:350px">Order1
-  										<span class="caret"></span></button>
-  										<ul class="dropdown-menu" style="width:350px">
-    											<li><a href="#">Order2</a></li>
-											<li><a href="#">Order3</a></li>
-    											<li><a href="#">Order4</a></li>
-    											<li><a href="#">Order5</a></li>
-  										</ul>
-									</div>
+
+							<%--<table class="table table-bordered table-active table-hover">--%>
+								<%--<thead>--%>
+									<%--<tr>--%>
+										<%--<th>Name</th>--%>
+										<%--<th>Second name</th>--%>
+										<%--<th>Last name</th>--%>
+										<%--<th>Personal number</th>--%>
+									<%--</tr>--%>
+								<%--</thead>--%>
+								<%--<tbody>--%>
+										<%--<c:if test="${updatedTruck != null}">--%>
+											<%--<c:if test="${updatedTruck.driversInTruck !=null}">--%>
+											<%--<c:forEach items="${updatedTruck.driversInTruck}" var="driver">--%>
+												<%--<tr>--%>
+													<%--<td>${driver.user.name}</td>--%>
+													<%--<td>${driver.user.middleName}</td>--%>
+													<%--<td>${driver.user.lastName}</td>--%>
+													<%--<td>${driver.user.personalNumber}</td>--%>
+												<%--</tr>--%>
+											<%--</c:forEach>--%>
+											<%--</c:if>--%>
+										<%--</c:if>--%>
+								<%--</tbody>--%>
+							<%--</table>--%>
 						</div>
 						<div>
 							<button type="submit" class="btn btn-primary">Save changes</button>
-							<button type="submit" class="btn btn-primary">Rollback changes</button>
+							<button type="reset" class="btn btn-primary">Rollback changes</button>
+							<br>
+							<br>
+							<br>
+							<br>
 						</div>
 					</form>
 				</div>
@@ -156,6 +192,26 @@ $(document).ready(function(){
   });
 });
 </script>
+
+<%--<script>--%>
+    <%--$("add").click(function (){--%>
+        <%--var firstName = $("#firstName").val();--%>
+        <%--var lastName = $("#lastName").val();--%>
+        <%--var entranceYear = $("#entranceYear").val();--%>
+        <%--$.ajax({--%>
+            <%--url: "studentAdd",--%>
+            <%--data: {"firstName": firstName, "lastName": lastName, "entranceYear": entranceYear },--%>
+            <%--type: "post",--%>
+            <%--success: function(data){--%>
+				<%----%>
+
+                <%--$.each(data, function(index, student){--%>
+
+                <%--})--%>
+            <%--}--%>
+    <%--})--%>
+<%--</script>--%>
+
 
 </body>
 </html>

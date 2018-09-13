@@ -16,7 +16,7 @@ public class Truck {
     private double capacity;
     private TruckState state;
     private City currentCity;
-    private Set<Driver> driverInTruck;
+    private Set<Driver> driversInTruck;
     private Order assignedOrder;
 
     public Truck() {
@@ -28,6 +28,22 @@ public class Truck {
         this.capacity = capacity;
         this.state = state;
         this.currentCity = currentCity;
+    }
+
+    public Truck(String registrationNumber,
+                 int numOfDrivers,
+                 double capacity,
+                 TruckState state,
+                 City currentCity,
+                 Set<Driver> driversInTruck,
+                 Order assignedOrder) {
+        this.registrationNumber = registrationNumber;
+        this.numOfDrivers = numOfDrivers;
+        this.capacity = capacity;
+        this.state = state;
+        this.currentCity = currentCity;
+        this.driversInTruck = driversInTruck;
+        this.assignedOrder = assignedOrder;
     }
 
     @Id
@@ -88,13 +104,13 @@ public class Truck {
         this.currentCity = currentCity;
     }
 
-    @OneToMany(mappedBy = "currentTruck")
-    public Set<Driver> getDriverInTruck() {
-        return driverInTruck;
+    @OneToMany(mappedBy = "currentTruck",fetch = FetchType.EAGER)
+    public Set<Driver> getDriversInTruck() {
+        return driversInTruck;
     }
 
-    public void setDriverInTruck(Set<Driver> driverInTruck) {
-        this.driverInTruck = driverInTruck;
+    public void setDriversInTruck(Set<Driver> driversInTruck) {
+        this.driversInTruck = driversInTruck;
     }
 
     @OneToOne(mappedBy = "assignedTruck")
@@ -106,34 +122,7 @@ public class Truck {
         this.assignedOrder = assignedOrder;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Truck)) return false;
 
-        Truck truck = (Truck) o;
-
-        if (id != truck.id) return false;
-        if (numOfDrivers != truck.numOfDrivers) return false;
-        if (Double.compare(truck.capacity, capacity) != 0) return false;
-        if (!registrationNumber.equals(truck.registrationNumber)) return false;
-        if (state != truck.state) return false;
-        return currentCity.equals(truck.currentCity);
-    }
-
-    @Override
-    public int hashCode() {
-        int result;
-        long temp;
-        result = id;
-        result = 31 * result + registrationNumber.hashCode();
-        result = 31 * result + numOfDrivers;
-        temp = Double.doubleToLongBits(capacity);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + state.hashCode();
-        result = 31 * result + currentCity.hashCode();
-        return result;
-    }
 
     //todo: onetomany with drivers
 }

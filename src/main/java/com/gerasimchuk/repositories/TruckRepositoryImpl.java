@@ -1,6 +1,8 @@
 package com.gerasimchuk.repositories;
 
 import com.gerasimchuk.entities.City;
+import com.gerasimchuk.entities.Driver;
+import com.gerasimchuk.entities.Order;
 import com.gerasimchuk.entities.Truck;
 import com.gerasimchuk.enums.TruckState;
 import org.hibernate.SessionFactory;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.Set;
 
 
 @Repository
@@ -28,6 +31,14 @@ public class TruckRepositoryImpl implements TruckRepository {
         sessionFactory.getCurrentSession().persist(truck);
         return truck;
     }
+
+//    @Transactional
+//    public Truck create(String registrationNumber, int numOfDrivers, double capacity, TruckState state, City currentCity, Set<Driver> driverInTruck, Order assignedOrder) {
+//        Truck truck = new Truck(registrationNumber,numOfDrivers,capacity,state,currentCity,driverInTruck,assignedOrder);
+//        sessionFactory.getCurrentSession().persist(truck);
+//        return truck;
+//    }
+
 
     @Transactional
     public Truck update(int id, String registrationNumber, int numOfDrivers, double capacity, TruckState state, City currentCity) {
