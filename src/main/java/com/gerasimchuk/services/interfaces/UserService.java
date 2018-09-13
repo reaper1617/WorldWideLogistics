@@ -32,6 +32,8 @@ public interface UserService {
 
 
     Collection<User> getAllDrivers();
+
+    Collection<User> getFreeDrivers();
 //    Collection<Manager> getAllManagers();
 //    Collection<Admin> getAllAdmins();
 

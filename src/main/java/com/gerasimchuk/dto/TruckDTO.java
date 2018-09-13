@@ -8,6 +8,7 @@ import java.util.Arrays;
  */
 
 public class TruckDTO {
+    private String id;
     private String registrationNumber;
     private String numberOfDrivers;
     private String capacity;
@@ -19,13 +20,8 @@ public class TruckDTO {
     public TruckDTO() {
     }
 
-    public TruckDTO(String registrationNumber,
-                    String numberOfDrivers,
-                    String capacity,
-                    String state,
-                    String currentCity,
-                    String[] assignedDrivers,
-                    String assignedOrderId) {
+    public TruckDTO(String id, String registrationNumber, String numberOfDrivers, String capacity, String state, String currentCity, String[] assignedDrivers, String assignedOrderId) {
+        this.id = id;
         this.registrationNumber = registrationNumber;
         this.numberOfDrivers = numberOfDrivers;
         this.capacity = capacity;
@@ -33,6 +29,14 @@ public class TruckDTO {
         this.currentCity = currentCity;
         this.assignedDrivers = assignedDrivers;
         this.assignedOrderId = assignedOrderId;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getRegistrationNumber() {

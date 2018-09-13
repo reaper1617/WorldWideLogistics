@@ -87,33 +87,5 @@ public class Driver {
         this.user = user;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Driver)) return false;
 
-        Driver driver = (Driver) o;
-
-        if (id != driver.id) return false;
-        if (Double.compare(driver.hoursWorked, hoursWorked) != 0) return false;
-        if (status != driver.status) return false;
-        if (!currentCity.equals(driver.currentCity)) return false;
-        if (currentTruck != null ? !currentTruck.equals(driver.currentTruck) : driver.currentTruck != null)
-            return false;
-        return user != null ? user.equals(driver.user) : driver.user == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result;
-        long temp;
-        result = id;
-        temp = Double.doubleToLongBits(hoursWorked);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + status.hashCode();
-        result = 31 * result + currentCity.hashCode();
-        result = 31 * result + (currentTruck != null ? currentTruck.hashCode() : 0);
-        result = 31 * result + (user != null ? user.hashCode() : 0);
-        return result;
-    }
 }

@@ -176,6 +176,17 @@ public class UserServiceImpl implements UserService {
         return drivers;
     }
 
+    public Collection<User> getFreeDrivers() {
+        Collection<User> users = userRepository.getAll();
+        Collection<User> freeDrivers = new ArrayList<User>();
+        for(User u: users){
+            if (u.getDriver()!=null){
+                if (u.getDriver().getCurrentTruck() == null) freeDrivers.add(u);
+            }
+        }
+        return freeDrivers;
+    }
+
 
     // ** util methods
 

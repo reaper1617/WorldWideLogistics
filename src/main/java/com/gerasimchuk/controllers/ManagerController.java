@@ -4,6 +4,7 @@ package com.gerasimchuk.controllers;
 import com.gerasimchuk.dto.CargoDTO;
 import com.gerasimchuk.dto.DriverDTO;
 import com.gerasimchuk.dto.IdDTO;
+import com.gerasimchuk.dto.TruckDTO;
 import com.gerasimchuk.entities.Cargo;
 import com.gerasimchuk.entities.City;
 import com.gerasimchuk.entities.Truck;
@@ -13,6 +14,7 @@ import com.gerasimchuk.repositories.CityRepository;
 import com.gerasimchuk.repositories.TruckRepository;
 import com.gerasimchuk.repositories.UserRepository;
 import com.gerasimchuk.services.interfaces.CargoService;
+import com.gerasimchuk.services.interfaces.TruckService;
 import com.gerasimchuk.services.interfaces.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -43,15 +45,17 @@ public class ManagerController {
 
     private CargoService cargoService;
     private UserService userService;
+    private TruckService truckService;
 
     @Autowired
-    public ManagerController(CargoRepository cargoRepository, CityRepository cityRepository, TruckRepository truckRepository, UserRepository userRepository, CargoService cargoService, UserService userService) {
+    public ManagerController(CargoRepository cargoRepository, CityRepository cityRepository, TruckRepository truckRepository, UserRepository userRepository, CargoService cargoService, UserService userService, TruckService truckService) {
         this.cargoRepository = cargoRepository;
         this.cityRepository = cityRepository;
         this.truckRepository = truckRepository;
         this.userRepository = userRepository;
         this.cargoService = cargoService;
         this.userService = userService;
+        this.truckService = truckService;
     }
 
     @RequestMapping(value = "/managermainpage", method = RequestMethod.GET)
@@ -62,12 +66,14 @@ public class ManagerController {
         log.info("Controller: ManagerController, metod = managerMainPage,  action = \"/managermainpage\", request = GET");
         Collection<Cargo> cargos = cargoRepository.getAll();
         Collection<User> drivers = userService.getAllDrivers();
+        Collection<Truck> trucks = truckRepository.getAll();
         // todo: driverList
         // todo: truckList
         // todo: ??? driversInTruckList??
         // todo: routePoints !!
         ui.addAttribute("cargoList", cargos);
         ui.addAttribute("driversList", drivers);
+        ui.addAttribute("trucksList", trucks);
         return "/manager/managermainpage";
     }
 
@@ -76,7 +82,7 @@ public class ManagerController {
         log.info("Controller: ManagerController, metod = managerMainPage,  action = \"/managermainpage\", request = POST");
         if (idDTO == null){
             log.error("Error: Id Data Transfer Object is not valid");
-            ui.addAttribute("actionFailed","Error while trying to change cargo!");
+            ui.addAttribute("actionFailed","Error while trying to make changes!");
             return "failure";
         }
         int id = Integer.parseInt(idDTO.getId());
@@ -102,9 +108,16 @@ public class ManagerController {
             ui.addAttribute("updatedDriverId", id);
             return "/manager/driverchangepage";
         }
-        if (action == 3){
+        if (action == 2){
             // truck change page
-            return "failure";
+            Truck truck = truckRepository.getById(id);
+            Collection<City> cities = cityRepository.getAll();
+            Collection<User> drivers = userService.getAllDrivers();
+            ui.addAttribute("updatedTruckId", id);
+            ui.addAttribute("updatedTruck", truck);
+            ui.addAttribute("citiesList", cities);
+            ui.addAttribute("driversList", drivers);
+            return "/manager/truckchangepage";
         }
         return "failure";
     }
@@ -184,9 +197,39 @@ public class ManagerController {
     }
 
     @RequestMapping(value = "/addnewtruckpage", method = RequestMethod.GET)
-    String addNewTruckPage(){
+    String addNewTruckPage(Model ui){
         log.info("Controller: ManagerController, metod = addNewTruckPage,  action = \"/addnewtruckpage\", request = GET");
+        Collection<City> citiesList = cityRepository.getAll(); // todo: get available !! (may not has agency)
+        ui.addAttribute("citiesList",citiesList);
+        Collection<User> freeDrivers = userService.getFreeDrivers();
+        ui.addAttribute("freeDrivers", freeDrivers);
         return "/manager/addnewtruckpage";
+    }
+
+    @RequestMapping(value = "/addnewtruckpage", method = RequestMethod.POST)
+    String addNewTruckPagePost(TruckDTO truckDTO, BindingResult bindingResult, Model ui){
+        log.info("Controller: ManagerController, metod = addNewTruckPage,  action = \"/addnewtruckpage\", request = POST");
+//        Collection<City> citiesList = cityRepository.getAll(); // todo: get available !! (may not has agency)
+//        ui.addAttribute("citiesList",citiesList);
+//        Collection<User> freeDrivers = userService.getFreeDrivers();
+//        ui.addAttribute("freeDrivers", freeDrivers);
+
+        if(truckDTO == null){
+            log.error("Error: Truck Data Transfer Object is not valid!");
+            ui.addAttribute("actionFailed", "Error while trying to create truck!");
+            return "failure";
+        }
+        boolean result = truckService.createTruck(truckDTO);
+        if (result){
+            log.info("New truck successfully created!");
+            ui.addAttribute("actionSuccess", "New truck successfully created!");
+            return "success";
+        }
+        else {
+            log.error("Error: createTruck method in TruckService returned false.");
+            ui.addAttribute("actionFailed", "Error while trying to create truck.");
+            return "failure";
+        }
     }
 
     @RequestMapping(value = "/cargochangepage", method = RequestMethod.GET)
@@ -239,6 +282,7 @@ public class ManagerController {
         if (driverDTO == null){
             log.error("Error: Driver Data Transfer Object is not valid");
             ui.addAttribute("actionFailed", "Error while trying to update driver!");
+            return "failure";
         }
         boolean result = userService.updateDriver(driverDTO);
         if (result){
@@ -256,10 +300,35 @@ public class ManagerController {
 
 
     @RequestMapping(value = "/truckchangepage", method = RequestMethod.GET)
-    String truckChangePage(){
+    String truckChangePage(Model ui){
         log.info("Controller: ManagerController, metod = truckChangePage,  action = \"/truckchangepage\", request = GET");
+        Collection<City> cities = cityRepository.getAll();
+        Collection<User> freeDrivers = userService.getAllDrivers();
+        ui.addAttribute("citiesList", cities);
+        ui.addAttribute("driversList", freeDrivers);
         return "/manager/truckchangepage";
     }
+
+    @RequestMapping(value = "/truckchangepage", method = RequestMethod.POST)
+    String truckChangePagePost(TruckDTO truckDTO, BindingResult bindingResult,Model ui){
+        log.info("Controller: ManagerController, metod = truckChangePage,  action = \"/truckchangepage\", request = POST");
+        if (truckDTO == null){
+            log.error("Error: Truck Data Transfer Object is not valid");
+            ui.addAttribute("actionFailed", "Error while trying to update truck!");
+        }
+        boolean result = truckService.updateTruck(truckDTO);
+        if (result){
+            log.info("Truck updated successfully");
+            ui.addAttribute("actionSuccess", "Truck updated successfully!");
+            return "success";
+        }
+        else {
+            log.error("Error: updateTruck method in TruckService returned false");
+            ui.addAttribute("actionFailed", "Error while trying to update truck!");
+            return "failure";
+        }
+    }
+
 
     @RequestMapping(value = "/success", method = RequestMethod.GET)
     String success(Model ui){
