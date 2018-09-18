@@ -58,8 +58,9 @@
 		 <div class="tab-content">
   			<div id="home" class="tab-pane active ">
     				<div class = "sticky-top">
-				<h3>Orders <button class = "btn btn-primary" type = "button">Add new</button> </h3>
-				
+						<form action="/addneworderpage", method="get">
+							<h3>Orders <button class = "btn btn-primary" type = "submit">Add new</button> </h3>
+						</form>
     				
 				<div><input class="form-control" id="myInput" type="text" placeholder="Search.."></div>
 				</div>
@@ -77,17 +78,17 @@
       							</tr>
 						</thead>
 							<tbody>
-							<c:if test="${orderList != null}">
-								<c:forEach items="${orderList}" var="cell">
+							<c:if test="${ordersList != null}">
+								<c:forEach items="${ordersList}" var="order">
 									<tr>
-										<td>${cell.personalNumber}</td>
-										<td>${cell.description}</td>
-										<td>${cell.date}</td>
-										<td>${cell.status}</td>
-										<c:if test="${cell.assignedTruck != null}">
-											<td>${cell.assignedTruck.registrationNumber}</td>
+										<td>${order.personalNumber}</td>
+										<td>${order.description}</td>
+										<td>${order.date}</td>
+										<td>${order.status}</td>
+										<c:if test="${order.assignedTruck != null}">
+											<td>${order.assignedTruck.registrationNumber}</td>
 										</c:if>
-										<c:if test="${cell.assignedTruck == null}">
+										<c:if test="${order.assignedTruck == null}">
 											<td>No assigned truck</td>
 										</c:if>
 										<td>
@@ -95,15 +96,37 @@
 												<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show assigned drivers
 													<span class="caret"></span></button>
 													<ul class="dropdown-menu">
-														<c:if test="${cell.assignedTruck != null}">
-															<c:forEach items="${cell.assignedTruck.driversInTruck}" var="driverInTruck">
-																<li><a href="#">${driverInTruck.id}</a></li>
-															</c:forEach>
-														</c:if>
-														<c:if test="${cell.assignedTruck == null}">
-																<li><a href="#">No assistants</a></li>
-														</c:if>
-													</ul>
+														<%--<c:if test="${order.assignedTruck != null}">--%>
+															<%--<c:if test="${not empty order.assignedTruck}">--%>
+                                                                <%--<c:forEach items="${order.assignedTruck.driversInTruck}" var="driverInTruck">--%>
+                                                                    <%--<li><a href="#">${driverInTruck.user.name} ${driverInTruck.user.middleName} ${driverInTruck.user.lastName}</a></li>--%>
+                                                                <%--</c:forEach>--%>
+															<%--</c:if>--%>
+															<%--<c:if test="${empty order.assignedTruck}">--%>
+																<%--<li><a href="#">No assigned drivers</a></li>--%>
+															<%--</c:if>--%>
+														<%--</c:if>--%>
+                                                        <%--<c:if test="${order.assignedTruck == null}">--%>
+                                                            <%--<li><a href="#">No assigned drivers</a></li>--%>
+                                                        <%--</c:if>--%>
+                                                        <c:if test="${order.assignedTruck != null}">
+                                                            <c:if test="${order.assignedTruck.driversInTruck != null}">
+                                                                <c:forEach items="${order.assignedTruck.driversInTruck}" var="driverInTruck">
+                                                                    <li><a href="#">${driverInTruck.user.name} ${driverInTruck.user.middleName} ${driverInTruck.user.lastName}</a></li>
+                                                                </c:forEach>
+                                                            </c:if>
+                                                            <c:if test="${order.assignedTruck.driversInTruck == null}">
+                                                                <li><a href="#">No assigned drivers</a></li>
+                                                            </c:if>
+                                                            <c:if test="${empty order.assignedTruck.driversInTruck}">
+                                                                <li><a href="#">No assigned drivers</a></li>
+                                                            </c:if>
+                                                        </c:if>
+                                                        <c:if test="${order.assignedTruck == null}">
+                                                            <li><a href="#">No assigned drivers</a></li>
+                                                        </c:if>
+
+                                                    </ul>
 											</div>
 										</td>
 										<td>
@@ -111,8 +134,8 @@
 												<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show route
 													<span class="caret"></span></button>
 													<ul class="dropdown-menu">
-														<c:forEach items="${routePoints}" var="cell">
-															<li><a href="#">${cell.name}</a></li>
+														<c:forEach items="${order.route}" var="city">
+															<li><a href="#">${city.name}</a></li>
 														</c:forEach>
 													</ul>
 											</div>

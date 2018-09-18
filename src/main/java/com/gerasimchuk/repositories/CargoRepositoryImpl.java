@@ -1,6 +1,7 @@
 package com.gerasimchuk.repositories;
 
 import com.gerasimchuk.entities.Cargo;
+import com.gerasimchuk.entities.Order;
 import com.gerasimchuk.entities.Route;
 import com.gerasimchuk.enums.CargoStatus;
 import org.hibernate.SessionFactory;
@@ -36,6 +37,19 @@ public class CargoRepositoryImpl implements CargoRepository {
         updated.setWeight(weight);
         updated.setStatus(status);
         updated.setRoute(route);
+        sessionFactory.getCurrentSession().update(updated);
+        return updated;
+    }
+
+    @Transactional
+    public Cargo update(int id, String personalNumber, String name, double weight, CargoStatus status, Route route, Order order) {
+        Cargo updated = sessionFactory.getCurrentSession().get(Cargo.class, id);
+        updated.setPersonalNumber(personalNumber);
+        updated.setName(name);
+        updated.setWeight(weight);
+        updated.setStatus(status);
+        updated.setRoute(route);
+        updated.setOrder(order);
         sessionFactory.getCurrentSession().update(updated);
         return updated;
     }

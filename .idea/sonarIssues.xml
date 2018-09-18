@@ -8,6 +8,11 @@
             <set />
           </value>
         </entry>
+        <entry key="/a.dummy">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$APPLICATION_CONFIG_DIR$/consoles/.datagrid/cell">
           <value>
             <set />
@@ -38,6 +43,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/constants/WWLConstants.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/controllers/AdminController.java">
           <value>
             <set />
@@ -59,6 +69,16 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/controllers/UserController.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/converters/OrderToDTOConverter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/converters/OrderToOrderWithRouteConverter.java">
           <value>
             <set />
           </value>
@@ -139,6 +159,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/entities/User.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/enums/CargoActionType.java">
           <value>
             <set />
           </value>
@@ -303,6 +328,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/services/impls/OrderServiceImpl.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/services/impls/TruckServiceImpl.java">
           <value>
             <set />
@@ -318,6 +348,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/services/interfaces/OrderService.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/services/interfaces/TruckService.java">
           <value>
             <set />
@@ -328,7 +363,22 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/utils/CargoActionPoint.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/utils/OrderWithRoute.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/utils/PersonalNumberGenerator.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/utils/RoutePoint.java">
           <value>
             <set />
           </value>
@@ -399,6 +449,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/manager/addnewtruckpage.jsp">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/manager/assigntrucktoorderpage.jsp">
           <value>
             <set />
           </value>

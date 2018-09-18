@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Add new order page</title>
+  <title>Assign truck to order page</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
@@ -28,7 +28,7 @@
 	<div class = "container-fluid fixed-top">
 		<h2>Fixed-top container</h2>
 		<nav class="nav nav-tabs bg-primary bg-light navbar-light fixed-top">
-			<a class="navbar-brand" href="#">Add new order</a>
+			<a class="navbar-brand" href="#">Assign truck to order</a>
 			<!-- Nav tabs -->
 		</nav>
  
@@ -42,22 +42,35 @@
 		      			<img src="img_avatar1.png" class="media-object" style="width:100px">
 				</div>
 				<div>
-					<form action="/addneworderpage" method="post">
+					<form action="/assigntrucktoorderpage", method="post">
 						<div class="form-group">
-					      		<label for="item_descr">New order description:</label>
-      							<input type="text" class="form-control" id="item_descr" placeholder="Enter order description" name="description" style="width:350px" required="required">
+							<input type="text" hidden class="form-control" id="item_descr"  name="description" style="width:350px" value="${orderDescription}">
 						</div>
 						<div class="form-group">
-							<label for="add_cargos">Add cargos</label>
-							 <select multiple class="form-control" id="add_cargos" size="10" required="required" name="cargosInOrder">
-        						<c:if test="${availableCargos != null}">
-									<c:if test="${not empty availableCargos}">
-										<c:forEach items="${availableCargos}" var="cargo">
-								 			<option value="${cargo.id}">${cargo.name}</option>
+							<select hidden multiple class="form-control" id="add_cargos"  name="cargosInOrder">
+								<c:if test="${chosenCargos != null}">
+									<c:if test="${not empty chosenCargos}">
+										<c:forEach items="${chosenCargos}" var="cargo">
+											<option selected value="${cargo.id}">${cargo.name}</option>
 										</c:forEach>
 									</c:if>
-									<c:if test="${empty availableCargos}">
-											<option>No cargos available</option>
+									<c:if test="${empty chosenCargos}">
+										<option selected>No cargos available</option>
+									</c:if>
+								</c:if>
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="add_truck">Assign truck:</label>
+							 <select  class="form-control" id="add_truck" size="10" required="required" name="assignedTruckId">
+        						<c:if test="${availableTrucks != null}">
+									<c:if test="${not empty availableTrucks}">
+										<c:forEach items="${availableTrucks}" var="truck">
+								 			<option value="${truck.id}">${truck.registrationNumber}</option>
+										</c:forEach>
+									</c:if>
+									<c:if test="${empty availableTrucks}">
+											<option>No trucks available</option>
 									</c:if>
 								</c:if>
       							</select>
@@ -73,7 +86,7 @@
       							<%--</select>--%>
 						<%--</div>--%>
 						<div>
-							<button type="submit" class="btn btn-primary">Go to assign truck</button>
+							<button type="submit" class="btn btn-primary">Create order with chosen truck</button>
 							<button type="reset" class="btn btn-primary">Rollback changes</button>
 						</div>
 					</form>

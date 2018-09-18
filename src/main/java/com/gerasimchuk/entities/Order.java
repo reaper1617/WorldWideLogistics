@@ -90,7 +90,7 @@ public class Order {
         this.assignedTruck = assignedTruck;
     }
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
     public Set<Cargo> getCargosInOrder() {
         return cargosInOrder;
     }

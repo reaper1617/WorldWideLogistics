@@ -1,21 +1,15 @@
 package com.gerasimchuk.controllers;
 
 
-import com.gerasimchuk.dto.CargoDTO;
-import com.gerasimchuk.dto.DriverDTO;
-import com.gerasimchuk.dto.IdDTO;
-import com.gerasimchuk.dto.TruckDTO;
-import com.gerasimchuk.entities.Cargo;
-import com.gerasimchuk.entities.City;
-import com.gerasimchuk.entities.Truck;
-import com.gerasimchuk.entities.User;
-import com.gerasimchuk.repositories.CargoRepository;
-import com.gerasimchuk.repositories.CityRepository;
-import com.gerasimchuk.repositories.TruckRepository;
-import com.gerasimchuk.repositories.UserRepository;
+import com.gerasimchuk.converters.OrderToDTOConverter;
+import com.gerasimchuk.dto.*;
+import com.gerasimchuk.entities.*;
+import com.gerasimchuk.repositories.*;
 import com.gerasimchuk.services.interfaces.CargoService;
+import com.gerasimchuk.services.interfaces.OrderService;
 import com.gerasimchuk.services.interfaces.TruckService;
 import com.gerasimchuk.services.interfaces.UserService;
+import com.gerasimchuk.utils.OrderWithRoute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,9 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /** Manager Controller
  * @author Reaper
@@ -42,20 +34,24 @@ public class ManagerController {
     private CityRepository cityRepository;
     private TruckRepository truckRepository;
     private UserRepository userRepository;
+    public OrderRepository orderRepository;
 
     private CargoService cargoService;
     private UserService userService;
     private TruckService truckService;
+    private OrderService orderService;
 
     @Autowired
-    public ManagerController(CargoRepository cargoRepository, CityRepository cityRepository, TruckRepository truckRepository, UserRepository userRepository, CargoService cargoService, UserService userService, TruckService truckService) {
+    public ManagerController(CargoRepository cargoRepository, CityRepository cityRepository, TruckRepository truckRepository, UserRepository userRepository, OrderRepository orderRepository, CargoService cargoService, UserService userService, TruckService truckService, OrderService orderService) {
         this.cargoRepository = cargoRepository;
         this.cityRepository = cityRepository;
         this.truckRepository = truckRepository;
         this.userRepository = userRepository;
+        this.orderRepository = orderRepository;
         this.cargoService = cargoService;
         this.userService = userService;
         this.truckService = truckService;
+        this.orderService = orderService;
     }
 
     @RequestMapping(value = "/managermainpage", method = RequestMethod.GET)
@@ -67,13 +63,19 @@ public class ManagerController {
         Collection<Cargo> cargos = cargoRepository.getAll();
         Collection<User> drivers = userService.getAllDrivers();
         Collection<Truck> trucks = truckRepository.getAll();
-        // todo: driverList
-        // todo: truckList
-        // todo: ??? driversInTruckList??
+        Collection<Order> orders = orderRepository.getAll();
+        //Map<Order, Collection<City>> routes = orderService.getRoutes(orders);
+        //Collection<City> routePoints = orderService.getO
         // todo: routePoints !!
+        List<OrderWithRoute> ordersWithRoutes = new ArrayList<OrderWithRoute>();
+        for(Order o: orders){
+            List<City> cities = (List<City>) orderService.getOrderRoute(OrderToDTOConverter.convert(o));
+            ordersWithRoutes.add(new OrderWithRoute(o, cities));
+        }
         ui.addAttribute("cargoList", cargos);
         ui.addAttribute("driversList", drivers);
         ui.addAttribute("trucksList", trucks);
+        ui.addAttribute("ordersList", ordersWithRoutes);
         return "/manager/managermainpage";
     }
 
@@ -118,6 +120,9 @@ public class ManagerController {
             ui.addAttribute("citiesList", cities);
             ui.addAttribute("driversList", drivers);
             return "/manager/truckchangepage";
+        }
+        if (action == 3){
+            // order change
         }
         return "failure";
     }
@@ -191,9 +196,100 @@ public class ManagerController {
     }
 
     @RequestMapping(value = "/addneworderpage", method = RequestMethod.GET)
-    String addNewOrderPage(){
+    String addNewOrderPage(Model ui){
         log.info("Controller: ManagerController, metod = addNewOrderPage,  action = \"/addneworderpage\", request = GET");
+        Collection<Cargo> availableCargos = cargoService.getAvailableCargos();
+        ui.addAttribute("availableCargos", availableCargos);
+
         return "/manager/addneworderpage";
+    }
+
+    @RequestMapping(value = "/addneworderpage", method = RequestMethod.POST)
+    String addNewOrderPagePost(OrderDTO orderDTO, BindingResult bindingResult, Model ui){
+        log.info("Controller: ManagerController, metod = addNewOrderPage,  action = \"/addneworderpage\", request = POST");
+        if(orderDTO == null){
+            log.error("Error: Order Data Transfer Object is not valid!");
+            ui.addAttribute("actionFailed", "Error while trying to create order!");
+            return "failure";
+        }
+        if (orderDTO.getDescription()!=null && orderDTO.getDescription().length()!=0){
+            ui.addAttribute("orderDescription", orderDTO.getDescription());
+        }
+        else {
+            log.error("Error: order description data is empty.");
+            ui.addAttribute("actionFailed", "Error while trying to create order.");
+            return "failure";
+        }
+        if (orderDTO.getCargosInOrder()!=null){
+            Collection<Cargo> chosenCargos = orderService.getChosenCargos(orderDTO);
+            ui.addAttribute("chosenCargos",chosenCargos);
+        }
+        else {
+            log.error("Error: getChosenCargos method in OrderService returned false.");
+            ui.addAttribute("actionFailed", "Error while trying to create order.");
+            return "failure";
+        }
+        Collection<Cargo> cargos = null;
+        if (ui.containsAttribute("chosenCargos")){
+            Map attr = ui.asMap();
+            cargos = (ArrayList<Cargo>)attr.get("chosenCargos");
+        }
+        if (cargos!=null) {
+            Collection<Truck> availableTrucks = orderService.getAvailableTrucks(orderDTO);
+            ui.addAttribute("availableTrucks", availableTrucks);
+        }
+        ui.addAttribute("orderDTO", orderDTO);
+        return "/manager/assigntrucktoorderpage";
+    }
+
+    @RequestMapping(value = "/assigntrucktoorderpage", method = RequestMethod.GET)
+    public String assignTruckToOrderPage(Model ui){
+        log.info("Controller: ManagerController, metod = assignTruckToOrderPage,  action = \"/assigntrucktoorderpage\", request = GET");
+//        Collection<Cargo> cargos = null;
+//        if (ui.containsAttribute("chosenCargos")){
+//            Map attr = ui.asMap();
+//            cargos = (ArrayList<Cargo>)attr.get("chosenCargos");
+//        }
+//        if (cargos!=null) {
+          if (ui.containsAttribute("orderDTO")) {
+              if (ui.asMap().get("orderDTO") instanceof OrderDTO) {
+                  OrderDTO orderDTO = ((OrderDTO) ui.asMap().get("orderDTO"));
+                  Collection<Truck> availableTrucks = orderService.getAvailableTrucks(orderDTO);
+                  ui.addAttribute("availableTrucks", availableTrucks);
+              }
+              else {
+                  log.error("Error: attribute 'orderDTO' is not instance of OrderDTO!");
+                  ui.addAttribute("actionFailed", "Error: attribute 'orderDTO' is not instance of OrderDTO!");
+                  return "failure";
+              }
+          }
+          else{
+              log.error("Error: model doesn't contain attribute 'orderDTO' !");
+              ui.addAttribute("actionFailed", "Error: attribute 'orderDTO' is not instance of OrderDTO!");
+              return "failure";
+          }
+        return "/manager/assigntrucktoorderpage";
+    }
+
+    @RequestMapping(value = "/assigntrucktoorderpage", method = RequestMethod.POST)
+    public String assignTruckToOrderPagePost(OrderDTO orderDTO, BindingResult bindingResult,Model ui){
+        log.info("Controller: ManagerController, metod = assignTruckToOrderPage,  action = \"/assigntrucktoorderpage\", request = POST");
+        if (orderDTO == null){
+            log.error("Error: Order Data Transfer Object is not valid!");
+            ui.addAttribute("actionFailed", "Error while trying to create order!");
+            return "failure";
+        }
+        boolean result = orderService.createOrder(orderDTO);
+        if (result){
+            log.info("New order successfully created!");
+            ui.addAttribute("actionSuccess", "New order successfully created!");
+            return "success";
+        }
+        else {
+            log.error("Error: createOrder method in OrderService returned false.");
+            ui.addAttribute("actionFailed", "Error while trying to create order.");
+            return "failure";
+        }
     }
 
     @RequestMapping(value = "/addnewtruckpage", method = RequestMethod.GET)
