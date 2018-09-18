@@ -15,6 +15,9 @@ import com.gerasimchuk.validators.DTOValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 /** Implementation for {@link CargoService} interface
  * @author Reaper
  * @version 1.0
@@ -24,10 +27,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class CargoServiceImpl implements CargoService {
 
-    CargoRepository cargoRepository;
-    RouteRepository routeRepository;
-    CityRepository cityRepository;
-    DTOValidator dtoValidator;
+    private CargoRepository cargoRepository;
+    private RouteRepository routeRepository;
+    private CityRepository cityRepository;
+    private DTOValidator dtoValidator;
 
     @Autowired
     public CargoServiceImpl(CargoRepository cargoRepository, RouteRepository routeRepository, CityRepository cityRepository, DTOValidator dtoValidator) {
@@ -72,6 +75,15 @@ public class CargoServiceImpl implements CargoService {
     public boolean deleteCargo(int cargoId) {
         // TODO: implement logics!
         return false;
+    }
+
+    public Collection<Cargo> getAvailableCargos() {
+        Collection<Cargo> cargos = cargoRepository.getAll();
+        Collection<Cargo> availableCargos = new ArrayList<Cargo>();
+        for (Cargo c: cargos){
+            if (c.getOrder() == null && !c.getStatus().equals(CargoStatus.DELIVERED)) availableCargos.add(c);
+        }
+        return availableCargos;
     }
 
     // ** util methods

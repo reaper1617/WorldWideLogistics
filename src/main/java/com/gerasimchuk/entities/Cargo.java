@@ -94,34 +94,5 @@ public class Cargo {
         this.order = order;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Cargo)) return false;
 
-        Cargo cargo = (Cargo) o;
-
-        if (id != cargo.id) return false;
-        if (Double.compare(cargo.weight, weight) != 0) return false;
-        if (!personalNumber.equals(cargo.personalNumber)) return false;
-        if (!name.equals(cargo.name)) return false;
-        if (status != cargo.status) return false;
-        if (!route.equals(cargo.route)) return false;
-        return order != null ? order.equals(cargo.order) : cargo.order == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result;
-        long temp;
-        result = id;
-        result = 31 * result + personalNumber.hashCode();
-        result = 31 * result + name.hashCode();
-        temp = Double.doubleToLongBits(weight);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + status.hashCode();
-        result = 31 * result + route.hashCode();
-        result = 31 * result + (order != null ? order.hashCode() : 0);
-        return result;
-    }
 }
