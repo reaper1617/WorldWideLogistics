@@ -5,6 +5,7 @@ import com.gerasimchuk.entities.Cargo;
 import com.gerasimchuk.entities.City;
 import com.gerasimchuk.entities.Order;
 import com.gerasimchuk.entities.Truck;
+import com.gerasimchuk.enums.OrderStatus;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,4 +25,5 @@ public interface OrderService {
 //    Collection<Truck> getAvailableTrucks(List<Cargo> cargosInOrder);
     boolean createOrder(OrderDTO orderDTO);
     boolean updateOrder(OrderDTO orderDTO);
+    OrderStatus getOrderStatusFromString(String status);
 }

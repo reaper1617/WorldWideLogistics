@@ -198,6 +198,15 @@ public class OrderServiceImpl implements OrderService {
         return false;
     }
 
+    public OrderStatus getOrderStatusFromString(String status) {
+        if (status == null || status.length()==0) return null;
+        if (status.equals("NOT_PREPARED")) return OrderStatus.NOT_PREPARED;
+        if (status.equals("PREPARED")) return OrderStatus.PREPARED;
+        if (status.equals("EXECUTING")) return OrderStatus.EXECUTING;
+        if (status.equals("EXECUTED")) return OrderStatus.EXECUTED;
+        return null;
+    }
+
 
     public Map<Order, Collection<City>> getRoutes(Collection<Order> orders){
         if (orders == null) return null;
