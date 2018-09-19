@@ -1,6 +1,7 @@
 package com.gerasimchuk.services.interfaces;
 
 import com.gerasimchuk.entities.Driver;
+import com.gerasimchuk.enums.DriverStatus;
 
 /** Driver Service
  * @author Reaper
@@ -9,5 +10,5 @@ import com.gerasimchuk.entities.Driver;
 
 public interface DriverService {
 
-    void addNewDriver(Driver driver);
+    DriverStatus getDriverStatusValFromString(String status);
 }

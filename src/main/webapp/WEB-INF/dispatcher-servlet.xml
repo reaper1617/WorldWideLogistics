@@ -27,6 +27,9 @@
         <property name="suffix" value=".jsp" />
     </bean>
 
+
+
+
     <bean id="sessionFactory"
           class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
         <property name="dataSource"
@@ -57,5 +60,7 @@
           class="org.springframework.orm.hibernate5.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
+
+
 
 </beans>

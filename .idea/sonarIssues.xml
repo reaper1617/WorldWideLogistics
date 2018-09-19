@@ -93,6 +93,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/dto/DriverAccountDTO.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/dto/DriverDTO.java">
           <value>
             <set />
@@ -318,12 +323,22 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/services/impls/AuthenticationSuccessHandler.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/services/impls/CargoServiceImpl.java">
           <value>
             <set />
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/services/impls/CustomUserDetailsService.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/services/impls/DriverServiceImpl.java">
           <value>
             <set />
           </value>
@@ -344,6 +359,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/services/interfaces/CargoService.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/services/interfaces/DriverService.java">
           <value>
             <set />
           </value>
@@ -399,6 +419,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/webapp/WEB-INF/dispatcher-servlet.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/driver/drivermainpage.jsp">
           <value>
             <set />
           </value>
