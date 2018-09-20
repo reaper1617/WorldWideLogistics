@@ -26,4 +26,5 @@ public interface OrderService {
     boolean createOrder(OrderDTO orderDTO);
     boolean updateOrder(OrderDTO orderDTO);
     OrderStatus getOrderStatusFromString(String status);
+    boolean areAllCargosDelivered(Order order);
 }

@@ -8,6 +8,7 @@ import com.gerasimchuk.entities.City;
 import com.gerasimchuk.entities.Order;
 import com.gerasimchuk.entities.Truck;
 import com.gerasimchuk.enums.CargoActionType;
+import com.gerasimchuk.enums.CargoStatus;
 import com.gerasimchuk.enums.OrderStatus;
 import com.gerasimchuk.enums.TruckState;
 import com.gerasimchuk.repositories.*;
@@ -205,6 +206,14 @@ public class OrderServiceImpl implements OrderService {
         if (status.equals("EXECUTING")) return OrderStatus.EXECUTING;
         if (status.equals("EXECUTED")) return OrderStatus.EXECUTED;
         return null;
+    }
+
+    public boolean areAllCargosDelivered(Order order) {
+        if (order == null) return false;
+        for(Cargo c: order.getCargosInOrder()){
+            if (!c.getStatus().equals(CargoStatus.DELIVERED)) return false;
+        }
+        return true;
     }
 
 

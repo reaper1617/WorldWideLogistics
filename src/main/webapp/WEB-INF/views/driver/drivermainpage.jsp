@@ -193,7 +193,7 @@
 			</form>
 		</div>
 		<div>
-			<form action="/drivermainpage/2" method="post" id="order_cargo_details">
+
 				<div class="sticky-top">
 					<b>Cargo details:</b>
 					<div><input class="form-control" id="myCargoDetailsInput" type="text" placeholder="Search.."></div>
@@ -214,24 +214,38 @@
 									<c:if test="${loggedDriver.driver.currentTruck.assignedOrder.cargosInOrder != null}">
 										<c:forEach items="${loggedDriver.driver.currentTruck.assignedOrder.cargosInOrder}" var="cargo">
 											<tr>
-												<input hidden type="text" value="${cargo.id}" name="cargoId">
-												<td>${cargo.personalNumber}</td>
-												<td>${cargo.name}</td>
-												<td>${cargo.route.cityFrom.name}</td>
-												<td>${cargo.route.cityTo.name}</td>
-												<td>
-													<select class="form-control" id="cargo_status" name="cargoStatus" style="width: 200px">
-														<option style="color: #0ed61f">${cargo.status}</option>
-														<c:if test="${cargoStatusList != null}">
-															<c:forEach items="${cargoStatusList}" var="cargoStatus">
-																<c:if test="${cargoStatus != cargo.status}">
-																	<option>${cargoStatus}</option>
-																</c:if>
-															</c:forEach>
+												<form action="/drivermainpage/2" method="post" >
+													<input hidden type="text" value="${cargo.id}" name="cargoId">
+													<td>${cargo.personalNumber}</td>
+													<td>${cargo.name}</td>
+													<td>${cargo.route.cityFrom.name}</td>
+													<td>${cargo.route.cityTo.name}</td>
+													<td>
+														<select class="form-control"  name="cargoStatus" style="width: 200px">
+															<option style="color: #0ed61f">${cargo.status}</option>
+															<c:if test="${cargoStatusList != null}">
+																<c:forEach items="${cargoStatusList}" var="cargoStatus">
+																	<c:if test="${cargoStatus != cargo.status}">
+																		<option>${cargoStatus}</option>
+																	</c:if>
+																</c:forEach>
+															</c:if>
+														</select>
+													</td>
+													<td>
+														<c:if test="${cargoStatusUpdatedSuccessfully != null}">
+															<c:if test="${updatedCargoId == cargo.id}">
+																<h5 style="color: darkcyan">Updated successfully!</h5>
+															</c:if>
+															<c:if test="${updatedCargoId != cargo.id}">
+																<button type="submit" class="btn btn-primary"  style="width: 200px">Update cargo status</button>
+															</c:if>
 														</c:if>
-													</select>
-												</td>
-												<td><button type="submit" class="btn btn-primary" form="order_cargo_details" style="width: 200px">Update cargo status</button></td>
+														<c:if test="${cargoStatusUpdatedSuccessfully == null}">
+															<button type="submit" class="btn btn-primary"  style="width: 200px">Update cargo status</button>
+														</c:if>
+													</td>
+												</form>
 											</tr>
 										</c:forEach>
 									</c:if>
@@ -240,7 +254,7 @@
 						</tbody>
 					</table>
 				</div>
-			</form>
+
 			<br>
 			<br>
 		</div>
