@@ -124,35 +124,5 @@ public class User {
         this.admin = admin;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
 
-        User user = (User) o;
-
-        if (id != user.id) return false;
-        if (!name.equals(user.name)) return false;
-        if (!middleName.equals(user.middleName)) return false;
-        if (!lastName.equals(user.lastName)) return false;
-        if (!personalNumber.equals(user.personalNumber)) return false;
-        if (!password.equals(user.password)) return false;
-        if (driver != null ? !driver.equals(user.driver) : user.driver != null) return false;
-        if (manager != null ? !manager.equals(user.manager) : user.manager != null) return false;
-        return admin != null ? admin.equals(user.admin) : user.admin == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + name.hashCode();
-        result = 31 * result + middleName.hashCode();
-        result = 31 * result + lastName.hashCode();
-        result = 31 * result + personalNumber.hashCode();
-        result = 31 * result + password.hashCode();
-        result = 31 * result + (driver != null ? driver.hashCode() : 0);
-        result = 31 * result + (manager != null ? manager.hashCode() : 0);
-        result = 31 * result + (admin != null ? admin.hashCode() : 0);
-        return result;
-    }
 }

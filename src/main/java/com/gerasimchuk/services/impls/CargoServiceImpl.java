@@ -86,6 +86,15 @@ public class CargoServiceImpl implements CargoService {
         return availableCargos;
     }
 
+    public CargoStatus getCargoStatusFromString(String status) {
+        if (status == null || status.length()==0)  return null;
+        if (status.equals("PREPARED") ) return CargoStatus.PREPARED;
+        if (status.equals("SHIPPING") ) return CargoStatus.SHIPPING;
+        if (status.equals("LOADED") ) return CargoStatus.LOADED;
+        if (status.equals("DELIVERED") ) return CargoStatus.DELIVERED;
+        return null;
+    }
+
     // ** util methods
 
     private CargoStatus getCargoStatusFromCargoDTO(CargoDTO cargoDTO){

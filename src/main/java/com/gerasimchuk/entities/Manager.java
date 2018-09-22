@@ -34,18 +34,5 @@ public class Manager {
         this.user = user;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Manager)) return false;
 
-        Manager manager = (Manager) o;
-
-        return id == manager.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return id;
-    }
 }

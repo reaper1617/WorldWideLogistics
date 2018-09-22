@@ -99,29 +99,5 @@ public class Order {
         this.cargosInOrder = cargosInOrder;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Order)) return false;
 
-        Order order = (Order) o;
-
-        if (id != order.id) return false;
-        if (!personalNumber.equals(order.personalNumber)) return false;
-        if (!description.equals(order.description)) return false;
-        if (!date.equals(order.date)) return false;
-        if (status != order.status) return false;
-        return assignedTruck != null ? assignedTruck.equals(order.assignedTruck) : order.assignedTruck == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + personalNumber.hashCode();
-        result = 31 * result + description.hashCode();
-        result = 31 * result + date.hashCode();
-        result = 31 * result + status.hashCode();
-        result = 31 * result + (assignedTruck != null ? assignedTruck.hashCode() : 0);
-        return result;
-    }
 }

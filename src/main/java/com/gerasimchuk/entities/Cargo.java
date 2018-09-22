@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Entity(name = "Cargos")
 @Table(name = "cargos",schema = "mywwldatabase", catalog = "")
-public class Cargo {
+public class Cargo implements Comparable<Cargo> {
     private int id;
     private String personalNumber;
     private String name;
@@ -95,4 +95,9 @@ public class Cargo {
     }
 
 
+    public int compareTo(Cargo o) {
+        if (this.id == o.getId()) return 0;
+        else if (this.id > o.getId()) return 1;
+        else return -1;
+    }
 }

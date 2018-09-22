@@ -2,6 +2,7 @@ package com.gerasimchuk.services.interfaces;
 
 import com.gerasimchuk.dto.CargoDTO;
 import com.gerasimchuk.entities.Cargo;
+import com.gerasimchuk.enums.CargoStatus;
 
 import java.util.Collection;
 
@@ -17,5 +18,5 @@ public interface CargoService {
     boolean deleteCargo(int cargoId);
 
     Collection<Cargo> getAvailableCargos();
-
+    CargoStatus getCargoStatusFromString(String status);
 }

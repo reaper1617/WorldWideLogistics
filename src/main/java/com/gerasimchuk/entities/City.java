@@ -2,6 +2,7 @@ package com.gerasimchuk.entities;
 
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity(name = "Cities")
@@ -53,7 +54,7 @@ public class City {
         this.hasAgency = hasAgency;
     }
 
-    @OneToMany(mappedBy = "currentCity")
+    @OneToMany(mappedBy = "currentCity", fetch = FetchType.EAGER)
     public Set<Driver> getDriversInCity() {
         return driversInCity;
     }
@@ -62,7 +63,7 @@ public class City {
         this.driversInCity = driversInCity;
     }
 
-    @OneToMany(targetEntity = Route.class,mappedBy = "cityFrom")
+    @OneToMany(targetEntity = Route.class,mappedBy = "cityFrom", fetch = FetchType.EAGER)
     public Set<City> getCitiesFrom() {
         return citiesFrom;
     }
@@ -71,7 +72,7 @@ public class City {
         this.citiesFrom = citiesFrom;
     }
 
-    @OneToMany(targetEntity = Route.class, mappedBy = "cityTo")
+    @OneToMany(targetEntity = Route.class, mappedBy = "cityTo", fetch = FetchType.EAGER)
     public Set<City> getCitiesTo() {
         return citiesTo;
     }
@@ -80,7 +81,7 @@ public class City {
         this.citiesTo = citiesTo;
     }
 
-    @OneToMany(mappedBy = "currentCity")
+    @OneToMany(mappedBy = "currentCity", fetch = FetchType.EAGER)
     public Set<Truck> getTrucksInCity() {
         return trucksInCity;
     }
@@ -89,22 +90,23 @@ public class City {
         this.trucksInCity = trucksInCity;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof City)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
         City city = (City) o;
 
         if (id != city.id) return false;
         if (hasAgency != city.hasAgency) return false;
-        return name != null ? name.equals(city.name) : city.name == null;
+        return name.equals(city.name);
     }
 
     @Override
     public int hashCode() {
         int result = id;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + name.hashCode();
         result = 31 * result + (hasAgency ? 1 : 0);
         return result;
     }

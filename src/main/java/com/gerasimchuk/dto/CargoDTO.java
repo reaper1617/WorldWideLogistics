@@ -1,11 +1,13 @@
 package com.gerasimchuk.dto;
 
+import com.gerasimchuk.entities.Cargo;
+
 /** Cargo Data Transfer Object
  * @author Reaper
  * @version 1.0
  */
 
-public class CargoDTO {
+public class CargoDTO  {
     private String id;
     private String personalNumber;
     private String name;
@@ -109,4 +111,6 @@ public class CargoDTO {
         result = 31 * result + (status != null ? status.hashCode() : 0);
         return result;
     }
+
+
 }

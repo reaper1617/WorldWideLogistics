@@ -1,3 +1,6 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,14 +11,13 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
-<style>
+	<style>
 		
 		.gradientbackgr{
   			background: #fffff0;
 	 		background: radial-gradient(#0ed61f, #bfc2ff);
 		}
 	</style>
-
 </head>
 <body class="gradientbackgr">
 
@@ -30,24 +32,27 @@
 			<a class="navbar-brand" href="#">Admin account</a>
 			<!-- Nav tabs -->
 			<ul class="nav nav-tabs bg-primary bg-light navbar-light" role="tablist">
-			    <li class="nav-item">
-			    	<a class="nav-link active" data-toggle="tab" href="#home">Home</a>
-		    	    </li>
-			    <li class="nav-item">
-			    	<a class="nav-link" data-toggle="tab" href="#managetrucks">Manage trucks</a>
+				<li class="nav-item">
+					<a class="nav-link active" data-toggle="tab" href="#manageorders">Manage orders</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" data-toggle="tab" href="#managetrucks">Manage trucks</a>
  			    </li>
 			    <li class="nav-item">
-				 <a class="nav-link" data-toggle="tab" href="#managedrivers">Manage drivers</a>
+				 	<a class="nav-link" data-toggle="tab" href="#manageusers">Manage users</a>
 			    </li>   
 			    <li class="nav-item">
-				 <a class="nav-link" data-toggle="tab" href="#managecargos">Manage cargos</a>
-			    </li> 
-			    <li class="nav-item">
-				 <a class="nav-link" data-toggle="tab" href="#managemanagers">Manage managers</a>
-			    </li>  
-    			    <li class="nav-item">
-      		      	    	<button type="button" class="btn btn-primary">Log out</button>
-    			    </li>
+				 	<a class="nav-link" data-toggle="tab" href="#managecargos">Manage cargos</a>
+			    </li>
+				<li class="nav-item">
+					<a class="nav-link" data-toggle="tab" href="#managecities">Manage cities</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" data-toggle="tab" href="#manageroutes">Manage routes</a>
+				</li>
+				<li class="nav-item">
+      		        	<button type="button" class="btn btn-primary">Log out</button>
+				</li>
 		       </ul>
 
 		</nav>
@@ -57,10 +62,11 @@
 	<br>
 	<div class = "container-fluid">
 		 <div class="tab-content">
-  			<div id="home" class="tab-pane active ">
+  			<div id="manageorders" class="tab-pane active ">
     				<div class = "sticky-top">
-				<h3>Orders <button class = "btn btn-primary" type = "button">Add new</button> </h3>
-				
+						<form action="/addneworderpage", method="get">
+							<h3>Orders <button class = "btn btn-primary" type = "submit">Add new</button> </h3>
+						</form>
     				
 				<div><input class="form-control" id="myInput" type="text" placeholder="Search.."></div>
 				</div>
@@ -68,57 +74,95 @@
 					<table id="myTable" class="table table-bordered table-active table-hover">
     						<thead>
       							<tr>
-								<th></th>
+									<th></th>
+									<th></th>
         							<th>Id</th>
         							<th>Description</th>
-								<th>Date/time</th>
-								<th>Status</th>
+									<th>Date/time</th>
+									<th>Status</th>
         							<th>Assigned truck</th>
-								<th>Assigned drivers</th>
+									<th>Assigned drivers</th>
         							<th>Route</th>
       							</tr>
 						</thead>
 							<tbody>
-								<tr>
-									<td>
-										<div class="dropdown">
-  											<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Manage
-  												<span class="caret"></span></button>
-  												<ul class="dropdown-menu">
-    													<li><a href="#">Change</a></li>
-    													<li><a href="#">Delete</a></li>
-  												</ul>
-										</div>
-									</td>
-									<td>8396hg834</td>
-									<td>Descr</td>
-									<td>11-12-2018 23-12-22</td>
-									<td>Prepared</td>
-									<td>ry448</td>
-									<td>
-										<div class="dropdown">
-  											<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show assigned drivers
-  												<span class="caret"></span></button>
-  												<ul class="dropdown-menu">
-    													<li><a href="#">Ivan</a></li>
-    													<li><a href="#">Petr</a></li>
-    													<li><a href="#">Sidor</a></li>
-  												</ul>
-										</div>
-									</td>
-									<td>
-										<div class="dropdown">
-  											<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show route
-  												<span class="caret"></span></button>
-  												<ul class="dropdown-menu">
-    													<li><a href="#">Moscow</a></li>
-    													<li><a href="#">SPb</a></li>
-    													<li><a href="#">Ptz</a></li>
-  												</ul>
-										</div>
-									</td>
-								</tr>
-								
+							<c:if test="${ordersList != null}">
+								<c:forEach items="${ordersList}" var="order">
+									<tr>
+										<td>
+											<form action="/adminmainpage/1" method="post" >
+												<button type="submit" class="btn btn-primary">Edit</button>
+													<input type="text" hidden name="id" value="${order.id}">
+											</form>
+										</td>
+										<td>
+											<form action="/adminmainpage/2" method="post" >
+												<button type="submit" class="btn btn-danger">Delete</button>
+												<input type="text" hidden name="id" value="${order.id}">
+											</form>
+										</td>
+										<td>${order.personalNumber}</td>
+										<td>${order.description}</td>
+										<td>${order.date}</td>
+										<td>${order.status}</td>
+										<c:if test="${order.assignedTruck != null}">
+											<td>${order.assignedTruck.registrationNumber}</td>
+										</c:if>
+										<c:if test="${order.assignedTruck == null}">
+											<td>No assigned truck</td>
+										</c:if>
+										<td>
+											<div class="dropdown">
+												<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show assigned drivers
+													<span class="caret"></span></button>
+													<ul class="dropdown-menu">
+														<%--<c:if test="${order.assignedTruck != null}">--%>
+															<%--<c:if test="${not empty order.assignedTruck}">--%>
+                                                                <%--<c:forEach items="${order.assignedTruck.driversInTruck}" var="driverInTruck">--%>
+                                                                    <%--<li><a href="#">${driverInTruck.user.name} ${driverInTruck.user.middleName} ${driverInTruck.user.lastName}</a></li>--%>
+                                                                <%--</c:forEach>--%>
+															<%--</c:if>--%>
+															<%--<c:if test="${empty order.assignedTruck}">--%>
+																<%--<li><a href="#">No assigned drivers</a></li>--%>
+															<%--</c:if>--%>
+														<%--</c:if>--%>
+                                                        <%--<c:if test="${order.assignedTruck == null}">--%>
+                                                            <%--<li><a href="#">No assigned drivers</a></li>--%>
+                                                        <%--</c:if>--%>
+                                                        <c:if test="${order.assignedTruck != null}">
+                                                            <c:if test="${order.assignedTruck.driversInTruck != null}">
+                                                                <c:forEach items="${order.assignedTruck.driversInTruck}" var="driverInTruck">
+                                                                    <li><a href="#">${driverInTruck.user.name} ${driverInTruck.user.middleName} ${driverInTruck.user.lastName}</a></li>
+                                                                </c:forEach>
+                                                            </c:if>
+                                                            <c:if test="${order.assignedTruck.driversInTruck == null}">
+                                                                <li><a href="#">No assigned drivers</a></li>
+                                                            </c:if>
+                                                            <c:if test="${empty order.assignedTruck.driversInTruck}">
+                                                                <li><a href="#">No assigned drivers</a></li>
+                                                            </c:if>
+                                                        </c:if>
+                                                        <c:if test="${order.assignedTruck == null}">
+                                                            <li><a href="#">No assigned drivers</a></li>
+                                                        </c:if>
+
+                                                    </ul>
+											</div>
+										</td>
+										<td>
+											<div class="dropdown">
+												<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show route
+													<span class="caret"></span></button>
+													<ul class="dropdown-menu">
+														<c:forEach items="${order.route}" var="city">
+															<li><a href="#">${city.name}</a></li>
+														</c:forEach>
+													</ul>
+											</div>
+										</td>
+									</tr>
+								</c:forEach>
+							</c:if>
 							</tbody>
     					
     					</table>
@@ -129,195 +173,346 @@
   			</div>
   			<div id="managetrucks" class="tab-pane fade">
     				<div class = "sticky-top">
-				<h3>Trucks <button class = "btn btn-primary" type = "button">Add new</button></h3>
-    				
+						<form action="/addnewtruckpage" method="get">
+							<h3>Trucks <button class = "btn btn-primary" type = "submit">Add new</button></h3>
+						</form>
 				<div><input class="form-control" id="myInput2" type="text" placeholder="Search.."></div>
 				</div>
 				<div>
 					<table id="myTable2" class="table table-bordered table-active table-hover">
     						<thead>
       							<tr>
-								<th></th>
+									<th></th>
+									<th></th>
         							<th>Registration number</th>
-        							<th>Number of drivers</th>
-								<th>Capacity</th>
-								<th>State</th>
-        							<th>Current city</th>
-								<th>Assigned drivers</th>
-        							<th>Assigned order</th>
+									<th>Number of drivers</th>
+									<th>Capacity</th>
+									<th>State</th>
+									<th>Current city</th>
+									<th>Assigned drivers</th>
+									<th>Assigned order</th>
       							</tr>
 						</thead>
 						<tbody>
-							
-								
-							
-							<tr>
+						<c:if test="${trucksList != null}">
+							<c:forEach items="${trucksList}" var="cell">
+								<tr>
+									<td>
+										<form action="#" method="post" >
+											<button type="submit" class="btn btn-primary">Edit</button>
+												<%--<input type="text" hidden name="id" value="${cell.id}">--%>
+										</form>
+									</td>
+									<td>
+										<form action="#" method="post" >
+											<button type="submit" class="btn btn-danger">Delete</button>
+												<%--<input type="text" hidden name="id" value="${cell.id}">--%>
+										</form>
+									</td>
+								<td>${cell.registrationNumber}</td>
+								<td>${cell.numOfDrivers}</td>
+								<td>${cell.capacity}</td>
+								<td>${cell.state}</td>
+								<td>${cell.currentCity.name}</td>
 								<td>
-								
 									<div class="dropdown">
-  											<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Manage
-  												<span class="caret"></span></button>
-  												<ul class="dropdown-menu">
-    													<li><a href="#">Change</a></li>
-    													<li><a href="#">Delete</a></li>
-  												</ul>
+										<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show drivers
+											<span class="caret"></span></button>
+										<ul class="dropdown-menu">
+											<c:if test="${cell.driversInTruck != null}">
+												<c:forEach items="${cell.driversInTruck}" var="driver">
+													<li><a href="#">${driver.user.name} ${driver.user.middleName} ${driver.user.lastName}</a></li>
+												</c:forEach>
+											</c:if>
+											<c:if test="${empty cell.driversInTruck}">
+												<li><a href="#">No assigned driver</a></li>
+											</c:if>
+										</ul>
 									</div>
-								
 								</td>
-        							<td>rr38473</td>
-        							<td>3</td>
-								<td>20</td>
-								<td>Ready</td>
-        							<td>Moscow</td>
-								<td>
-									<div class="dropdown">
-  											<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show drivers
-  												<span class="caret"></span></button>
-  												<ul class="dropdown-menu">
-    													<li><a href="#">Ivan</a></li>
-    													<li><a href="#">Petr</a></li>
-    													<li><a href="#">Sidor</a></li>
-  												</ul>
-										</div>
-								</td>
-        							<td>No assigned orders</td>
-      							</tr>
+
+								<c:if test="${cell.assignedOrder != null}">
+									<td>${cell.assignedOrder}</td>
+								</c:if>
+								<c:if test="${cell.assignedOrder == null}">
+									<td>No assigned order</td>
+								</c:if>
+								</tr>
+                            </c:forEach>
+						</c:if>
 						</tbody>
-							
     					</table>
 				</div>
   			</div>
-  			<div id="managedrivers" class="tab-pane fade">
+  			<div id="manageusers" class="tab-pane fade">
     				<div class = "sticky-top">
-				<h3>Drivers <button class = "btn btn-primary" type = "button">Add new</button></h3>
-    				
+						<form action="#" method="get">
+							<h3>Users <button class = "btn btn-primary" type = "submit">Add new</button></h3>
+						</form>
 				<div><input class="form-control" id="myInput3" type="text" placeholder="Search.."></div>
 				</div>
 				<div>
 					<table id="myTable3" class="table table-bordered table-active table-hover">
     						<thead>
       							<tr>
-								<th></th>
-        							<th>Name</th>
+									<th></th>
+									<th></th>
+        							<th>First name</th>
         							<th>Middle name</th>
-								<th>Last name</th>
-								<th>Personal number</th>
-        							<th>Hours worked</th>
-								<th>Status</th>
-        							<th>Current city</th>
-								<th>Current truck</th>
+									<th>Last name</th>
+									<th>Personal number</th>
+        							<th>Role</th>
       							</tr>
 						</thead>	
 						<tbody>
-							<td>
-								<div class="dropdown">
-  											<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Manage
-  												<span class="caret"></span></button>
-  												<ul class="dropdown-menu">
-    													<li><a href="#">Change</a></li>
-    													<li><a href="#">Delete</a></li>
-  												</ul>
-								</div>
-							</td>
-        							<td>Ivan</td>
-        							<td>Petrovich</td>
-								<td>Sidorov</td>
-								<td>7748kshdg74</td>
-        							<td>10</td>
-								<td>Ready</td>
-        							<td>Moscow</td>
-								<td>rr48474</td>
+						<c:if test="${usersList != null}">
+                            <c:forEach items="${usersList}" var="user">
+                                <tr>
+                                    <td>
+                                        <form action="#" method="post" >
+                                            <button type="submit" class="btn btn-primary">Edit</button>
+                                            <%--<input type="text" hidden name="id" value="${cell.id}">--%>
+                                        </form>
+                                    </td>
+									<td>
+										<form action="#" method="post" >
+											<button type="submit" class="btn btn-danger">Delete</button>
+												<%--<input type="text" hidden name="id" value="${cell.id}">--%>
+										</form>
+									</td>
+                                    <td>${user.name}</td>
+                                    <td>${user.middleName}</td>
+                                    <td>${user.lastName}</td>
+                                    <td>${user.personalNumber}</td>
+
+									<c:if test="${user.driver != null}">
+                                    	<td>DRIVER</td>
+									</c:if>
+									<c:if test="${user.manager != null}">
+										<td>MANAGER</td>
+									</c:if>
+									<c:if test="${user.admin != null}">
+										<td>ADMIN</td>
+									</c:if>
+                                </tr>
+                            </c:forEach>
+						</c:if>
 						</tbody>				
     					</table>
 				</div>
   			</div>
 			<div id="managecargos" class="tab-pane fade">
-    				<div class = "sticky-top">
-				<h3>Cargos <button class = "btn btn-primary" type = "button">Add new</button></h3>
-    				
+				<div class = "sticky-top">
+					<form action="/addnewcargopage" method="get">
+						<h3>Cargos <button class = "btn btn-primary" type="submit">Add new</button></h3>
+					</form>
 				<div><input class="form-control" id="myInput4" type="text" placeholder="Search.."></div>
 				</div>
 				<div>
 					<table id="myTable4" class="table table-bordered table-active table-hover">
     						<thead>
       							<tr>
-								<th></th>
-								<th>Item Id</th>
+									<th></th>
+									<th></th>
+									<th>Item Id</th>
         							<th>Name</th>
         							<th>Weight</th>
-								<th>City from</th>
-								<th>City to</th>
-								<th>Status</th>
+									<th>City from</th>
+									<th>City to</th>
+									<th>Status</th>
       							</tr>
 						</thead>	
 						<tbody>
-							<td>
-								<div class="dropdown">
-  											<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Manage
-  												<span class="caret"></span></button>
-  												<ul class="dropdown-menu">
-    													<li><a href="#">Change</a></li>
-    													<li><a href="#">Delete</a></li>
-  												</ul>
-								</div>
-							</td>
-								<td>7865hjkdfghk4</th>
-        							<td>Beer</th>
-        							<td>30</th>
-								<td>Moscow</th>
-								<td>Saint-Petersburg</th>
-								<td>Prepared</th>
+						<c:if test="${cargoList != null}">
+							<c:forEach items="${cargoList}" var="cell">
+								<tr>
+									<td>
+										<form action="#" method="post" >
+											<button type="submit" class="btn btn-primary">Edit</button>
+												<%--<input type="text" hidden name="id" value="${cell.id}">--%>
+										</form>
+									</td>
+									<td>
+										<form action="#" method="post" >
+											<button type="submit" class="btn btn-danger">Delete</button>
+												<%--<input type="text" hidden name="id" value="${cell.id}">--%>
+										</form>
+									</td>
+									<td>${cell.personalNumber}</td>
+									<td>${cell.name}</td>
+									<td>${cell.weight}</td>
+									<td>${cell.route.cityFrom.name}</td>
+									<td>${cell.route.cityTo.name}</td>
+									<td>${cell.status}</td>
+								</tr>
+							</c:forEach>
+						</c:if>
 						</tbody>				
     					</table>
 				</div>
   			</div>
-			<div id="managemanagers" class="tab-pane fade">
-    				<div class = "sticky-top">
-				<h3>Managers <button class = "btn btn-primary" type = "button">Add new</button></h3>
-    				
-				<div><input class="form-control" id="myInput5" type="text" placeholder="Search.."></div>
-				</div>
-				<div>
-					<table id="myTable5" class="table table-bordered table-active table-hover">
-    						<thead>
-      							<tr>
-								<th></th>
-								<th>Name</th>
-								<th>Second name</th>
-								<th>Last name</th>
-								<th>Current roles</th>
-      							</tr>
-						</thead>	
-						<tbody>
-							<td>
-								<div class="dropdown">
-  											<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Manage
-  												<span class="caret"></span></button>
-  												<ul class="dropdown-menu">
-    													<li><a href="#">Change</a></li>
-    													<li><a href="#">Delete</a></li>
-  												</ul>
+			 <div id="managecities" class="tab-pane fade">
+				 <div class = "sticky-top">
+					 <form action="#" method="get">
+						 <h3>Cities <button class = "btn btn-primary" type = "submit">Add new</button></h3>
+					 </form>
+					 <div><input class="form-control" id="myInput5" type="text" placeholder="Search.."></div>
+				 </div>
+				 <div>
+					 <table id="myTable5" class="table table-bordered table-active table-hover">
+						 <thead>
+						 <tr>
+							 <th></th>
+							 <th></th>
+							 <th>Name</th>
+							 <th>Has agency</th>
+							 <th>Drivers in city</th>
+							 <th>Trucks in city</th>
+						 </tr>
+						 </thead>
+						 <tbody>
+						 <c:forEach items="${citiesList}" var="city">
+						 <tr>
+							 <td>
+								 <form action="#" method="post" >
+									 <button type="submit" class="btn btn-primary">Edit</button>
+									 <%--<input type="text" hidden name="id" value="${cell.id}">--%>
+								 </form>
+							 </td>
+							 <td>
+								 <form action="#" method="post" >
+									 <button type="submit" class="btn btn-danger">Edit</button>
+									 <%--<input type="text" hidden name="id" value="${cell.id}">--%>
+								 </form>
+							 </td>
+							 <td>${city.name}</td>
+							 <td>${city.hasAgency}</td>
+
+							 <c:if test="${city.driversInCity != null}">
+								 <c:if test="${not empty city.driversInCity}">
+									 <td>
+										<div class="dropdown">
+											<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show drivers
+												<span class="caret"></span></button>
+											<ul class="dropdown-menu">
+												<c:forEach items="${city.driversInCity}" var="driver">
+													<li><a href="#">${driver.user.name} ${driver.user.middleName} ${driver.user.lastName}</a></li>
+												</c:forEach>
+											</ul>
 										</div>
-							</td>
-								<td>Ivan</td>
-								<td>Ivanovich</td>
-								<td>Ivanov</td>
-								<td>
-									<div class="dropdown">
-  											<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show roles
-  												<span class="caret"></span></button>
-  												<ul class="dropdown-menu">
-    													<li><a href="#">Manager</a></li>
-    													<li><a href="#">Admin</a></li>
-  												</ul>
-										</div>
-								</td>
-						</tbody>				
-    					</table>
-				</div>
-  			</div>
-			
-			
+									</td>
+								 </c:if>
+								 <c:if test="${empty city.driversInCity}">
+									 <td>
+										 <div class="dropdown">
+											 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show drivers
+												 <span class="caret"></span></button>
+											 <ul class="dropdown-menu">
+													 <li><a href="#">No drivers in city</a></li>
+											 </ul>
+										 </div>
+									 </td>
+								 </c:if>
+							 </c:if>
+							 <c:if test="${city.driversInCity == null}">
+								 <td>
+									 <div class="dropdown">
+										 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show drivers
+											 <span class="caret"></span></button>
+										 <ul class="dropdown-menu">
+												 <li><a href="#">No drivers in city</a></li>
+										 </ul>
+									 </div>
+								 </td>
+							 </c:if>
+
+							 <c:if test="${city.trucksInCity != null}">
+								 <c:if test="${not empty city.trucksInCity}">
+									 <td>
+										 <div class="dropdown">
+											 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show trucks
+												 <span class="caret"></span></button>
+											 <ul class="dropdown-menu">
+												 <c:forEach items="${city.trucksInCity}" var="truck">
+													 <li><a href="#">${truck.registrationNumber}</a></li>
+												 </c:forEach>
+											 </ul>
+										 </div>
+									 </td>
+								 </c:if>
+								 <c:if test="${empty city.trucksInCity}">
+									 <td>
+										 <div class="dropdown">
+											 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show trucks
+												 <span class="caret"></span></button>
+											 <ul class="dropdown-menu">
+												 <li><a href="#">No trucks in city</a></li>
+											 </ul>
+										 </div>
+									 </td>
+								 </c:if>
+							 </c:if>
+							 <c:if test="${city.trucksInCity == null}">
+								 <td>
+									 <div class="dropdown">
+										 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show trucks
+											 <span class="caret"></span></button>
+										 <ul class="dropdown-menu">
+											 <li><a href="#">No trucks in city</a></li>
+										 </ul>
+									 </div>
+								 </td>
+							 </c:if>
+						 </tr>
+						 </c:forEach>
+						 </tbody>
+					 </table>
+				 </div>
+			 </div>
+			 <div id="manageroutes" class="tab-pane fade">
+				 <div class = "sticky-top">
+					 <form action="#" method="get">
+						 <h3>Routes <button class = "btn btn-primary" type = "submit">Add new</button></h3>
+					 </form>
+					 <div><input class="form-control" id="myInput6" type="text" placeholder="Search.."></div>
+				 </div>
+				 <div>
+					 <table id="myTable6" class="table table-bordered table-active table-hover">
+						 <thead>
+						 <tr>
+							 <th></th>
+							 <th></th>
+							 <th>City from</th>
+							 <th>City to</th>
+							 <th>Distance</th>
+						 </tr>
+						 </thead>
+						 <tbody>
+						 <c:if test="${routesList != null}">
+							 <c:forEach items="${routesList}" var="route">
+								<tr>
+									<td>
+										<form action="#" method="post" >
+											<button type="submit" class="btn btn-primary">Edit</button>
+											<%--<input type="text" hidden name="id" value="${cell.id}">--%>
+										</form>
+									</td>
+									<td>
+										<form action="#" method="post" >
+											<button type="submit" class="btn btn-danger">Edit</button>
+											<%--<input type="text" hidden name="id" value="${cell.id}">--%>
+										</form>
+									</td>
+									<td>${route.cityFrom.name}</td>
+									<td>${route.cityTo.name}</td>
+									<td>${route.distance}</td>
+								</tr>
+							 </c:forEach>
+						 </c:if>
+						 </tbody>
+					 </table>
+				 </div>
+			 </div>
 		</div>
 
 

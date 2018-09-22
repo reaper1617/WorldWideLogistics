@@ -3,17 +3,12 @@ package com.gerasimchuk.controllers;
 import com.gerasimchuk.converters.OrderToDTOConverter;
 import com.gerasimchuk.dto.DriverAccountDTO;
 import com.gerasimchuk.dto.OrderDTO;
-import com.gerasimchuk.entities.City;
-import com.gerasimchuk.entities.Driver;
-import com.gerasimchuk.entities.Order;
-import com.gerasimchuk.entities.User;
+import com.gerasimchuk.entities.*;
 import com.gerasimchuk.enums.CargoStatus;
 import com.gerasimchuk.enums.DriverStatus;
 import com.gerasimchuk.enums.OrderStatus;
-import com.gerasimchuk.repositories.DriverRepository;
-import com.gerasimchuk.repositories.OrderRepository;
-import com.gerasimchuk.repositories.TruckRepository;
-import com.gerasimchuk.repositories.UserRepository;
+import com.gerasimchuk.repositories.*;
+import com.gerasimchuk.services.interfaces.CargoService;
 import com.gerasimchuk.services.interfaces.DriverService;
 import com.gerasimchuk.services.interfaces.OrderService;
 import com.gerasimchuk.services.interfaces.UserService;
@@ -46,18 +41,22 @@ public class DriverController {
     private TruckRepository truckRepository;
     private DriverRepository driverRepository;
     private OrderRepository orderRepository;
+    private CargoRepository cargoRepository;
 
     private DriverService driverService;
     private OrderService orderService;
+    private CargoService cargoService;
 
     @Autowired
-    public DriverController(UserRepository userRepository, TruckRepository truckRepository, DriverRepository driverRepository, OrderRepository orderRepository, DriverService driverService, OrderService orderService) {
+    public DriverController(UserRepository userRepository, TruckRepository truckRepository, DriverRepository driverRepository, OrderRepository orderRepository, CargoRepository cargoRepository, DriverService driverService, OrderService orderService, CargoService cargoService) {
         this.userRepository = userRepository;
         this.truckRepository = truckRepository;
         this.driverRepository = driverRepository;
         this.orderRepository = orderRepository;
+        this.cargoRepository = cargoRepository;
         this.driverService = driverService;
         this.orderService = orderService;
+        this.cargoService = cargoService;
     }
 
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(DriverController.class);
@@ -172,10 +171,16 @@ public class DriverController {
                 ui.addAttribute("Error: order id is not valid");
                 return "failure";
             }
-            Order order = orderRepository.getById(id);
+            Order order = null;
+            if (id != 0)  order = orderRepository.getById(id);
             if (order != null){
                 OrderStatus orderStatus = orderService.getOrderStatusFromString(driverAccountDTO.getOrderStatus());
                 if (orderStatus != null) {
+                    if (!orderService.areAllCargosDelivered(order)&&orderStatus.equals(OrderStatus.EXECUTED)){
+                        log.error("Error: not all cargos in order are delivered!");
+                        ui.addAttribute("actionFailed", "Error: not all of cargos in order are delivered!");
+                        return "failure";
+                    }
                     orderRepository.update(order.getId(),
                             order.getPersonalNumber(),
                             order.getDescription(),
@@ -196,8 +201,32 @@ public class DriverController {
         }
         if (action == 2){
             // update current order cargos state
-
-
+            int id = 0;
+            try{
+                id = Integer.parseInt(driverAccountDTO.getCargoId());
+            }
+            catch (Exception e){
+                e.printStackTrace();
+                log.error("Error: cargo id is not valid");
+                ui.addAttribute("actionFailed", "Error: cargo id is not valid");
+                return "failure";
+            }
+            CargoStatus cargoStatus = cargoService.getCargoStatusFromString(driverAccountDTO.getCargoStatus());
+            if (cargoStatus == null){
+                log.error("Error: cargo status value is not valid!");
+                ui.addAttribute("actionFailed", "Error: cargo status value is not valid!");
+                return "failure";
+            }
+            Cargo cargo = null;
+            if (id != 0) cargo = cargoRepository.getById(id);
+            if (cargo != null){
+                cargoRepository.update(cargo.getId(),cargo.getPersonalNumber(),cargo.getName(),cargo.getWeight(),cargoStatus,cargo.getRoute());
+                ui.addAttribute("cargoStatusUpdatedSuccessfully", "Updated successfully!");
+                ui.addAttribute("updatedCargoId", id);
+                return setDriverMainPageAttributes(ui);
+            }
+            ui.addAttribute("actionFailed", "Error: cargo object is not valid!");
+            return "failure";
         }
 
         ui.addAttribute("actionFailed", "Error: unknown action!");

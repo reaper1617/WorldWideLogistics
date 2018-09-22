@@ -61,7 +61,7 @@ public class Route {
         this.distance = distance;
     }
 
-    @OneToMany(mappedBy = "route")
+    @OneToMany(mappedBy = "route", fetch = FetchType.EAGER)
     public Set<Cargo> getCargosOnRoute() {
         return cargosOnRoute;
     }
@@ -70,28 +70,4 @@ public class Route {
         this.cargosOnRoute = cargosOnRoute;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Route)) return false;
-
-        Route route = (Route) o;
-
-        if (id != route.id) return false;
-        if (Double.compare(route.distance, distance) != 0) return false;
-        if (!cityFrom.equals(route.cityFrom)) return false;
-        return cityTo.equals(route.cityTo);
-    }
-
-    @Override
-    public int hashCode() {
-        int result;
-        long temp;
-        result = id;
-        result = 31 * result + cityFrom.hashCode();
-        result = 31 * result + cityTo.hashCode();
-        temp = Double.doubleToLongBits(distance);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        return result;
-    }
 }

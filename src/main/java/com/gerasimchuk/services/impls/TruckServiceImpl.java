@@ -115,7 +115,7 @@ public class TruckServiceImpl implements TruckService {
     }
 
     // todo: mfk refactor!!!!
-    boolean updateTruckWithFieldsFromDTO(Truck updated, TruckDTO truckDTO){
+    private boolean updateTruckWithFieldsFromDTO(Truck updated, TruckDTO truckDTO){
         String newRegistrationNumber = null;
         int newNumberOfDrivers = 0;
         double newCapacity = 0;

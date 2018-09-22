@@ -54,26 +54,26 @@ public class UserController {
             ui.addAttribute("actionFailed", "Login error during executing login method!");
             return "failure";
         }
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User u = userRepository.getByPersonalNumber(authentication.getName());
-        if (u == null) {
-            log.error("Error: no such user!");
-            ui.addAttribute("actionFailed", "Error: no such user!");
-            return "failure";
-        }
-        if(u.getDriver() != null){
-            log.info("Driver" + u.getPersonalNumber() + "successfully logged");
-            return "/driver/drivermainpage";
-        }
-        if (u.getManager() != null){
-            log.info("Manager" + u.getPersonalNumber() + "successfully logged");
-            return "/manager/managermainpage";
-        }
-        if (u.getAdmin() != null){
-            log.info("Admin" + u.getPersonalNumber() + "successfully logged");
-            return "/admin/adminmainpage";
-        }
+//
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        User u = userRepository.getByPersonalNumber(authentication.getName());
+//        if (u == null) {
+//            log.error("Error: no such user!");
+//            ui.addAttribute("actionFailed", "Error: no such user!");
+//            return "failure";
+//        }
+//        if(u.getDriver() != null){
+//            log.info("Driver" + u.getPersonalNumber() + "successfully logged");
+//            return "/driver/drivermainpage";
+//        }
+//        if (u.getManager() != null){
+//            log.info("Manager" + u.getPersonalNumber() + "successfully logged");
+//            return "/manager/managermainpage";
+//        }
+//        if (u.getAdmin() != null){
+//            log.info("Admin" + u.getPersonalNumber() + "successfully logged");
+//            return "admin/adminmainpage";
+//        }
         return "failure";
     }
 
