@@ -11,4 +11,5 @@ public interface TruckService {
 
     boolean createTruck(TruckDTO truckDTO);
     boolean updateTruck(TruckDTO truckDTO);
+    boolean deleteTruck(int id);
 }

@@ -6,6 +6,7 @@ import com.gerasimchuk.entities.*;
 import com.gerasimchuk.repositories.*;
 import com.gerasimchuk.services.interfaces.CargoService;
 import com.gerasimchuk.services.interfaces.OrderService;
+import com.gerasimchuk.services.interfaces.TruckService;
 import com.gerasimchuk.services.interfaces.UserService;
 import com.gerasimchuk.utils.OrderWithRoute;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +40,10 @@ public class AdminController {
     private UserService userService;
     private OrderService orderService;
     private CargoService cargoService;
+    private TruckService truckService;
 
     @Autowired
-    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, UserService userService, OrderService orderService, CargoService cargoService) {
+    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService) {
         this.orderRepository = orderRepository;
         this.truckRepository = truckRepository;
         this.userRepository = userRepository;
@@ -51,6 +53,7 @@ public class AdminController {
         this.userService = userService;
         this.orderService = orderService;
         this.cargoService = cargoService;
+        this.truckService = truckService;
     }
 
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(AdminController.class);
@@ -104,6 +107,8 @@ public class AdminController {
         return "/admin/adminmainpage";
     }
 
+
+    // todo: replace OrderDTO with IdDTO !
     @RequestMapping(value = "/adminmainpage/{id}", method = RequestMethod.POST)
     public String adminMainPagePost(@PathVariable("id") int action, OrderDTO orderDTO, BindingResult bindingResult, Model ui){
         log.info("Controller: AdminController, metod = adminMainPage,  action = \"/adminmainpage\", request = POST");
@@ -143,13 +148,86 @@ public class AdminController {
         }
         if (action == 2){
             // delete order
+            Order deleted = null;
+            int id = 0;
+            try{
+                id = Integer.parseInt(orderDTO.getId());
+            }
+            catch (Exception e){
+                e.printStackTrace();
+                log.error("Error: order id value is not valid!");
+                ui.addAttribute("actionFailed", "Error: order id value is not valid!");
+                return "failure";
+            }
+            if (id != 0) deleted = orderRepository.getById(id);
+            if (deleted != null){
+                boolean result = orderService.deleteOrder(orderDTO);
+                if (result){
+                    log.info("Order deleted successfully!");
+                    ui.addAttribute("actionSuccess", "Order deleted successfully!");
+                    return "success";
+                }
+                else {
+                    log.error("Error: deleteOrder method in OrderService returned false.");
+                    ui.addAttribute("actionFailed", "Error while trying to delete order.");
+                    return "failure";
+                }
+            }
+
         }
-//        if (action == 3){
-//            // edit order
-//        }
-//        if (action == 4){
-//            // delete order
-//        }
+        if (action == 3) {
+            // edit truck
+            int id = 0;
+            try {
+                id = Integer.parseInt(orderDTO.getId());
+            } catch (Exception e) {
+                log.error("Error: truck id value is not valid!");
+                ui.addAttribute("actionFailed", "Error: truck id value is not valid!");
+                return "failure";
+            }
+            if (id == 0) {
+                log.error("Error: truck id value is zero!");
+                ui.addAttribute("actionFailed", "Error: truck id value is zero!");
+                return "failure";
+            }
+            Truck truck = truckRepository.getById(id);
+            Collection<City> cities = cityRepository.getAll();
+            Collection<User> drivers = userService.getAllDrivers();
+            ui.addAttribute("updatedTruckId", id);
+            ui.addAttribute("updatedTruck", truck);
+            ui.addAttribute("citiesList", cities);
+            ui.addAttribute("driversList", drivers);
+            return "/manager/truckchangepage";
+        }
+        if (action == 4){
+            // delete truck
+            int id = 0;
+            try {
+                id = Integer.parseInt(orderDTO.getId());
+            } catch (Exception e) {
+                log.error("Error: truck id value is not valid!");
+                ui.addAttribute("actionFailed", "Error: truck id value is not valid!");
+                return "failure";
+            }
+            if (id == 0) {
+                log.error("Error: truck id value is zero!");
+                ui.addAttribute("actionFailed", "Error: truck id value is zero!");
+                return "failure";
+            }
+            boolean result = truckService.deleteTruck(id);
+            if (result){
+                log.info("Truck deleted successfully!");
+                ui.addAttribute("actionSuccess","Truck deleted successfully!" );
+                return "success";
+            }
+            else {
+                log.error("Error: method deleteTruck in TruckService returned false.");
+                ui.addAttribute("actionFailed", "Error: method deleteTruck in TruckService returned false.");
+                return "failure";
+            }
+        }
+        log.error("Error: no such action!");
+        ui.addAttribute("actionFailed", "Error no such action!");
         return "failure";
     }
 

@@ -44,7 +44,7 @@
 				<div>
 					<form action="/assigntrucktoorderpage", method="post">
 						<div class="form-group">
-							<input type="text" hidden class="form-control" id="item_descr"  name="id" style="width:350px" value="${updatedOrderId}">
+							<input type="text" hidden class="form-control" id="item_descr"  name="description" style="width:350px" value="${orderDTO.description}">
 						</div>
 						<div class="form-group">
 							<select hidden multiple class="form-control" id="add_cargos"  name="cargosInOrder">

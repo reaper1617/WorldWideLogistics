@@ -212,14 +212,14 @@ public class ManagerController {
             ui.addAttribute("actionFailed", "Error while trying to create order!");
             return "failure";
         }
-        if (orderDTO.getDescription()!=null && orderDTO.getDescription().length()!=0){
-            ui.addAttribute("orderDescription", orderDTO.getDescription());
-        }
-        else {
-            log.error("Error: order description data is empty.");
-            ui.addAttribute("actionFailed", "Error while trying to create order.");
-            return "failure";
-        }
+//        if (orderDTO.getDescription()!=null && orderDTO.getDescription().length()!=0){
+//            ui.addAttribute("orderDescription", orderDTO.getDescription());
+//        }
+//        else {
+//            log.error("Error: order description data is empty.");
+//            ui.addAttribute("actionFailed", "Error while trying to create order.");
+//            return "failure";
+//        }
         if (orderDTO.getCargosInOrder()!=null){
             Collection<Cargo> chosenCargos = orderService.getChosenCargos(orderDTO);
             ui.addAttribute("chosenCargos",chosenCargos);
@@ -265,7 +265,7 @@ public class ManagerController {
           }
           else{
               log.error("Error: model doesn't contain attribute 'orderDTO' !");
-              ui.addAttribute("actionFailed", "Error: attribute 'orderDTO' is not instance of OrderDTO!");
+              ui.addAttribute("actionFailed", "Error: model doesn't contain attribute 'orderDTO' !");
               return "failure";
           }
         return "/manager/assigntrucktoorderpage";

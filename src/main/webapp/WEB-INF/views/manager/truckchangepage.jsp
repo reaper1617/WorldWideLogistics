@@ -113,6 +113,7 @@
 										</c:if>
 										<c:if test="${not empty driversList}">
 											<option>Do nothing</option>
+											<option style="color: orangered">Unassign current drivers</option>
 											<c:forEach items="${driversList}" var="driver">
 												<option value="${driver.id}">${driver.name} ${driver.middleName} ${driver.lastName}</option>
 											</c:forEach>

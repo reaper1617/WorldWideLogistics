@@ -12,12 +12,18 @@ public class OrderToDTOConverter {
         String personalNumber = order.getPersonalNumber();
         String description = order.getDescription();
         String status = getOrderStatus(order);
-        String assignedTruckId = Integer.toString(order.getAssignedTruck().getId());
-        String[] cargosInOrder = new String[order.getCargosInOrder().size()];
-        Object[] cargosInOrderArray = order.getCargosInOrder().toArray();
-        if (cargosInOrderArray == null || cargosInOrderArray.length == 0) return null;
-        for(int i = 0; i <cargosInOrder.length; i++){
-            cargosInOrder[i] =  Integer.toString(((Cargo)cargosInOrderArray[i]).getId());
+        String assignedTruckId = null;
+        if (order.getAssignedTruck() != null) {
+            assignedTruckId = Integer.toString(order.getAssignedTruck().getId());
+        }
+        String[] cargosInOrder = null;
+        if (order.getCargosInOrder() != null && !order.getCargosInOrder().isEmpty()) {
+            cargosInOrder = new String[order.getCargosInOrder().size()];
+            Object[] cargosInOrderArray = order.getCargosInOrder().toArray();
+            if (cargosInOrderArray == null || cargosInOrderArray.length == 0) return null;
+            for (int i = 0; i < cargosInOrder.length; i++) {
+                cargosInOrder[i] = Integer.toString(((Cargo) cargosInOrderArray[i]).getId());
+            }
         }
         OrderDTO orderDTO = new OrderDTO(id,personalNumber,description,status,assignedTruckId,cargosInOrder);
         return orderDTO;
