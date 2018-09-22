@@ -195,8 +195,68 @@ public class OrderServiceImpl implements OrderService {
 
 
     public boolean updateOrder(OrderDTO orderDTO) {
-        //todo: implement logics!!!
+        if (!dtoValidator.validate(orderDTO)) return false;
+
+        if (orderDTO.getId() == null) return false;
+        int id = 0;
+        try {
+            id = Integer.parseInt(orderDTO.getId());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        Order updated = null;
+        if (id != 0){
+            updated = orderRepository.getById(id);
+        }
+        else return false;
+        if (updated != null){
+            updateOrderWithFieldsFromDTO(updated,orderDTO);
+            return true;
+        }
         return false;
+    }
+
+    //todo: refactor!!
+    private boolean updateOrderWithFieldsFromDTO(Order updated, OrderDTO orderDTO){
+        if (updated == null || orderDTO == null) return false;
+        if (updated.getStatus().equals(OrderStatus.EXECUTING) || updated.getStatus().equals(OrderStatus.EXECUTED)) return false;
+        String newPersonalNumber = null;
+        String newDescription = null;
+        OrderStatus newOrderStatus = null;
+        Truck newAssignedTruck = null;
+        if (orderDTO.getPersonalNumber() != null && orderDTO.getPersonalNumber().length() != 0) newPersonalNumber = orderDTO.getPersonalNumber();
+        else newPersonalNumber = updated.getPersonalNumber();
+        if (orderDTO.getDescription() != null && orderDTO.getDescription().length()!=0) newDescription = orderDTO.getDescription();
+        else newDescription = updated.getDescription();
+        if (orderDTO.getStatus() != null && orderDTO.getStatus().length()!=0 && !orderDTO.getStatus().equals("Not selected")) newOrderStatus = getOrderStatusFromString(orderDTO.getStatus());
+        else newOrderStatus = updated.getStatus();
+        if (orderDTO.getAssignedTruckId() != null && orderDTO.getAssignedTruckId().length() != 0){
+            int id;
+            try{
+                id = Integer.parseInt(orderDTO.getAssignedTruckId());
+            }
+            catch (Exception e){
+                e.printStackTrace();
+                return false;
+            }
+            if (id == 0) return false;
+            newAssignedTruck = truckRepository.getById(id);
+        }
+        else newAssignedTruck = updated.getAssignedTruck();
+        // clear all cargos in this order!
+        Collection<Cargo> currentCargosInOrder = updated.getCargosInOrder();
+        for(Cargo c: currentCargosInOrder){
+            cargoRepository.update(c.getId(),c.getPersonalNumber(),c.getName(),c.getWeight(),CargoStatus.PREPARED,c.getRoute(), null);
+        }
+        // update chosen cargos as assigned to updated order
+        Collection<Cargo> newCargosInOrder = getChosenCargos(orderDTO);
+        for(Cargo c: newCargosInOrder){
+            cargoRepository.update(c.getId(),c.getPersonalNumber(),c.getName(),c.getWeight(),c.getStatus(),c.getRoute(), updated);
+        }
+        orderRepository.update(updated.getId(),newPersonalNumber, newDescription, updated.getDate(),newOrderStatus,newAssignedTruck);
+        return true;
     }
 
     public OrderStatus getOrderStatusFromString(String status) {
@@ -248,6 +308,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private List<City> getNormalizedOrderRoute(Collection<City> citiesInOrderRoute){
+        if (citiesInOrderRoute == null || citiesInOrderRoute.size() == 0) return null;
         double[][] distances = makeDistancesMatrixForOrderRoute(citiesInOrderRoute);
         List<City> result = new ArrayList<City>();
         int size = citiesInOrderRoute.size();

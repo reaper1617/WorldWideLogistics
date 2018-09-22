@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Assign truck to order page</title>
+  <title>Reassign truck to order page</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
@@ -42,9 +42,18 @@
 		      			<img src="img_avatar1.png" class="media-object" style="width:100px">
 				</div>
 				<div>
-					<form action="/assigntrucktoorderpage", method="post">
+					<form action="/reassigntrucktoorderpage", method="post">
 						<div class="form-group">
-							<input type="text" hidden class="form-control" id="item_descr"  name="id" style="width:350px" value="${updatedOrderId}">
+							<input type="text" hidden class="form-control" id="item_id"  name="id" style="width:350px" value="${updatedOrderDTO.id}">
+						</div>
+						<div class="form-group">
+							<input type="text" hidden class="form-control" id="item_pNumber"  name="personalNumber" style="width:350px" value="${updatedOrderDTO.personalNumber}">
+						</div>
+						<div class="form-group">
+							<input type="text" hidden class="form-control" id="item_descr"  name="description" style="width:350px" value="${updatedOrderDTO.description}">
+						</div>
+						<div class="form-group">
+							<input type="text" hidden class="form-control" id="item_status"  name="status" style="width:350px" value="${updatedOrderDTO.status}">
 						</div>
 						<div class="form-group">
 							<select hidden multiple class="form-control" id="add_cargos"  name="cargosInOrder">
@@ -86,7 +95,7 @@
       							<%--</select>--%>
 						<%--</div>--%>
 						<div>
-							<button type="submit" class="btn btn-primary">Create order with chosen truck</button>
+							<button type="submit" class="btn btn-primary">Update order with chosen truck</button>
 							<button type="reset" class="btn btn-primary">Rollback changes</button>
 						</div>
 					</form>

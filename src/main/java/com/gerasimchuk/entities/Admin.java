@@ -33,18 +33,5 @@ public class Admin {
         this.user = user;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Admin)) return false;
 
-        Admin admin = (Admin) o;
-
-        return id == admin.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return id;
-    }
 }
