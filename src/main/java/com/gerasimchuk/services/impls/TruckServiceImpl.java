@@ -5,6 +5,7 @@ import com.gerasimchuk.entities.City;
 import com.gerasimchuk.entities.Driver;
 import com.gerasimchuk.entities.Order;
 import com.gerasimchuk.entities.Truck;
+import com.gerasimchuk.enums.OrderStatus;
 import com.gerasimchuk.enums.TruckState;
 import com.gerasimchuk.repositories.*;
 import com.gerasimchuk.services.interfaces.TruckService;
@@ -13,6 +14,7 @@ import com.gerasimchuk.validators.DTOValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -105,6 +107,45 @@ public class TruckServiceImpl implements TruckService {
         return updateTruckWithFieldsFromDTO(updated,truckDTO);
     }
 
+    public boolean deleteTruck(int id) {
+        if (id <= 0) return false;
+        Truck deleted = truckRepository.getById(id);
+        if (deleted == null) return false;
+        Order order = deleted.getAssignedOrder();
+        if (order != null) {
+            if (order.getStatus().equals(OrderStatus.EXECUTING)
+                    || order.getStatus().equals(OrderStatus.EXECUTED)) return false;
+            orderRepository.update(order.getId(),
+                    order.getPersonalNumber(),
+                    order.getDescription(),
+                    order.getDate(),
+                    order.getStatus(),
+                    null);
+        }
+        Collection<Driver> drivers = deleted.getDriversInTruck();
+        if (drivers != null){
+            for(Driver d: drivers){
+                driverRepository.update(d.getId(),d.getHoursWorked(),d.getStatus(),d.getCurrentCity(),null);
+            }
+        }
+        truckRepository.remove(id);
+        return true;
+    }
+
+
+    public Collection<Truck> getFreeTrucks() {
+        Collection<Truck> trucks = truckRepository.getAll();
+        Collection<Truck> freeTrucks = new ArrayList<Truck>();
+        for(Truck t: trucks){
+            if (t.getState().equals(TruckState.READY)
+                    && t.getAssignedOrder() == null
+                    && t.getDriversInTruck().size() < t.getNumOfDrivers()){
+                freeTrucks.add(t);
+            }
+        }
+        return freeTrucks;
+    }
+
     // utils
 
     TruckState getTruckStateFromTruckDTO(TruckDTO truckDTO){
@@ -147,30 +188,36 @@ public class TruckServiceImpl implements TruckService {
         else newState = updated.getState();
         if (truckDTO.getCurrentCity()!=null && truckDTO.getCurrentCity().length()!=0 && !truckDTO.getCurrentCity().equals("Not selected") && !truckDTO.getCurrentCity().equals("No cities available")) newCurrentCity = cityRepository.getByName(truckDTO.getCurrentCity());
         else newCurrentCity = updated.getCurrentCity();
-        if (truckDTO.getAssignedDrivers()!=null && !truckDTO.getAssignedDrivers()[0].equals("Not selected") && !truckDTO.getAssignedDrivers()[0].equals("No drivers available")){
+        if (truckDTO.getAssignedDrivers()!=null
+                && !truckDTO.getAssignedDrivers()[0].equals("Do nothing")
+                && !truckDTO.getAssignedDrivers()[0].equals("No drivers available")){
             if (newNumberOfDrivers < truckDTO.getAssignedDrivers().length) return false;
+
             String[] drivers = truckDTO.getAssignedDrivers();
             //  delete this truck from all drivers
             Collection<Driver> oldAssignedDrivers = updated.getDriversInTruck();
             for(Driver d: oldAssignedDrivers){
                 driverRepository.update(d.getId(),d.getHoursWorked(),d.getStatus(),d.getCurrentCity(),null);
             }
-            for(int i = 0; i < drivers.length; i++){
-                if (!drivers[i].equals("Not selected") && !drivers[i].equals("No drivers available")){
-                    int id = 0;
-                    try{
-                        id = Integer.parseInt(drivers[i]);
+            if (!truckDTO.getAssignedDrivers()[0].equals("Unassign current drivers")) {
+                for (int i = 0; i < drivers.length; i++) {
+                    if (!drivers[i].equals("Do nothing")
+                            && !drivers[i].equals("No drivers available")
+                            && !drivers[i].equals("Unassign current drivers")) {
+                        int id = 0;
+                        try {
+                            id = Integer.parseInt(drivers[i]);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            return false;
+                        }
+                        Driver driver = userRepository.getById(id).getDriver();
+                        driverRepository.update(driver.getId(), driver.getHoursWorked(), driver.getStatus(), driver.getCurrentCity(), updated);
                     }
-                    catch (Exception e){
-                        e.printStackTrace();
-                        return false;
-                    }
-                    Driver driver = userRepository.getById(id).getDriver();
-                    driverRepository.update(driver.getId(),driver.getHoursWorked(), driver.getStatus(), driver.getCurrentCity(),updated);
                 }
             }
         }
-        else{
+        else {
             if (newNumberOfDrivers < updated.getDriversInTruck().size()) return false;
         }
         truckRepository.update(updated.getId(), newRegistrationNumber,newNumberOfDrivers, newCapacity, newState, newCurrentCity);

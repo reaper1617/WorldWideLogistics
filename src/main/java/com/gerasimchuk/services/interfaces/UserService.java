@@ -3,10 +3,12 @@ package com.gerasimchuk.services.interfaces;
 import com.gerasimchuk.dto.AdminDTO;
 import com.gerasimchuk.dto.DriverDTO;
 import com.gerasimchuk.dto.ManagerDTO;
+import com.gerasimchuk.dto.UserDTO;
 import com.gerasimchuk.entities.Admin;
 import com.gerasimchuk.entities.Driver;
 import com.gerasimchuk.entities.Manager;
 import com.gerasimchuk.entities.User;
+import com.gerasimchuk.enums.UserRole;
 
 import java.util.Collection;
 
@@ -34,6 +36,12 @@ public interface UserService {
     Collection<User> getAllDrivers();
 
     Collection<User> getFreeDrivers();
+
+    Collection<UserRole> getRoles();
+
+    boolean createUser(UserDTO userDTO);
+    boolean updateUser(UserDTO userDTO);
+    boolean deleteUser(int id);
 //    Collection<Manager> getAllManagers();
 //    Collection<Admin> getAllAdmins();
 

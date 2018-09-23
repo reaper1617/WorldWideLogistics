@@ -21,10 +21,11 @@ public interface OrderService {
     Collection<Cargo> getChosenCargos(OrderDTO orderDTO);
     Collection<Truck> getAvailableTrucks(OrderDTO orderDTO);
     Collection<City> getOrderRoute(OrderDTO orderDTO);
-    Map<Order, Collection<City>> getRoutes(Collection<Order> orders);
+//    Map<Order, Collection<City>> getRoutes(Collection<Order> orders);
 //    Collection<Truck> getAvailableTrucks(List<Cargo> cargosInOrder);
     boolean createOrder(OrderDTO orderDTO);
     boolean updateOrder(OrderDTO orderDTO);
     OrderStatus getOrderStatusFromString(String status);
     boolean areAllCargosDelivered(Order order);
+    boolean deleteOrder(OrderDTO orderDTO);
 }

@@ -73,8 +73,12 @@ public class CargoServiceImpl implements CargoService {
     }
 
     public boolean deleteCargo(int cargoId) {
-        // TODO: implement logics!
-        return false;
+        if (cargoId <= 0) return false;
+        Cargo deleted = cargoRepository.getById(cargoId);
+        if (deleted == null) return false;
+        if (!deleted.getStatus().equals(CargoStatus.PREPARED)) return false;
+        cargoRepository.remove(cargoId);
+        return true;
     }
 
     public Collection<Cargo> getAvailableCargos() {
@@ -122,13 +126,24 @@ public class CargoServiceImpl implements CargoService {
         else name = updated.getName();
         if (cargoDTO.getWeight()!=null && cargoDTO.getWeight().length()!=0) weight = Double.parseDouble(cargoDTO.getWeight());
         else weight = updated.getWeight();
-        if (cargoDTO.getCityFrom()!=null && cargoDTO.getCityFrom().length()!=0) cityFrom = cityRepository.getByName(cargoDTO.getCityFrom());
+        if (cargoDTO.getCityFrom()!=null
+                && cargoDTO.getCityFrom().length()!=0
+                && !cargoDTO.getCityFrom().equals("No cities available")) cityFrom = cityRepository.getByName(cargoDTO.getCityFrom());
         else cityFrom = updated.getRoute().getCityFrom();
-        if (cargoDTO.getCityTo()!=null && cargoDTO.getCityTo().length()!=0) cityTo = cityRepository.getByName(cargoDTO.getCityTo());
+        if (cargoDTO.getCityTo()!=null
+                && cargoDTO.getCityTo().length()!=0
+                && !cargoDTO.getCityTo().equals("No cities available")) cityTo = cityRepository.getByName(cargoDTO.getCityTo());
         else cityTo = updated.getRoute().getCityTo();
         if (cargoDTO.getStatus()!=null && cargoDTO.getStatus().length()!=0 && !cargoDTO.getStatus().equals("Not selected")) status = getCargoStatusFromCargoDTO(cargoDTO);
         else status = updated.getStatus();
-        if (cargoDTO.getCityFrom()!=null && cargoDTO.getCityFrom().length()!=0 && !cargoDTO.getCityFrom().equals("Not selected") && cargoDTO.getCityTo()!=null && cargoDTO.getCityTo().length()!=0 && !cargoDTO.getCityTo().equals("Not selected")) {
+        if (cargoDTO.getCityFrom()!=null
+                && cargoDTO.getCityFrom().length()!=0
+                && !cargoDTO.getCityFrom().equals("Not selected")
+                && !cargoDTO.getCityFrom().equals("No cities available")
+                && cargoDTO.getCityTo()!=null
+                && cargoDTO.getCityTo().length()!=0
+                && !cargoDTO.getCityTo().equals("Not selected")
+                && !cargoDTO.getCityTo().equals("No cities available")) {
             cityFrom = cityRepository.getByName(cargoDTO.getCityFrom());
             cityTo = cityRepository.getByName(cargoDTO.getCityTo());
             route = routeRepository.getByCities(cityFrom, cityTo);

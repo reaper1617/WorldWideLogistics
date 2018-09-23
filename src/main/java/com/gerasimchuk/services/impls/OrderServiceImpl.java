@@ -276,6 +276,28 @@ public class OrderServiceImpl implements OrderService {
         return true;
     }
 
+    public boolean deleteOrder(OrderDTO orderDTO) {
+        if (!dtoValidator.validate(orderDTO)) return false;
+        if (orderDTO.getId() == null || orderDTO.getId().length()==0) return false;
+        int id = 0;
+        try{
+            id = Integer.parseInt(orderDTO.getId());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        if (id == 0) return false;
+        Order deleted = orderRepository.getById(id);
+        if (deleted == null) return false;
+        Collection<Cargo> cargosInOrder = deleted.getCargosInOrder();
+        for(Cargo c: cargosInOrder){
+            cargoRepository.update(c.getId(),c.getPersonalNumber(),c.getName(),c.getWeight(),c.getStatus(),c.getRoute(), null);
+        }
+        orderRepository.remove(deleted.getId());
+        return true;
+    }
+
 
     public Map<Order, Collection<City>> getRoutes(Collection<Order> orders){
         if (orders == null) return null;

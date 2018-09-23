@@ -116,19 +116,6 @@
 												<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show assigned drivers
 													<span class="caret"></span></button>
 													<ul class="dropdown-menu">
-														<%--<c:if test="${order.assignedTruck != null}">--%>
-															<%--<c:if test="${not empty order.assignedTruck}">--%>
-                                                                <%--<c:forEach items="${order.assignedTruck.driversInTruck}" var="driverInTruck">--%>
-                                                                    <%--<li><a href="#">${driverInTruck.user.name} ${driverInTruck.user.middleName} ${driverInTruck.user.lastName}</a></li>--%>
-                                                                <%--</c:forEach>--%>
-															<%--</c:if>--%>
-															<%--<c:if test="${empty order.assignedTruck}">--%>
-																<%--<li><a href="#">No assigned drivers</a></li>--%>
-															<%--</c:if>--%>
-														<%--</c:if>--%>
-                                                        <%--<c:if test="${order.assignedTruck == null}">--%>
-                                                            <%--<li><a href="#">No assigned drivers</a></li>--%>
-                                                        <%--</c:if>--%>
                                                         <c:if test="${order.assignedTruck != null}">
                                                             <c:if test="${order.assignedTruck.driversInTruck != null}">
                                                                 <c:forEach items="${order.assignedTruck.driversInTruck}" var="driverInTruck">
@@ -198,15 +185,15 @@
 							<c:forEach items="${trucksList}" var="cell">
 								<tr>
 									<td>
-										<form action="#" method="post" >
+										<form action="/adminmainpage/3" method="post" >
 											<button type="submit" class="btn btn-primary">Edit</button>
-												<%--<input type="text" hidden name="id" value="${cell.id}">--%>
+												<input type="text" hidden name="id" value="${cell.id}">
 										</form>
 									</td>
 									<td>
-										<form action="#" method="post" >
+										<form action="/adminmainpage/4" method="post" >
 											<button type="submit" class="btn btn-danger">Delete</button>
-												<%--<input type="text" hidden name="id" value="${cell.id}">--%>
+												<input type="text" hidden name="id" value="${cell.id}">
 										</form>
 									</td>
 								<td>${cell.registrationNumber}</td>
@@ -246,7 +233,7 @@
   			</div>
   			<div id="manageusers" class="tab-pane fade">
     				<div class = "sticky-top">
-						<form action="#" method="get">
+						<form action="/addnewuserpage" method="get">
 							<h3>Users <button class = "btn btn-primary" type = "submit">Add new</button></h3>
 						</form>
 				<div><input class="form-control" id="myInput3" type="text" placeholder="Search.."></div>
@@ -269,15 +256,15 @@
                             <c:forEach items="${usersList}" var="user">
                                 <tr>
                                     <td>
-                                        <form action="#" method="post" >
+                                        <form action="/adminmainpage/5" method="post" >
                                             <button type="submit" class="btn btn-primary">Edit</button>
-                                            <%--<input type="text" hidden name="id" value="${cell.id}">--%>
+                                            <input type="text" hidden name="id" value="${user.id}">
                                         </form>
                                     </td>
 									<td>
-										<form action="#" method="post" >
+										<form action="/adminmainpage/6" method="post" >
 											<button type="submit" class="btn btn-danger">Delete</button>
-												<%--<input type="text" hidden name="id" value="${cell.id}">--%>
+                                            <input type="text" hidden name="id" value="${user.id}">
 										</form>
 									</td>
                                     <td>${user.name}</td>
@@ -327,15 +314,15 @@
 							<c:forEach items="${cargoList}" var="cell">
 								<tr>
 									<td>
-										<form action="#" method="post" >
+										<form action="/adminmainpage/7" method="post" >
 											<button type="submit" class="btn btn-primary">Edit</button>
-												<%--<input type="text" hidden name="id" value="${cell.id}">--%>
+												<input type="text" hidden name="id" value="${cell.id}">
 										</form>
 									</td>
 									<td>
-										<form action="#" method="post" >
+										<form action="/adminmainpage/8" method="post" >
 											<button type="submit" class="btn btn-danger">Delete</button>
-												<%--<input type="text" hidden name="id" value="${cell.id}">--%>
+                                            <input type="text" hidden name="id" value="${cell.id}">
 										</form>
 									</td>
 									<td>${cell.personalNumber}</td>
@@ -353,7 +340,7 @@
   			</div>
 			 <div id="managecities" class="tab-pane fade">
 				 <div class = "sticky-top">
-					 <form action="#" method="get">
+					 <form action="/addnewcitypage" method="get">
 						 <h3>Cities <button class = "btn btn-primary" type = "submit">Add new</button></h3>
 					 </form>
 					 <div><input class="form-control" id="myInput5" type="text" placeholder="Search.."></div>
@@ -374,15 +361,15 @@
 						 <c:forEach items="${citiesList}" var="city">
 						 <tr>
 							 <td>
-								 <form action="#" method="post" >
+								 <form action="/adminmainpage/9" method="post" >
 									 <button type="submit" class="btn btn-primary">Edit</button>
-									 <%--<input type="text" hidden name="id" value="${cell.id}">--%>
+									 <input type="text" hidden name="id" value="${city.id}">
 								 </form>
 							 </td>
 							 <td>
-								 <form action="#" method="post" >
-									 <button type="submit" class="btn btn-danger">Edit</button>
-									 <%--<input type="text" hidden name="id" value="${cell.id}">--%>
+								 <form action="/adminmainpage/10" method="post" >
+									 <button type="submit" class="btn btn-danger">Delete</button>
+									 <input type="text" hidden name="id" value="${city.id}">
 								 </form>
 							 </td>
 							 <td>${city.name}</td>
@@ -471,7 +458,7 @@
 			 </div>
 			 <div id="manageroutes" class="tab-pane fade">
 				 <div class = "sticky-top">
-					 <form action="#" method="get">
+					 <form action="/addnewroutepage" method="get">
 						 <h3>Routes <button class = "btn btn-primary" type = "submit">Add new</button></h3>
 					 </form>
 					 <div><input class="form-control" id="myInput6" type="text" placeholder="Search.."></div>
@@ -492,15 +479,15 @@
 							 <c:forEach items="${routesList}" var="route">
 								<tr>
 									<td>
-										<form action="#" method="post" >
+										<form action="/adminmainpage/11" method="post" >
 											<button type="submit" class="btn btn-primary">Edit</button>
-											<%--<input type="text" hidden name="id" value="${cell.id}">--%>
+											<input type="text" hidden name="id" value="${route.id}">
 										</form>
 									</td>
 									<td>
-										<form action="#" method="post" >
-											<button type="submit" class="btn btn-danger">Edit</button>
-											<%--<input type="text" hidden name="id" value="${cell.id}">--%>
+										<form action="/adminmainpage/12" method="post" >
+											<button type="submit" class="btn btn-danger">Delete</button>
+											<input type="text" hidden name="id" value="${route.id}">
 										</form>
 									</td>
 									<td>${route.cityFrom.name}</td>

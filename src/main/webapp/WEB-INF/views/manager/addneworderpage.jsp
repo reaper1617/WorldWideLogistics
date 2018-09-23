@@ -62,16 +62,6 @@
 								</c:if>
       							</select>
 						</div>
-						<%--<div class="form-group">--%>
-							<%--<label for="assign_truck">Assign truck</label>--%>
-							 <%--<select class="form-control" id="assign_truck">--%>
-        							<%--<option>rr44443</option>--%>
-        							<%--<option>re45453</option>--%>
-        							<%--<option>3</option>--%>
-        							<%--<option>4</option>--%>
-        							<%--<option>5</option>--%>
-      							<%--</select>--%>
-						<%--</div>--%>
 						<div>
 							<button type="submit" class="btn btn-primary">Go to assign truck</button>
 							<button type="reset" class="btn btn-primary">Rollback changes</button>

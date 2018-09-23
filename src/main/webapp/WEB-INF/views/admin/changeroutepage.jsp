@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Assign truck to order page</title>
+  <title>Change route page</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
@@ -28,7 +28,7 @@
 	<div class = "container-fluid fixed-top">
 		<h2>Fixed-top container</h2>
 		<nav class="nav nav-tabs bg-primary bg-light navbar-light fixed-top">
-			<a class="navbar-brand" href="#">Assign truck to order</a>
+			<a class="navbar-brand" href="#">Add new route</a>
 			<!-- Nav tabs -->
 		</nav>
  
@@ -36,60 +36,55 @@
 	<br>
 	<br>
 	<div class = "container-fluid" >
-		 
+		
 			<div class="media" >
 				<div class="media-left">
 		      			<img src="img_avatar1.png" class="media-object" style="width:100px">
 				</div>
 				<div>
-					<form action="/assigntrucktoorderpage", method="post">
-						<div class="form-group">
-							<input type="text" hidden class="form-control" id="item_descr"  name="description" style="width:350px" value="${orderDTO.description}">
+					<form action="/changeroutepage" method="post">
+						<div>
+							<c:if test="${updatedRouteId != null}">
+								<input type="text" hidden name="id" value="${updatedRouteId}">
+							</c:if>
 						</div>
 						<div class="form-group">
-							<select hidden multiple class="form-control" id="add_cargos"  name="cargosInOrder">
-								<c:if test="${chosenCargos != null}">
-									<c:if test="${not empty chosenCargos}">
-										<c:forEach items="${chosenCargos}" var="cargo">
-											<option selected value="${cargo.id}">${cargo.name}</option>
-										</c:forEach>
-									</c:if>
-									<c:if test="${empty chosenCargos}">
-										<option selected>No cargos available</option>
-									</c:if>
+							<label for="city_from">Choose new city from:</label>
+							<select class="form-control" id="city_from"  name="cityFrom">
+								<c:if test="${citiesList != null}">
+									<c:forEach items="${citiesList}" var="city">
+										<option>${city.name}</option>
+									</c:forEach>
+								</c:if>
+								<c:if test="${citiesList == null}">
+									<option>No cities available</option>
 								</c:if>
 							</select>
 						</div>
 						<div class="form-group">
-							<label for="add_truck">Assign truck:</label>
-							 <select  class="form-control" id="add_truck" size="10" required="required" name="assignedTruckId">
-        						<c:if test="${availableTrucks != null}">
-									<c:if test="${not empty availableTrucks}">
-										<c:forEach items="${availableTrucks}" var="truck">
-								 			<option value="${truck.id}">${truck.registrationNumber}</option>
-										</c:forEach>
-									</c:if>
-									<c:if test="${empty availableTrucks}">
-											<option>No trucks available</option>
-									</c:if>
+							<label for="city_to">Choose new city to:</label>
+							<select class="form-control" id="city_to"  name="cityTo">
+								<c:if test="${citiesList != null}">
+									<c:forEach items="${citiesList}" var="city">
+										<option>${city.name}</option>
+									</c:forEach>
 								</c:if>
-      							</select>
+								<c:if test="${citiesList == null}">
+									<option>No cities available</option>
+								</c:if>
+							</select>
 						</div>
-						<%--<div class="form-group">--%>
-							<%--<label for="assign_truck">Assign truck</label>--%>
-							 <%--<select class="form-control" id="assign_truck">--%>
-        							<%--<option>rr44443</option>--%>
-        							<%--<option>re45453</option>--%>
-        							<%--<option>3</option>--%>
-        							<%--<option>4</option>--%>
-        							<%--<option>5</option>--%>
-      							<%--</select>--%>
-						<%--</div>--%>
+						<div class="form-group">
+							<label for="distance">New distance:</label>
+							<input type="text" class="form-control" id="distance" placeholder="Enter new distance" name="distance" style="width:350px" required="required">
+						</div>
 						<div>
-							<button type="submit" class="btn btn-primary">Create order with chosen truck</button>
+							<button type="submit" class="btn btn-primary">Save changes</button>
 							<button type="reset" class="btn btn-primary">Rollback changes</button>
 						</div>
 					</form>
+					<br>
+					<br>
 				</div>
 			
 					
@@ -114,6 +109,17 @@
 	
 </div>
 
+
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
 
 </body>
 </html>
