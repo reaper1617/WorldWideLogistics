@@ -123,6 +123,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/dto/UserDTO.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/entities/Admin.java">
           <value>
             <set />
@@ -194,6 +199,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/enums/TruckState.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/enums/UserRole.java">
           <value>
             <set />
           </value>
@@ -423,6 +433,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/admin/addnewuserpage.jsp">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/admin/adminmainpage.jsp">
           <value>
             <set />
@@ -434,6 +449,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/admin/reassigntrucktoorderpage.jsp">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/admin/userchangepage.jsp">
           <value>
             <set />
           </value>

@@ -233,7 +233,7 @@
   			</div>
   			<div id="manageusers" class="tab-pane fade">
     				<div class = "sticky-top">
-						<form action="#" method="get">
+						<form action="/addnewuserpage" method="get">
 							<h3>Users <button class = "btn btn-primary" type = "submit">Add new</button></h3>
 						</form>
 				<div><input class="form-control" id="myInput3" type="text" placeholder="Search.."></div>
@@ -256,9 +256,9 @@
                             <c:forEach items="${usersList}" var="user">
                                 <tr>
                                     <td>
-                                        <form action="#" method="post" >
+                                        <form action="/adminmainpage/5" method="post" >
                                             <button type="submit" class="btn btn-primary">Edit</button>
-                                            <%--<input type="text" hidden name="id" value="${cell.id}">--%>
+                                            <input type="text" hidden name="id" value="${user.id}">
                                         </form>
                                     </td>
 									<td>

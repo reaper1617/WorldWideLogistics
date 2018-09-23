@@ -3,8 +3,10 @@ package com.gerasimchuk.services.impls;
 import com.gerasimchuk.dto.AdminDTO;
 import com.gerasimchuk.dto.DriverDTO;
 import com.gerasimchuk.dto.ManagerDTO;
+import com.gerasimchuk.dto.UserDTO;
 import com.gerasimchuk.entities.*;
 import com.gerasimchuk.enums.DriverStatus;
+import com.gerasimchuk.enums.UserRole;
 import com.gerasimchuk.repositories.*;
 import com.gerasimchuk.services.interfaces.UserService;
 import com.gerasimchuk.utils.PersonalNumberGenerator;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 /** Implementation for {@link UserService} interface
  * @author Reaper
@@ -185,6 +188,54 @@ public class UserServiceImpl implements UserService {
             }
         }
         return freeDrivers;
+    }
+
+    public Collection<UserRole> getRoles() {
+        Collection<UserRole> userRoles = new HashSet<UserRole>();
+        userRoles.add(UserRole.ADMIN);
+        userRoles.add(UserRole.DRIVER);
+        userRoles.add(UserRole.MANAGER);
+        return userRoles;
+    }
+
+    public boolean createUser(UserDTO userDTO) {
+        if (!dtoValidator.validate(userDTO)) return false;
+        boolean result = false;
+        String role = userDTO.getRole();
+        if (role.equals(UserRole.DRIVER.toString())){
+            DriverDTO driverDTO =
+                    new DriverDTO(userDTO.getId(),
+                    userDTO.getFirstName(),
+                    userDTO.getMiddleName(),
+                    userDTO.getLastName(),
+                    userDTO.getPersonalNumber(),
+                    userDTO.getPassword(),
+                    userDTO.getHoursWorked(),
+                    userDTO.getDriverStatus(),
+                    userDTO.getCurrentCityName(),
+                    userDTO.getCurrentTruckRegistrationNumber(),
+                    userDTO.getOrderId());
+            result = createDriver(driverDTO);
+        }
+        if (role.equals(UserRole.MANAGER.toString())){
+            ManagerDTO managerDTO = new ManagerDTO(userDTO.getId(),
+                    userDTO.getFirstName(),
+                    userDTO.getMiddleName(),
+                    userDTO.getLastName(),
+                    userDTO.getPersonalNumber(),
+                    userDTO.getPassword());
+            result = createManager(managerDTO);
+        }
+        if (role.equals(UserRole.ADMIN.toString())){
+            AdminDTO adminDTO = new AdminDTO(userDTO.getId(),
+                    userDTO.getFirstName(),
+                    userDTO.getMiddleName(),
+                    userDTO.getLastName(),
+                    userDTO.getPassword(),
+                    userDTO.getPersonalNumber());
+            result = createAdmin(adminDTO);
+        }
+        return result;
     }
 
 

@@ -14,6 +14,7 @@ import com.gerasimchuk.validators.DTOValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -129,6 +130,20 @@ public class TruckServiceImpl implements TruckService {
         }
         truckRepository.remove(id);
         return true;
+    }
+
+
+    public Collection<Truck> getFreeTrucks() {
+        Collection<Truck> trucks = truckRepository.getAll();
+        Collection<Truck> freeTrucks = new ArrayList<Truck>();
+        for(Truck t: trucks){
+            if (t.getState().equals(TruckState.READY)
+                    && t.getAssignedOrder() == null
+                    && t.getDriversInTruck().size() < t.getNumOfDrivers()){
+                freeTrucks.add(t);
+            }
+        }
+        return freeTrucks;
     }
 
     // utils

@@ -82,9 +82,11 @@ public class DriverController {
             Collection<Driver> driversInTruck = loggedUser.getDriver().getCurrentTruck().getDriversInTruck();
             ui.addAttribute("driversInTruck", driversInTruck);
             Order order = loggedUser.getDriver().getCurrentTruck().getAssignedOrder();
-            OrderDTO orderDTO = OrderToDTOConverter.convert(order);
-            OrderWithRoute orderWithRoute = new OrderWithRoute(order, (List<City>) orderService.getOrderRoute(orderDTO));
-            ui.addAttribute("orderWithRoute", orderWithRoute);
+            if (order != null) {
+                OrderDTO orderDTO = OrderToDTOConverter.convert(order);
+                OrderWithRoute orderWithRoute = new OrderWithRoute(order, (List<City>) orderService.getOrderRoute(orderDTO));
+                ui.addAttribute("orderWithRoute", orderWithRoute);
+            }
         }
         // todo: refactor
         List<DriverStatus> driverStatusList = new ArrayList<DriverStatus>();

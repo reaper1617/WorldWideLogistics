@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Add new driver page</title>
+  <title>User change page</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
@@ -28,7 +28,7 @@
 	<div class = "container-fluid fixed-top">
 		<h2>Fixed-top container</h2>
 		<nav class="nav nav-tabs bg-primary bg-light navbar-light fixed-top">
-			<a class="navbar-brand" href="#">Add new driver</a>
+			<a class="navbar-brand" href="#">Add new user</a>
 			<!-- Nav tabs -->
 		</nav>
  
@@ -42,30 +42,37 @@
 		      			<img src="img_avatar1.png" class="media-object" style="width:100px">
 				</div>
 				<div>
-					<form action="/addnewdriverpage" method="post">
+					<form action="/userchangepage" method="post">
+						<div>
+							<c:if test="${updatedUser != null}">
+								<input type="text" hidden name="id" value="${updatedUser.id}">
+							</c:if>
+						</div>
 						<div class="form-group">
 					      		<label for="driver_name">Name:</label>
-      							<input type="text" class="form-control" id="driver_name" placeholder="Enter driver name" name="firstName" style="width:350px" required="required">
+      							<input type="text" class="form-control" id="driver_name" placeholder="Enter new user name" name="firstName" style="width:350px" >
 						</div>
 						<div class="form-group">
 					      		<label for="driver_middle_name">Middle name:</label>
-      							<input type="text" class="form-control" id="driver_middle_name" placeholder="Enter middle name" name="middleName" style="width:350px" required="required">
+      							<input type="text" class="form-control" id="driver_middle_name" placeholder="Enter new middle name" name="middleName" style="width:350px" >
 						</div>
 						<div class="form-group">
 					      		<label for="driver_last_name">Last name:</label>
-      							<input type="text" class="form-control" id="driver_last_name" placeholder="Enter last name" name="lastName" style="width:350px" required="required">
+      							<input type="text" class="form-control" id="driver_last_name" placeholder="Enter new last name" name="lastName" style="width:350px" >
 						</div>
 						<div class="form-group">
 							<label for="driver_password">Password:</label>
-							<input type="password" class="form-control" id="driver_password" placeholder="Enter password" name="password" style="width:350px" required="required">
+							<input type="password" class="form-control" id="driver_password" placeholder="Enter password" name="password" style="width:350px" >
 						</div>
+
+						<%--if its driver--%>
 						<div class="form-group">
 					      		<label for="hours_worked">Hours worked:</label>
-      							<input type="text" class="form-control" id="hours_worked" placeholder="Enter number of hours worked" name="hoursWorked" style="width:350px" required="required">
+      							<input type="text" class="form-control" id="hours_worked" placeholder="Enter number of hours worked" name="hoursWorked" style="width:350px" >
 						</div>
 						<div class="form-group">
 							<label for="driver_current_city">Current city</label>
-							 <select class="form-control" id="driver_current_city" required="required" name="currentCityName">
+							 <select class="form-control" id="driver_current_city"  name="currentCityName">
 								 <c:if test="${citiesList != null}">
 									 <c:forEach items="${citiesList}" var="city">
         								<option>${city.name}</option>
@@ -94,6 +101,8 @@
 							<button type="reset" class="btn btn-primary">Rollback changes</button>
 						</div>
 					</form>
+					<br>
+					<br>
 				</div>
 			
 					
