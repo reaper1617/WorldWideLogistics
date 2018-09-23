@@ -40,6 +40,8 @@ public interface UserService {
     Collection<UserRole> getRoles();
 
     boolean createUser(UserDTO userDTO);
+    boolean updateUser(UserDTO userDTO);
+    boolean deleteUser(int id);
 //    Collection<Manager> getAllManagers();
 //    Collection<Admin> getAllAdmins();
 

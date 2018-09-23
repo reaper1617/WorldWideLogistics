@@ -1,15 +1,13 @@
 package com.gerasimchuk.controllers;
 
 import com.gerasimchuk.converters.OrderToDTOConverter;
+import com.gerasimchuk.dto.CityDTO;
 import com.gerasimchuk.dto.OrderDTO;
 import com.gerasimchuk.dto.UserDTO;
 import com.gerasimchuk.entities.*;
 import com.gerasimchuk.enums.UserRole;
 import com.gerasimchuk.repositories.*;
-import com.gerasimchuk.services.interfaces.CargoService;
-import com.gerasimchuk.services.interfaces.OrderService;
-import com.gerasimchuk.services.interfaces.TruckService;
-import com.gerasimchuk.services.interfaces.UserService;
+import com.gerasimchuk.services.interfaces.*;
 import com.gerasimchuk.utils.OrderWithRoute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -43,9 +42,10 @@ public class AdminController {
     private OrderService orderService;
     private CargoService cargoService;
     private TruckService truckService;
+    private CityService cityService;
 
     @Autowired
-    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService) {
+    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService, CityService cityService) {
         this.orderRepository = orderRepository;
         this.truckRepository = truckRepository;
         this.userRepository = userRepository;
@@ -56,6 +56,7 @@ public class AdminController {
         this.orderService = orderService;
         this.cargoService = cargoService;
         this.truckService = truckService;
+        this.cityService = cityService;
     }
 
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(AdminController.class);
@@ -64,28 +65,6 @@ public class AdminController {
     @RequestMapping(value = "/adminmainpage", method = RequestMethod.GET)
     String adminMainPage(Model ui) {
         log.info("Controller: AdminController, metod = adminMainPage,  action = \"/adminmainpage\", request = GET");
-
-//
-//        Collection<Order> orders = orderRepository.getAll();
-//        List<OrderWithRoute> ordersWithRoutes = new ArrayList<OrderWithRoute>();
-//        for(Order o: orders){
-//            List<City> cities = (List<City>) orderService.getOrderRoute(OrderToDTOConverter.convert(o));
-//            ordersWithRoutes.add(new OrderWithRoute(o, cities));
-//        }
-//        Collection<Truck> trucks = truckRepository.getAll();
-//        Collection<User> usersList = userRepository.getAll();
-//        Collection<City> citiesList = cityRepository.getAll();
-//        Collection<Route> routesList = routeRepository.getAll();
-//
-//        Collection<Cargo> cargos = cargoRepository.getAll();
-//        ui.addAttribute("cargoList", cargos);
-//        ui.addAttribute("usersList", usersList);
-//        ui.addAttribute("ordersList", ordersWithRoutes);
-//        ui.addAttribute("trucksList", trucks);
-//        ui.addAttribute("citiesList", citiesList);
-//        ui.addAttribute("routesList", routesList);
-
-        ////////////////////////
         Collection<Cargo> cargos = cargoRepository.getAll();
         Collection<User> users = userRepository.getAll();
         Collection<Truck> trucks = truckRepository.getAll();
@@ -93,7 +72,6 @@ public class AdminController {
         //Map<Order, Collection<City>> routes = orderService.getRoutes(orders);
         //Collection<City> routePoints = orderService.getO
         Collection<Route> routesList = routeRepository.getAll();
-
         Collection<City> citiesList = cityRepository.getAll();
         List<OrderWithRoute> ordersWithRoutes = new ArrayList<OrderWithRoute>();
         for (Order o : orders) {
@@ -238,7 +216,99 @@ public class AdminController {
                     availableTrucks.add(updated.getDriver().getCurrentTruck());
                 }
             }
+            ui.addAttribute("trucksList", availableTrucks);
             return "/admin/userchangepage";
+        }
+        if (action == 6){
+            // delete user
+            int id = parseId(orderDTO);
+            if (id == 0){
+                log.error("Error: user id value is zero!");
+                ui.addAttribute("actionFailed", "Error: user id value is zero!");
+                return "failure";
+            }
+            boolean result = userService.deleteUser(id);
+            if (result){
+                log.info("User deleted successfully!");
+                ui.addAttribute("actionSuccess","User deleted successfully!");
+                return "success";
+            }
+            else {
+                log.error("Error: deleteUser method in UserService returned false!");
+                ui.addAttribute("actionFailed","Error: deleteUser method in UserService returned false!");
+                return "failure";
+            }
+        }
+        if (action == 7){
+            // change cargo
+            int id = parseId(orderDTO);
+            if (id == 0){
+                log.error("Error: cargo id value is zero!");
+                ui.addAttribute("actionFailed", "Error: cargo id value is zero!");
+                return "failure";
+            }
+            ui.addAttribute("updatedCargoId", id);
+            Collection<City> citiesList = cityRepository.getAll();
+            ui.addAttribute("citiesList", citiesList);
+            return "/manager/cargochangepage";
+        }
+        if (action == 8){
+            // delete cargo
+            int id = parseId(orderDTO);
+            if (id == 0){
+                log.error("Error: cargo id value is zero!");
+                ui.addAttribute("actionFailed", "Error: cargo id value is zero!");
+                return "failure";
+            }
+            boolean result = cargoService.deleteCargo(id);
+            if (result){
+                log.info("Cargo deleted successfully!");
+                ui.addAttribute("actionSuccess", "Cargo deleted successfully!");
+                return "success";
+            }
+            else {
+                log.error("Error: deleteCargo method in CargoService returned false!");
+                ui.addAttribute("actionFailed", "Error: deleteCargo method in CargoService returned false!");
+                return "failure";
+            }
+        }
+        if (action == 9){
+            // edit city
+            int id = parseId(orderDTO);
+            if (id == 0) {
+                log.error("Error: city id value is zero!");
+                ui.addAttribute("actionFailed", "Error: city id value is zero!");
+                return "failure";
+            }
+            ui.addAttribute("changedCityId", id);
+            return "/admin/changecitypage";
+        }
+        if (action == 10){
+            int id = parseId(orderDTO);
+            if (id == 0) {
+                log.error("Error: city id value is zero!");
+                ui.addAttribute("actionFailed", "Error: city id value is zero!");
+                return "failure";
+            }
+            boolean result = false;
+            try {
+                result = cityService.deleteCity(id);
+            }
+            catch (Exception e){
+                log.error("Error: there are some drivers or trucks in this city. They need to be unassigned from city for successful remove.");
+                ui.addAttribute("actionFailed", "Error: there are some drivers or trucks in this city. They need to be unassigned from city for successful remove.");
+                return "failure";
+            }
+            if (result){
+                log.info("City deleted successfully!");
+                ui.addAttribute("actionSuccess", "City deleted successfully!");
+                return "success";
+            }
+            else {
+                log.error("Error: deleteCity method in CityService returned false!");
+                ui.addAttribute("actionFailed", "Error: deleteCity method in CityService returned false!");
+                return "failure";
+            }
         }
         log.error("Error: no such action!");
         ui.addAttribute("actionFailed", "Error no such action!");
@@ -252,6 +322,26 @@ public class AdminController {
         Collection<Truck> availableTrucks = truckService.getFreeTrucks();
         ui.addAttribute("updatedUser", null);
         return "/admin/userchangepage";
+    }
+
+    @RequestMapping(value = "/userchangepage", method = RequestMethod.POST)
+    public String userChangePagePost(UserDTO userDTO, BindingResult bindingResult,Model ui){
+        if (userDTO == null) {
+            log.error("Error: user Data Transfer Object is null!");
+            ui.addAttribute("actionFailed", "Error: user Data Transfer Object is null!");
+            return "failure";
+        }
+        boolean result = userService.updateUser(userDTO);
+        if (result){
+            log.info("User successfully updated!");
+            ui.addAttribute("actionSuccess", "User successfully updated!");
+            return "success";
+        }
+        else {
+            log.error("Error: updateUser method in UserService returned false!");
+            ui.addAttribute("actionFailed","Error: updateUser method in UserService returned false!" );
+            return "failure";
+        }
     }
 
 
@@ -386,4 +476,59 @@ public class AdminController {
             return "failure";
         }
     }
+
+    @RequestMapping(value = "/addnewcitypage", method = RequestMethod.GET)
+    public String addNewCity(){
+        log.info("Controller: AdminController, metod = addNewCityPage,  action = \"/addnewcitypage\", request = GET");
+        return "/admin/addnewcitypage";
+    }
+
+    @RequestMapping(value = "/addnewcitypage", method = RequestMethod.POST)
+    public String addNewCityPost(CityDTO cityDTO, BindingResult bindingResult, Model ui){
+        log.info("Controller: AdminController, metod = addNewCityPage,  action = \"/addnewcitypage\", request = POST");
+        if (cityDTO == null){
+            log.error("Error: city Data Transfer Object is null!");
+            ui.addAttribute("actionFailed", "Error: city Data Transfer Object is null!");
+            return "failure";
+        }
+        boolean result = cityService.createCity(cityDTO);
+        if (result){
+            log.info("City created successfully!");
+            ui.addAttribute("actionSuccess", "City created successfully!");
+            return "success";
+        }
+        else {
+            log.error("Error: createCity method in CityService returned false!");
+            ui.addAttribute("actionFailed", "Error: createCity method in CityService returned false!");
+            return "failure";
+        }
+    }
+
+    @RequestMapping(value = "/changecitypage", method = RequestMethod.GET)
+    public String changeCity(){
+        log.info("Controller: AdminController, metod = changeCityPage,  action = \"/addnewcitypage\", request = GET");
+        return "/admin/changecitypage";
+    }
+
+    @RequestMapping(value = "/changecitypage", method = RequestMethod.POST)
+    public String changeCityPost(CityDTO cityDTO, BindingResult bindingResult, Model ui){
+        log.info("Controller: AdminController, metod = changeCityPage,  action = \"/changecitypage\", request = POST");
+        if (cityDTO == null){
+            log.error("Error: city Data Transfer Object is null!");
+            ui.addAttribute("actionFailed", "Error: city Data Transfer Object is null!");
+            return "failure";
+        }
+        boolean result = cityService.updateCity(cityDTO);
+        if (result){
+            log.info("City updated successfully!");
+            ui.addAttribute("actionSuccess", "City updated successfully!");
+            return "success";
+        }
+        else {
+            log.error("Error: updateCity method in CityService returned false!");
+            ui.addAttribute("actionFailed", "Error: updateCity method in CityService returned false!");
+            return "failure";
+        }
+    }
+
 }

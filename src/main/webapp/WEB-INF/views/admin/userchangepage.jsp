@@ -28,7 +28,7 @@
 	<div class = "container-fluid fixed-top">
 		<h2>Fixed-top container</h2>
 		<nav class="nav nav-tabs bg-primary bg-light navbar-light fixed-top">
-			<a class="navbar-brand" href="#">Add new user</a>
+			<a class="navbar-brand" href="#">Change user</a>
 			<!-- Nav tabs -->
 		</nav>
  

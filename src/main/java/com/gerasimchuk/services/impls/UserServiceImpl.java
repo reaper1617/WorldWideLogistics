@@ -108,7 +108,6 @@ public class UserServiceImpl implements UserService {
 
     public boolean updateDriver(DriverDTO driverDTO) {
         if (!dtoValidator.validate(driverDTO)) return false;
-
         User updated = null;
         if (driverDTO.getId()!=null) {
             if (driverDTO.getId().length() != 0) {
@@ -130,7 +129,7 @@ public class UserServiceImpl implements UserService {
         if (managerDTO.getId()!=null){
             if (managerDTO.getId().length()!=0){
                 if (Integer.parseInt(managerDTO.getId())!=0){
-                    updated = userRepository.getByManagerId(Integer.parseInt(managerDTO.getId()));
+                    updated = userRepository.getById(Integer.parseInt(managerDTO.getId()));
                 }
             }
         }
@@ -159,15 +158,43 @@ public class UserServiceImpl implements UserService {
     }
 
     public boolean deleteDriver(int userId) {
-        return false;
+        if (userId <= 0) return false;
+        User deleted = userRepository.getById(userId);
+        if (deleted == null) return false;
+        if (deleted.getDriver() == null) return false;
+        Driver driver = deleted.getDriver();
+//        if (driver.getCurrentTruck() != null){
+//            driverRepository.update(driver.getId(),
+//                    driver.getHoursWorked(),
+//                    driver.getStatus(),
+//                    driver.getCurrentCity(),
+//                    null);
+//        }
+        userRepository.remove(userId);
+        driverRepository.remove(driver.getId());
+        return true;
     }
 
     public boolean deleteManager(int userId) {
-        return false;
+        if (userId <= 0) return false;
+        User deleted = userRepository.getById(userId);
+        if (deleted == null) return false;
+        if (deleted.getManager() == null) return false;
+        Manager manager = deleted.getManager();
+        userRepository.remove(userId);
+        managerRepository.remove(manager.getId());
+        return true;
     }
 
     public boolean deleteAdmin(int userId) {
-        return false;
+        if (userId <= 0) return false;
+        User deleted = userRepository.getById(userId);
+        if (deleted == null) return false;
+        if (deleted.getAdmin() == null) return false;
+        Admin admin = deleted.getAdmin();
+        userRepository.remove(userId);
+        adminRepository.remove(admin.getId());
+        return true;
     }
 
     public Collection<User> getAllDrivers() {
@@ -234,6 +261,73 @@ public class UserServiceImpl implements UserService {
                     userDTO.getPassword(),
                     userDTO.getPersonalNumber());
             result = createAdmin(adminDTO);
+        }
+        return result;
+    }
+
+    public boolean updateUser(UserDTO userDTO) {
+        if (!dtoValidator.validate(userDTO)) return false;
+        boolean result = false;
+        int id = 0;
+        if (userDTO.getId() != null){
+            try{
+                id = Integer.parseInt(userDTO.getId());
+            }
+            catch (Exception e){
+                e.printStackTrace();
+                return false;
+            }
+        }
+        if (id == 0) return false;
+        User updated = userRepository.getById(id);
+        if (updated.getDriver() != null){
+            DriverDTO driverDTO = new DriverDTO(userDTO.getId(),
+                    userDTO.getFirstName(),
+                    userDTO.getMiddleName(),
+                    userDTO.getLastName(),
+                    userDTO.getPersonalNumber(),
+                    userDTO.getPassword(),
+                    userDTO.getHoursWorked(),
+                    userDTO.getDriverStatus(),
+                    userDTO.getCurrentCityName(),
+                    userDTO.getCurrentTruckRegistrationNumber(),
+                    userDTO.getOrderId());
+            result = updateDriver(driverDTO);
+        }
+        if (updated.getAdmin()!= null){
+            AdminDTO adminDTO = new AdminDTO(userDTO.getId(),
+                    userDTO.getFirstName(),
+                    userDTO.getMiddleName(),
+                    userDTO.getLastName(),
+                    userDTO.getPassword(),
+                    userDTO.getPersonalNumber());
+            result = updateAdmin(adminDTO);
+        }
+        if (updated.getManager() != null){
+            ManagerDTO managerDTO = new ManagerDTO(userDTO.getId(),
+                    userDTO.getFirstName(),
+                    userDTO.getMiddleName(),
+                    userDTO.getLastName(),
+                    userDTO.getPersonalNumber(),
+                    userDTO.getPassword());
+            result = updateManager(managerDTO);
+        }
+        return result;
+    }
+
+    public boolean deleteUser(int id) {
+        if (id <= 0) return false;
+        boolean result = false;
+        User deleted = userRepository.getById(id);
+        if (deleted == null) return false;
+        if (deleted.getManager() != null){
+            result = deleteManager(id);
+        }
+        if (deleted.getAdmin() != null){
+            result = deleteAdmin(id);
+        }
+        if (deleted.getDriver() != null){
+            result = deleteDriver(id);
         }
         return result;
     }

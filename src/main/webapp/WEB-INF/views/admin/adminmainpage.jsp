@@ -262,9 +262,9 @@
                                         </form>
                                     </td>
 									<td>
-										<form action="#" method="post" >
+										<form action="/adminmainpage/6" method="post" >
 											<button type="submit" class="btn btn-danger">Delete</button>
-												<%--<input type="text" hidden name="id" value="${cell.id}">--%>
+                                            <input type="text" hidden name="id" value="${user.id}">
 										</form>
 									</td>
                                     <td>${user.name}</td>
@@ -314,15 +314,15 @@
 							<c:forEach items="${cargoList}" var="cell">
 								<tr>
 									<td>
-										<form action="#" method="post" >
+										<form action="/adminmainpage/7" method="post" >
 											<button type="submit" class="btn btn-primary">Edit</button>
-												<%--<input type="text" hidden name="id" value="${cell.id}">--%>
+												<input type="text" hidden name="id" value="${cell.id}">
 										</form>
 									</td>
 									<td>
-										<form action="#" method="post" >
+										<form action="/adminmainpage/8" method="post" >
 											<button type="submit" class="btn btn-danger">Delete</button>
-												<%--<input type="text" hidden name="id" value="${cell.id}">--%>
+                                            <input type="text" hidden name="id" value="${cell.id}">
 										</form>
 									</td>
 									<td>${cell.personalNumber}</td>
@@ -340,7 +340,7 @@
   			</div>
 			 <div id="managecities" class="tab-pane fade">
 				 <div class = "sticky-top">
-					 <form action="#" method="get">
+					 <form action="/addnewcitypage" method="get">
 						 <h3>Cities <button class = "btn btn-primary" type = "submit">Add new</button></h3>
 					 </form>
 					 <div><input class="form-control" id="myInput5" type="text" placeholder="Search.."></div>
@@ -361,15 +361,15 @@
 						 <c:forEach items="${citiesList}" var="city">
 						 <tr>
 							 <td>
-								 <form action="#" method="post" >
+								 <form action="/adminmainpage/9" method="post" >
 									 <button type="submit" class="btn btn-primary">Edit</button>
-									 <%--<input type="text" hidden name="id" value="${cell.id}">--%>
+									 <input type="text" hidden name="id" value="${city.id}">
 								 </form>
 							 </td>
 							 <td>
-								 <form action="#" method="post" >
-									 <button type="submit" class="btn btn-danger">Edit</button>
-									 <%--<input type="text" hidden name="id" value="${cell.id}">--%>
+								 <form action="/adminmainpage/10" method="post" >
+									 <button type="submit" class="btn btn-danger">Delete</button>
+									 <input type="text" hidden name="id" value="${city.id}">
 								 </form>
 							 </td>
 							 <td>${city.name}</td>
