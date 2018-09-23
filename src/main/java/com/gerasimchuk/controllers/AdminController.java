@@ -3,6 +3,7 @@ package com.gerasimchuk.controllers;
 import com.gerasimchuk.converters.OrderToDTOConverter;
 import com.gerasimchuk.dto.CityDTO;
 import com.gerasimchuk.dto.OrderDTO;
+import com.gerasimchuk.dto.RouteDTO;
 import com.gerasimchuk.dto.UserDTO;
 import com.gerasimchuk.entities.*;
 import com.gerasimchuk.enums.UserRole;
@@ -43,9 +44,10 @@ public class AdminController {
     private CargoService cargoService;
     private TruckService truckService;
     private CityService cityService;
+    private RouteService routeService;
 
     @Autowired
-    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService, CityService cityService) {
+    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService, CityService cityService, RouteService routeService) {
         this.orderRepository = orderRepository;
         this.truckRepository = truckRepository;
         this.userRepository = userRepository;
@@ -57,6 +59,7 @@ public class AdminController {
         this.cargoService = cargoService;
         this.truckService = truckService;
         this.cityService = cityService;
+        this.routeService = routeService;
     }
 
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(AdminController.class);
@@ -295,6 +298,7 @@ public class AdminController {
                 result = cityService.deleteCity(id);
             }
             catch (Exception e){
+                e.printStackTrace();
                 log.error("Error: there are some drivers or trucks in this city. They need to be unassigned from city for successful remove.");
                 ui.addAttribute("actionFailed", "Error: there are some drivers or trucks in this city. They need to be unassigned from city for successful remove.");
                 return "failure";
@@ -310,13 +314,88 @@ public class AdminController {
                 return "failure";
             }
         }
+        if (action == 11){
+            // edit route
+            int id = parseId(orderDTO);
+            if (id == 0) {
+                log.error("Error: route id value is zero!");
+                ui.addAttribute("actionFailed", "Error: route id value is zero!");
+                return "failure";
+            }
+            ui.addAttribute("updatedRouteId", id);
+            Collection<City> cities = cityRepository.getAll();
+            ui.addAttribute("citiesList", cities);
+            return "/admin/changeroutepage";
+
+        }
+        if (action == 12){
+            // delete route
+            int id = parseId(orderDTO);
+            if (id == 0) {
+                log.error("Error: route id value is zero!");
+                ui.addAttribute("actionFailed", "Error: route id value is zero!");
+                return "failure";
+            }
+            boolean result = false;
+            try {
+                result = routeService.deleteRoute(id);
+            }
+            catch (Exception e){
+                e.printStackTrace();
+                log.error("Error: there are some cargos with this route. They need to be unassigned from route for successful remove.");
+                ui.addAttribute("actionFailed", "Error: there are some cargos with this route. They need to be unassigned from route for successful remove.");
+                return "failure";
+            }
+            if (result){
+                log.info("Route deleted successfully!");
+                ui.addAttribute("actionSuccess", "Route deleted successfully!");
+                return "success";
+            }
+            else {
+                log.error("Error: deleteRoute method in RouteService returned false!");
+                ui.addAttribute("actionFailed", "Error: deleteRoute method in RouteService returned false!");
+                return "failure";
+            }
+        }
+
         log.error("Error: no such action!");
         ui.addAttribute("actionFailed", "Error no such action!");
         return "failure";
     }
 
+    @RequestMapping(value = "/changeroutepage", method = RequestMethod.GET)
+    public String changeRoute(Model ui){
+        log.info("Controller: AdminController, metod = changeRoute,  action = \"/changeroutepage\", request = GET");
+        Collection<City> cities = cityRepository.getAll();
+        ui.addAttribute("citiesList", cities);
+        return "/admin/changeroutepage";
+    }
+
+    @RequestMapping(value = "/changeroutepage", method = RequestMethod.POST)
+    public String changeRoutePost(RouteDTO routeDTO, BindingResult bindingResult,Model ui){
+        log.info("Controller: AdminController, metod = changeRoute,  action = \"/changeroutepage\", request = POST");
+        if (routeDTO == null){
+            log.error("Error: route Data Transfer Object is null!");
+            ui.addAttribute("actionFailed", "Error: route Data Transfer Object is null!");
+            return "failure";
+        }
+        boolean result = routeService.updateRoute(routeDTO);
+        if (result){
+            log.info("Route successfully updated!");
+            ui.addAttribute("actionSuccess", "Route successfully updated!");
+            return "success";
+        }
+        else {
+            log.error("Error: updateRoute method in RouteService returned false!");
+            ui.addAttribute("actionFailed","Error:  updateRoute method in RouteService returned false!" );
+            return "failure";
+        }
+    }
+
+
     @RequestMapping(value = "/userchangepage", method = RequestMethod.GET)
     public String userChangePage(Model ui){
+        log.info("Controller: AdminController, metod = userChangePage,  action = \"/userchangepage\", request = GET");
         Collection<City> cities = cityRepository.getAll();
         ui.addAttribute("citiesList", cities);
         Collection<Truck> availableTrucks = truckService.getFreeTrucks();
@@ -326,6 +405,7 @@ public class AdminController {
 
     @RequestMapping(value = "/userchangepage", method = RequestMethod.POST)
     public String userChangePagePost(UserDTO userDTO, BindingResult bindingResult,Model ui){
+        log.info("Controller: AdminController, metod = userChangePagePost,  action = \"/userchangepage\", request = POST");
         if (userDTO == null) {
             log.error("Error: user Data Transfer Object is null!");
             ui.addAttribute("actionFailed", "Error: user Data Transfer Object is null!");
@@ -527,6 +607,35 @@ public class AdminController {
         else {
             log.error("Error: updateCity method in CityService returned false!");
             ui.addAttribute("actionFailed", "Error: updateCity method in CityService returned false!");
+            return "failure";
+        }
+    }
+
+    @RequestMapping(value = "/addnewroutepage", method = RequestMethod.GET)
+    public String addNewRoute(Model ui){
+        log.info("Controller: AdminController, metod = addNewRoute,  action = \"/addnewroutepage\", request = GET");
+        Collection<City> citiesList = cityRepository.getAll();
+        ui.addAttribute("citiesList", citiesList);
+        return "/admin/addnewroutepage";
+    }
+
+    @RequestMapping(value = "/addnewroutepage", method = RequestMethod.POST)
+    public String addNewRoutePost(RouteDTO routeDTO, BindingResult bindingResult, Model ui){
+        log.info("Controller: AdminController, metod = addNewRoute,  action = \"/addnewroutepage\", request = POST");
+        if (routeDTO == null){
+            log.error("Error: route Data Transfer Object is null!");
+            ui.addAttribute("actionFailed", "Error: route Data Transfer Object is null!");
+            return "failure";
+        }
+        boolean result = routeService.createRoute(routeDTO);
+        if (result){
+            log.info("Route created successfully!");
+            ui.addAttribute("actionSuccess", "Route created successfully!");
+            return "success";
+        }
+        else {
+            log.error("Error: createRoute method in RouteService returned false!");
+            ui.addAttribute("actionFailed", "Error: createRoute method in RouteService returned false!");
             return "failure";
         }
     }
