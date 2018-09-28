@@ -40,9 +40,9 @@
 			<h2>Truck ${updatedTruckId} update:</h2>
 		</c:if>
 			<div class="media" >
-				<div class="media-left">
-		      			<img src="img_avatar1.png" class="media-object" style="width:100px">
-				</div>
+				<%--<div class="media-left">--%>
+		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
+				<%--</div>--%>
 				<div>
 					<form action="/truckchangepage" method="post">
 						<div>
@@ -151,13 +151,14 @@
 						</div>
 						<div>
 							<button type="submit" class="btn btn-primary">Save changes</button>
-							<button type="reset" class="btn btn-primary">Rollback changes</button>
+							<button type="submit" class="btn btn-primary" form="rollback">Rollback changes</button>
 							<br>
 							<br>
 							<br>
 							<br>
 						</div>
 					</form>
+					<form action="/index" method="get" id="rollback"></form>
 				</div>
 			
 					
@@ -172,9 +173,9 @@
 			    <li class="nav-item">
 			    	<a class="nav-link active " data-toggle="tab" href="#home">Home</a>
 		    	    </li>
-			    <li class="nav-item">
-			    	<a class="nav-link" data-toggle="tab" href="#about">About</a>
- 			    </li>
+			    <%--<li class="nav-item">--%>
+			    	<%--<a class="nav-link" data-toggle="tab" href="#about">About</a>--%>
+ 			    <%--</li>--%>
 		       </ul>
 
 		</nav>

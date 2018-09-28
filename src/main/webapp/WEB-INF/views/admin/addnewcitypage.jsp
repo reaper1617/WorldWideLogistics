@@ -38,11 +38,11 @@
 	<div class = "container-fluid" >
 		
 			<div class="media" >
-				<div class="media-left">
-		      			<img src="img_avatar1.png" class="media-object" style="width:100px">
-				</div>
+				<%--<div class="media-left">--%>
+		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
+				<%--</div>--%>
 				<div>
-					<form action="/addnewcitypage" method="post">
+					<form action="/addnewcitypage" method="post" id="addNewCityForm">
 						<div class="form-group">
 					      		<label for="city_name">Name:</label>
       							<input type="text" class="form-control" id="city_name" placeholder="Enter city name" name="name" style="width:350px" required="required">
@@ -55,10 +55,11 @@
 							</select>
 						</div>
 						<div>
-							<button type="submit" class="btn btn-primary">Save changes</button>
-							<button type="reset" class="btn btn-primary">Rollback changes</button>
+							<button type="submit" class="btn btn-primary" form="addNewCityForm">Save changes</button>
+							<button type="submit" class="btn btn-primary" form="rollbackChanges">Rollback changes</button>
 						</div>
 					</form>
+					<form action="/index" method="get" id="rollbackChanges"></form>
 					<br>
 					<br>
 				</div>
@@ -75,9 +76,9 @@
 			    <li class="nav-item">
 			    	<a class="nav-link active " data-toggle="tab" href="#home">Home</a>
 		    	    </li>
-			    <li class="nav-item">
-			    	<a class="nav-link" data-toggle="tab" href="#about">About</a>
- 			    </li>
+			    <%--<li class="nav-item">--%>
+			    	<%--<a class="nav-link" data-toggle="tab" href="#about">About</a>--%>
+ 			    <%--</li>--%>
 		       </ul>
 
 		</nav>

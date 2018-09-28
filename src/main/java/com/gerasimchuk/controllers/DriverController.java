@@ -1,5 +1,6 @@
 package com.gerasimchuk.controllers;
 
+import com.gerasimchuk.constants.WWLConstants;
 import com.gerasimchuk.converters.OrderToDTOConverter;
 import com.gerasimchuk.dto.DriverAccountDTO;
 import com.gerasimchuk.dto.OrderDTO;
@@ -7,11 +8,11 @@ import com.gerasimchuk.entities.*;
 import com.gerasimchuk.enums.CargoStatus;
 import com.gerasimchuk.enums.DriverStatus;
 import com.gerasimchuk.enums.OrderStatus;
+import com.gerasimchuk.exceptions.routeexceptions.RouteException;
 import com.gerasimchuk.repositories.*;
 import com.gerasimchuk.services.interfaces.CargoService;
 import com.gerasimchuk.services.interfaces.DriverService;
 import com.gerasimchuk.services.interfaces.OrderService;
-import com.gerasimchuk.services.interfaces.UserService;
 import com.gerasimchuk.utils.OrderWithRoute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 
 /** Driver Controller
@@ -75,7 +77,7 @@ public class DriverController {
         ui.addAttribute("loggedDriver" , loggedUser);
         if (loggedUser.getDriver() == null) {
             log.error("Error: access violation - user is not a driver");
-            ui.addAttribute("Error: access violation - user is not a driver");
+            ui.addAttribute("actionFailed","Error: access violation - user is not a driver");
             return "failure";
         }
         if (loggedUser.getDriver().getCurrentTruck()!=null) {
@@ -84,8 +86,17 @@ public class DriverController {
             Order order = loggedUser.getDriver().getCurrentTruck().getAssignedOrder();
             if (order != null) {
                 OrderDTO orderDTO = OrderToDTOConverter.convert(order);
-                OrderWithRoute orderWithRoute = new OrderWithRoute(order, (List<City>) orderService.getOrderRoute(orderDTO));
-                ui.addAttribute("orderWithRoute", orderWithRoute);
+                try {
+                    List<City> cities =  (List<City>)orderService.getOrderRoute(orderDTO, null);
+                    if (order.getAssignedTruck() != null) cities.add(0, order.getAssignedTruck().getCurrentCity());
+                    OrderWithRoute orderWithRoute = new OrderWithRoute(order, cities);
+                    ui.addAttribute("orderWithRoute", orderWithRoute);
+                }
+                catch (Exception e){
+                    log.error("Error: " + e.getMessage());
+                    ui.addAttribute("Error: " + e.getMessage());
+                    return "failure";
+                }
             }
         }
         // todo: refactor
@@ -114,8 +125,8 @@ public class DriverController {
         return "/driver/drivermainpage";
     }
 
-    @RequestMapping(value = "/drivermainpage", method = RequestMethod.GET)
-    String driverMainPage(Model ui){
+    @RequestMapping(value = "/drivermainpage/{id}", method = RequestMethod.GET)
+    String driverMainPage(@PathVariable("id") int id, Model ui){
         log.info("Controller: DriverController, metod = driverMainPage,  action = \"/drivermainpage\", request = GET");
         String resultUrl = setDriverMainPageAttributes(ui);
         return resultUrl;
@@ -187,8 +198,39 @@ public class DriverController {
                             order.getPersonalNumber(),
                             order.getDescription(),
                             order.getDate(),
-                            orderStatus,
+                            OrderStatus.EXECUTED,
                             order.getAssignedTruck());
+
+                    if(orderStatus.equals(OrderStatus.EXECUTED)){
+                        Truck t = order.getAssignedTruck();
+                        Set<Driver> drivers = t.getDriversInTruck();
+                        ArrayList<City> cities = null;
+                        try {
+                            cities = (ArrayList<City>) orderService.getOrderRoute(OrderToDTOConverter.convert(order), null);
+                        } catch (RouteException e) {
+                            e.printStackTrace();
+                        }
+                        City newCurrentCity = null;
+                        if (cities != null) newCurrentCity  = cities.get(cities.size()-1);
+                        for(Driver d: drivers){
+                            double orderHours = 0;
+                            try {
+                                orderHours = orderService.getExecutingTime(OrderToDTOConverter.convert(order));
+                            } catch (RouteException e) {
+                                e.printStackTrace();
+                                return "failure";
+                            }
+                            double newHoursWorked = d.getHoursWorked() + orderHours;
+                            if (newHoursWorked > WWLConstants.MAX_DRIVER_HOURS_WORKED_IN_MONTH) newHoursWorked -= WWLConstants.MAX_DRIVER_HOURS_WORKED_IN_MONTH;
+                            if (newCurrentCity != null) driverRepository.update(d.getId(),d.getHoursWorked() + orderHours,DriverStatus.RESTING,newCurrentCity,d.getCurrentTruck());
+                            else driverRepository.update(d.getId(),d.getHoursWorked() + orderHours,DriverStatus.RESTING,d.getCurrentCity(),d.getCurrentTruck());
+                        }
+                        orderRepository.update(order.getId(),order.getPersonalNumber(),order.getDescription(),order.getDate(),OrderStatus.EXECUTED,null);
+
+                        if (newCurrentCity != null){
+                            truckRepository.update(t.getId(),t.getRegistrationNumber(),t.getNumOfDrivers(),t.getCapacity(),t.getState(), newCurrentCity);
+                        }
+                    }
                     ui.addAttribute("orderStatusUpdatedSuccessfully", "Updated successfully!");
                     return setDriverMainPageAttributes(ui);
                 }

@@ -1,5 +1,11 @@
 package com.gerasimchuk.dto;
 
+
+/** Route Data Transfer Object
+ * @author Reaper
+ * @version 1.0
+ */
+
 public class RouteDTO {
     private String id;
     private String cityFrom;

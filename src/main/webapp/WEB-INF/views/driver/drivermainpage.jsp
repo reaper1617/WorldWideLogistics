@@ -29,15 +29,14 @@
 	<div class = "container-fluid">
 		<h2>Fixed-top container</h2>
  		<nav class="nav nav-tabs bg-primary bg-light navbar-light fixed-top">
-			<a class="navbar-brand" href="#">Driver account</a>
+			<a class="navbar-brand" href="/drivermainpage/0">Driver account</a>
 			<!-- Nav tabs -->
 			<ul class="nav nav-tabs bg-primary bg-light navbar-light" role="tablist">
-			    <li class="nav-item">
-			    	<a class="nav-link active" data-toggle="tab" href="#home">Home</a>
-		    	    </li>
+                <form action="/logout" method="get">
     			    <li class="nav-item">
-      		      	    	<button type="button" class="btn btn-primary">Log out</button>
+      		      	    	<button type="submit" class="btn btn-primary">Log out</button>
     			    </li>
+                </form>
 		       </ul>
 
 		</nav>
@@ -89,7 +88,12 @@
 								</div>
 							</td>
 							<td>${loggedDriver.driver.currentTruck.registrationNumber}</td>
-							<td>${loggedDriver.driver.currentTruck.assignedOrder.description}</td>
+							<c:if test="${loggedDriver.driver.currentTruck.assignedOrder != null}">
+								<td>${loggedDriver.driver.currentTruck.assignedOrder.description}</td>
+							</c:if>
+							<c:if test="${loggedDriver.driver.currentTruck.assignedOrder == null}">
+								<td>No assigned order</td>
+							</c:if>
 							<td>
 								<div class="dropdown">
 									<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show route
@@ -267,9 +271,9 @@
 			    <li class="nav-item">
 			    	<a class="nav-link active " data-toggle="tab" href="#home">Home</a>
 		    	    </li>
-			    <li class="nav-item">
-			    	<a class="nav-link" data-toggle="tab" href="#about">About</a>
- 			    </li>
+			    <%--<li class="nav-item">--%>
+			    	<%--<a class="nav-link" data-toggle="tab" href="#about">About</a>--%>
+ 			    <%--</li>--%>
 		       </ul>
 
 		</nav>

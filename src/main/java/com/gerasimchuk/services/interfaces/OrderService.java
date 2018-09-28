@@ -6,10 +6,10 @@ import com.gerasimchuk.entities.City;
 import com.gerasimchuk.entities.Order;
 import com.gerasimchuk.entities.Truck;
 import com.gerasimchuk.enums.OrderStatus;
+import com.gerasimchuk.exceptions.driverexceptions.TooManyHoursWorkedForOrderException;
+import com.gerasimchuk.exceptions.routeexceptions.RouteException;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 /** Order Service
  * @author Reaper
@@ -19,13 +19,14 @@ import java.util.Map;
 public interface OrderService {
 
     Collection<Cargo> getChosenCargos(OrderDTO orderDTO);
-    Collection<Truck> getAvailableTrucks(OrderDTO orderDTO);
-    Collection<City> getOrderRoute(OrderDTO orderDTO);
+    Collection<Truck> getAvailableTrucks(OrderDTO orderDTO) throws RouteException;
+    Collection<City> getOrderRoute(OrderDTO orderDTO, Truck truck) throws RouteException;
 //    Map<Order, Collection<City>> getRoutes(Collection<Order> orders);
 //    Collection<Truck> getAvailableTrucks(List<Cargo> cargosInOrder);
-    boolean createOrder(OrderDTO orderDTO);
-    boolean updateOrder(OrderDTO orderDTO);
+    boolean createOrder(OrderDTO orderDTO) throws RouteException;
+    boolean updateOrder(OrderDTO orderDTO) throws RouteException, TooManyHoursWorkedForOrderException;
     OrderStatus getOrderStatusFromString(String status);
     boolean areAllCargosDelivered(Order order);
     boolean deleteOrder(OrderDTO orderDTO);
+    double getExecutingTime(OrderDTO orderDTO) throws RouteException;
 }

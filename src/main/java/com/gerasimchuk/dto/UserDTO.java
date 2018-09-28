@@ -1,6 +1,6 @@
 package com.gerasimchuk.dto;
 
-/** Cargo Data Transfer Object
+/** User Data Transfer Object
  * @author Reaper
  * @version 1.0
  */

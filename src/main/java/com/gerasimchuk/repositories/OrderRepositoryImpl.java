@@ -10,11 +10,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 
+/** Implementation of {@link OrderRepository} interface
+ * @author Reaper
+ * @version 1.0
+ */
+
 @Repository
 @Transactional
 public class OrderRepositoryImpl implements OrderRepository {
 
     private SessionFactory sessionFactory;
+    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(OrderRepositoryImpl.class);
 
     @Autowired
     public OrderRepositoryImpl(SessionFactory sessionFactory) {
@@ -23,13 +29,16 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Transactional
     public Order create(String personalNumber, String description, String date, OrderStatus status, Truck assignedTruck) {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: create");
         Order order = new Order(personalNumber, description, date, status, assignedTruck);
         sessionFactory.getCurrentSession().persist(order);
+        LOGGER.info("Persisted order: " + order.getDescription());
         return order;
     }
 
     @Transactional
     public Order update(int id, String personalNumber, String description, String date, OrderStatus status, Truck assignedTruck) {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: update");
         Order updated = sessionFactory.getCurrentSession().get(Order.class,id);
         updated.setPersonalNumber(personalNumber);
         updated.setDescription(description);
@@ -37,22 +46,31 @@ public class OrderRepositoryImpl implements OrderRepository {
         updated.setStatus(status);
         updated.setAssignedTruck(assignedTruck);
         sessionFactory.getCurrentSession().update(updated);
+        LOGGER.info("Updated order: " + updated.getDescription());
         return updated;
     }
 
     @Transactional
     public Order getById(int id) {
-        return sessionFactory.getCurrentSession().get(Order.class, id);
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getById");
+        Order res = sessionFactory.getCurrentSession().get(Order.class, id);
+        LOGGER.info("Found order: " + res.getDescription());
+        return res;
     }
 
     @Transactional
     public Collection<Order> getAll() {
-        return sessionFactory.getCurrentSession().createQuery("from Orders", Order.class).getResultList();
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getAll");
+        Collection<Order> res = sessionFactory.getCurrentSession().createQuery("from Orders", Order.class).getResultList();
+        LOGGER.info("Found collection: " + res + ", size = " + res.size());
+        return res;
     }
 
     @Transactional
     public void remove(int id) {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: remove");
         Order removed = sessionFactory.getCurrentSession().get(Order.class, id);
         sessionFactory.getCurrentSession().remove(removed);
+        LOGGER.info("Removed order: " + removed.getDescription());
     }
 }

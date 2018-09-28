@@ -14,11 +14,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashSet;
 import java.util.Set;
 
+/** Implementation for {@link UserDetailsService} interface
+ * @author Reaper
+ * @version 1.0
+ */
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(CustomUserDetailsService.class);
+    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(CustomUserDetailsService.class);
 
     private UserRepository userRepository;
 
@@ -29,19 +33,24 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Transactional
     public UserDetails loadUserByUsername(String personalNumber) throws UsernameNotFoundException {
-        //now just for tests we will get user by id
+        LOGGER.info("Class: " + this.getClass().getName() + " method: loadUserByUsername");
         User user = userRepository.getByPersonalNumber(personalNumber);
+        LOGGER.info("Loaded user: id = " + user.getId());
         String username = user.getPersonalNumber();
         String password = user.getPassword();
+        LOGGER.info("Loaded user personal number = " + user.getPersonalNumber());
+        LOGGER.info("Loaded user password = " + user.getPassword());
         // role???
         String role = null;
         if (user.getDriver()!=null) role="DRIVER";
         if (user.getManager()!=null) role="MANAGER";
         if (user.getAdmin()!=null) role = "ADMIN";
+        LOGGER.info("Loaded user role = " + role);
         GrantedAuthority auth = new SimpleGrantedAuthority(role);
         Set<GrantedAuthority> set = new HashSet<GrantedAuthority>();
         set.add(auth);
         UserDetails details = new org.springframework.security.core.userdetails.User(username,password,set);
+        LOGGER.info("UserDetails object " + details + " successfully created");
         return details;
     }
 }

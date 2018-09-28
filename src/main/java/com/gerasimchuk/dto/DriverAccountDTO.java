@@ -1,5 +1,11 @@
 package com.gerasimchuk.dto;
 
+
+/** Driver Account Data Transfer Object
+ * @author Reaper
+ * @version 1.0
+ */
+
 public class DriverAccountDTO {
     private String driverId; // its user id !!
     private String driverStatus;

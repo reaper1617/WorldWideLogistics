@@ -38,9 +38,9 @@
 	<div class = "container-fluid" >
 		
 			<div class="media" >
-				<div class="media-left">
-		      			<img src="img_avatar1.png" class="media-object" style="width:100px">
-				</div>
+				<%--<div class="media-left">--%>
+		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
+				<%--</div>--%>
 				<div>
 					<form action="/addnewroutepage" method="post">
 						<div class="form-group">
@@ -75,9 +75,10 @@
 						</div>
 						<div>
 							<button type="submit" class="btn btn-primary">Save changes</button>
-							<button type="reset" class="btn btn-primary">Rollback changes</button>
+							<button type="submit" class="btn btn-primary" form="rollback">Rollback changes</button>
 						</div>
 					</form>
+					<form action="/index" method="get" id="rollback"></form>
 					<br>
 					<br>
 				</div>
@@ -94,9 +95,9 @@
 			    <li class="nav-item">
 			    	<a class="nav-link active " data-toggle="tab" href="#home">Home</a>
 		    	    </li>
-			    <li class="nav-item">
-			    	<a class="nav-link" data-toggle="tab" href="#about">About</a>
- 			    </li>
+			    <%--<li class="nav-item">--%>
+			    	<%--<a class="nav-link" data-toggle="tab" href="#about">About</a>--%>
+ 			    <%--</li>--%>
 		       </ul>
 
 		</nav>
