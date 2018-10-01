@@ -13,27 +13,12 @@
             <set />
           </value>
         </entry>
-        <entry key="/fragment.java">
-          <value>
-            <set />
-          </value>
-        </entry>
         <entry key="$APPLICATION_CONFIG_DIR$/consoles/.datagrid/cell">
           <value>
             <set />
           </value>
         </entry>
-        <entry key="$APPLICATION_CONFIG_DIR$/consoles/db/a6f3dcda-6660-4ddf-82c3-9a4e0b45a6ba/console.sql">
-          <value>
-            <set />
-          </value>
-        </entry>
         <entry key="$USER_HOME$/Downloads/Spring Security DataBaseConnection/webapp/WEB-INF/web.xml">
-          <value>
-            <set />
-          </value>
-        </entry>
-        <entry key="$PROJECT_DIR$/../helloHibernateAppRepo-tryToMakeWebAppBranch/src/main/webapp/WEB-INF/web.xml">
           <value>
             <set />
           </value>
@@ -49,6 +34,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/Main.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/config/AppConfig.java">
           <value>
             <set />
           </value>
@@ -228,36 +218,6 @@
             <set />
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/exceptions/NullRouteException.java">
-          <value>
-            <set />
-          </value>
-        </entry>
-        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/exceptions/RouteException.java">
-          <value>
-            <set />
-          </value>
-        </entry>
-        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/exceptions/driverexceptions/DriverException.java">
-          <value>
-            <set />
-          </value>
-        </entry>
-        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/exceptions/driverexceptions/TooManyHoursWorkedForOrderException.java">
-          <value>
-            <set />
-          </value>
-        </entry>
-        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/exceptions/routeexceptions/NullRouteException.java">
-          <value>
-            <set />
-          </value>
-        </entry>
-        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/exceptions/routeexceptions/RouteException.java">
-          <value>
-            <set />
-          </value>
-        </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/repositories/AdminRepository.java">
           <value>
             <set />
@@ -418,11 +378,6 @@
             <set />
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/services/impls/SecurityServiceImpl.java">
-          <value>
-            <set />
-          </value>
-        </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/services/impls/TruckServiceImpl.java">
           <value>
             <set />
@@ -473,11 +428,6 @@
             <set />
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/utils/DateParser.java">
-          <value>
-            <set />
-          </value>
-        </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/utils/OrderWithRoute.java">
           <value>
             <set />
@@ -489,11 +439,6 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/utils/RoutePoint.java">
-          <value>
-            <set />
-          </value>
-        </entry>
-        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/validators/AdminDTOValidator.java">
           <value>
             <set />
           </value>
@@ -564,16 +509,6 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/driver/drivermainpage.jsp">
-          <value>
-            <set />
-          </value>
-        </entry>
-        <entry key="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/errors/error404.jsp">
-          <value>
-            <set />
-          </value>
-        </entry>
-        <entry key="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/errors/uncaughtexception.jsp">
           <value>
             <set />
           </value>
@@ -653,11 +588,6 @@
             <set />
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/success.jsp">
-          <value>
-            <set />
-          </value>
-        </entry>
         <entry key="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml">
           <value>
             <set />
@@ -683,11 +613,6 @@
             <set />
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/src/test/java/com/gerasimchuk/services/impls/CargoServiceImplTest.java">
-          <value>
-            <set />
-          </value>
-        </entry>
         <entry key="$PROJECT_DIR$/src/webapp/WEB-INF/dispatcher-servlet.xml">
           <value>
             <set />
@@ -709,6 +634,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/webapp/web.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../helloHibernateAppRepo-tryToMakeWebAppBranch/src/main/webapp/WEB-INF/web.xml">
           <value>
             <set />
           </value>

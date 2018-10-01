@@ -135,6 +135,13 @@
             <version>5.0.4.RELEASE</version>
             <!-- <scope>test</scope>-->
         </dependency>
+
+
+        <dependency>
+            <groupId>org.springframework.amqp</groupId>
+            <artifactId>spring-rabbit</artifactId>
+            <version>1.4.5.RELEASE</version>
+        </dependency>
     </dependencies>
 
 </project>

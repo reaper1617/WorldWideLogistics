@@ -10,6 +10,7 @@ import com.gerasimchuk.enums.UserRole;
 import com.gerasimchuk.repositories.*;
 import com.gerasimchuk.services.interfaces.*;
 import com.gerasimchuk.utils.OrderWithRoute;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -47,8 +48,10 @@ public class AdminController {
     private CityService cityService;
     private RouteService routeService;
 
+    private AmqpTemplate amqpTemplate;
+
     @Autowired
-    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService, CityService cityService, RouteService routeService) {
+    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService, CityService cityService, RouteService routeService, AmqpTemplate amqpTemplate) {
         this.orderRepository = orderRepository;
         this.truckRepository = truckRepository;
         this.userRepository = userRepository;
@@ -61,6 +64,7 @@ public class AdminController {
         this.truckService = truckService;
         this.cityService = cityService;
         this.routeService = routeService;
+        this.amqpTemplate = amqpTemplate;
     }
 
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(AdminController.class);
@@ -71,6 +75,7 @@ public class AdminController {
         LOGGER.info("Controller: AdminController, metod = adminMainPage,  action = \"/adminmainpage\", request = GET");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String personalNumber = authentication.getName();
+        amqpTemplate.convertAndSend("myQueue", "Authenticated user personal number:" + personalNumber);
         LOGGER.info("Authenticated user personal number:" + personalNumber);
         User loggedUser = userRepository.getByPersonalNumber(personalNumber);
         if (loggedUser == null){
