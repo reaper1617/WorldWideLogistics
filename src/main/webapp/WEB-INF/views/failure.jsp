@@ -44,6 +44,9 @@
 				<c:if test="${actionFailed == null}">
 					<h1>Whatever you did, don't do it again! :( </h1>
 				</c:if>
+				<form action="/index" method="get">
+					<button type="submit" class="btn btn-primary">Go home</button>
+				</form>
 			</div>
 		</div>
 		<div class = "container-fluid fixed-bottom">

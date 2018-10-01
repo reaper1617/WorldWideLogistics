@@ -31,6 +31,7 @@ public class CargoServiceImpl implements CargoService {
     private RouteRepository routeRepository;
     private CityRepository cityRepository;
     private DTOValidator dtoValidator;
+    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(CargoServiceImpl.class);
 
     @Autowired
     public CargoServiceImpl(CargoRepository cargoRepository, RouteRepository routeRepository, CityRepository cityRepository, DTOValidator dtoValidator) {
@@ -41,78 +42,163 @@ public class CargoServiceImpl implements CargoService {
     }
 
     public boolean createCargo(CargoDTO cargoDTO) {
-        if (!dtoValidator.validate(cargoDTO)) return false;
+        LOGGER.info("Class: " + this.getClass().getName() + " method: createCargo");
+        if (!dtoValidator.validate(cargoDTO)) {
+            LOGGER.error("Error: cargoDTO validation failed.");
+            return false;
+        }
         String personalNumber = PersonalNumberGenerator.generate(10);
         double weight = Double.parseDouble(cargoDTO.getWeight());
-        CargoStatus status = getCargoStatusFromCargoDTO(cargoDTO);
+        CargoStatus status = CargoStatus.PREPARED;//getCargoStatusFromCargoDTO(cargoDTO);
         City cityFrom = cityRepository.getByName(cargoDTO.getCityFrom());
         City cityTo = cityRepository.getByName(cargoDTO.getCityTo());
-        if (cityFrom!=null && cityTo!=null && !cityFrom.getName().equals(cityTo.getName())){
-            Route route = routeRepository.getByCities(cityFrom,cityTo);
-            if (route!=null){
-                cargoRepository.create(personalNumber,cargoDTO.getName(),weight,status,route);
-                return true;
-            }
-            else return false;
+        if (cityFrom == null) {
+            LOGGER.error("Error: cityFrom is null.");
+            return false;
         }
-        return false;
+        if (cityTo == null) {
+            LOGGER.error("Error: cityTo is null.");
+            return false;
+        }
+        if (cityFrom.getName().equals(cityTo.getName())){
+            LOGGER.error("Error: cityFrom and cityTo are equal.");
+            return false;
+        }
+        Route route = routeRepository.getByCities(cityFrom,cityTo);
+        if (route!=null){
+            Cargo created = cargoRepository.create(personalNumber,cargoDTO.getName(),weight,status,route);
+            LOGGER.info("Cargo id = " + created.getId() + ", name = " + created.getName() + "successfully created");
+            return true;
+        }
+        else {
+            LOGGER.error("Error: route between cityFrom = " + cityFrom.getName() + " and cityTo = " + cityTo.getName() + " doesn't exist.");
+            return false;
+        }
     }
 
     public boolean updateCargo(CargoDTO cargoDTO) {
-        if (!dtoValidator.validate(cargoDTO)) return false;
-        if (cargoDTO.getId()!=null && cargoDTO.getId().length()!=0){
-            int id = Integer.parseInt(cargoDTO.getId());
-            Cargo updated = cargoRepository.getById(id);
-            if (updated.getOrder()!=null) return false;
-            if (updated!=null){
-                updateCargoWithFieldsFromDTO(updated, cargoDTO);
-                return true;
-            }
+        LOGGER.info("Class: " + this.getClass().getName() + " method: updateCargo");
+        if (!dtoValidator.validate(cargoDTO)) {
+            LOGGER.error("Error: cargoDTO validation failed.");
+            return false;
         }
+        if (cargoDTO.getId()!=null && cargoDTO.getId().length()!=0){
+            int id = 0;
+            try {
+                id = Integer.parseInt(cargoDTO.getId());
+            }
+            catch (Exception e){
+                e.printStackTrace();
+                LOGGER.error("Error: cannot parse id from cargoDTO.");
+                return false;
+            }
+            if (id == 0 ){
+                LOGGER.error("Error: id value is 0");
+                return false;
+            }
+            Cargo updated = cargoRepository.getById(id);
+            if (updated.getOrder()!=null){
+                LOGGER.error("Error: cannot change cargo which is already in order.");
+                return false;
+            }
+            updateCargoWithFieldsFromDTO(updated, cargoDTO);
+            LOGGER.info("Cargo id = " + updated.getId() + ", name = " + updated.getName() + "successfully updated.");
+            return true;
+        }
+        LOGGER.error("Error: cargoId field in cargoDTO is null or empty");
         return false;
     }
 
     public boolean deleteCargo(int cargoId) {
-        if (cargoId <= 0) return false;
+        LOGGER.info("Class: " + this.getClass().getName() + " method: deleteCargo");
+        if (cargoId <= 0) {
+            LOGGER.error("Error: cargoId is not valid.");
+            return false;
+        }
         Cargo deleted = cargoRepository.getById(cargoId);
-        if (deleted == null) return false;
-        if (!deleted.getStatus().equals(CargoStatus.PREPARED)) return false;
+        if (deleted == null) {
+            LOGGER.error("Error: there is no cargo with this id in database.");
+            return false;
+        }
+        if (!deleted.getStatus().equals(CargoStatus.PREPARED)){
+            LOGGER.error("Error: cannot delete cargo which status is already " + deleted.getStatus());
+            return false;
+        }
         cargoRepository.remove(cargoId);
+        LOGGER.info("Cargo id = " + deleted.getId() + ", name = " + deleted.getName() + " deleted successfully");
         return true;
     }
 
     public Collection<Cargo> getAvailableCargos() {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getAvailableCargos");
         Collection<Cargo> cargos = cargoRepository.getAll();
         Collection<Cargo> availableCargos = new ArrayList<Cargo>();
         for (Cargo c: cargos){
-            if (c.getOrder() == null && !c.getStatus().equals(CargoStatus.DELIVERED)) availableCargos.add(c);
+            if (c.getOrder()!=null){
+                LOGGER.info("Cargo " + c.getName() + " is not added into availableCargos list because it's already in order" + c.getOrder().getDescription());
+            }
+            else if (c.getStatus().equals(CargoStatus.SHIPPING) || c.getStatus().equals(CargoStatus.DELIVERED)){
+                LOGGER.info("Cargo " + c.getName() + " is not added into availableCargos list because it has status = " + c.getStatus());
+            }
+            else {
+                availableCargos.add(c);
+                LOGGER.info("Cargo " + c.getName() + " added to availableCargos collection.");
+            }
         }
+        LOGGER.info("availableCargos collection: " + availableCargos + ", size = " + availableCargos.size());
         return availableCargos;
     }
 
     public CargoStatus getCargoStatusFromString(String status) {
-        if (status == null || status.length()==0)  return null;
-        if (status.equals("PREPARED") ) return CargoStatus.PREPARED;
-        if (status.equals("SHIPPING") ) return CargoStatus.SHIPPING;
-        if (status.equals("LOADED") ) return CargoStatus.LOADED;
-        if (status.equals("DELIVERED") ) return CargoStatus.DELIVERED;
-        return null;
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getCargoStatusFromString");
+        if (status == null || status.length()==0) {
+            LOGGER.error("Error: status string is null or empty.");
+            return null;
+        }
+        CargoStatus result = null;
+        if (status.equals("PREPARED") ) result =  CargoStatus.PREPARED;
+        if (status.equals("SHIPPING") ) result =  CargoStatus.SHIPPING;
+        if (status.equals("LOADED") ) result = CargoStatus.LOADED;
+        if (status.equals("DELIVERED") ) result = CargoStatus.DELIVERED;
+        if (result != null){
+            LOGGER.info("Cargo status is " + result);
+        }
+        else {
+            LOGGER.error("Cargo status is null.");
+        }
+        return result;
     }
 
     // ** util methods
 
     private CargoStatus getCargoStatusFromCargoDTO(CargoDTO cargoDTO){
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getCargoStatusFromCargoDTO");
+        CargoStatus result = null;
         if (cargoDTO.getStatus() != null) {
-            if (cargoDTO.getStatus().equals("Delivered")) return CargoStatus.DELIVERED;
-            if (cargoDTO.getStatus().equals("Loaded")) return CargoStatus.LOADED;
-            if (cargoDTO.getStatus().equals("Prepared")) return CargoStatus.PREPARED;
-            if (cargoDTO.getStatus().equals("Shipping")) return CargoStatus.SHIPPING;
+            if (cargoDTO.getStatus().equals("Delivered")) result = CargoStatus.DELIVERED;
+            if (cargoDTO.getStatus().equals("Loaded")) result =  CargoStatus.LOADED;
+            if (cargoDTO.getStatus().equals("Prepared")) result = CargoStatus.PREPARED;
+            if (cargoDTO.getStatus().equals("Shipping")) result = CargoStatus.SHIPPING;
         }
-        return CargoStatus.PREPARED;
+        if (result != null){
+            LOGGER.info("Cargo status is " + result);
+        }
+        else {
+            LOGGER.error("Cargo status is null");
+        }
+        return result;
     }
 
     private void updateCargoWithFieldsFromDTO(Cargo updated, CargoDTO cargoDTO){
-        if (updated == null || cargoDTO == null) return;
+        LOGGER.info("Class: " + this.getClass().getName() + " method: updateCargoWithFieldsFromDTO");
+        if (updated == null){
+            LOGGER.error("Error: cargo parameter is null.");
+            return;
+        }
+
+        if (cargoDTO == null){
+            LOGGER.error("Error: cargoDTO parameter is null.");
+        }
         String personalNumber = null;
         String name= null;
         double weight = 0;
@@ -122,20 +208,26 @@ public class CargoServiceImpl implements CargoService {
         Route route = null;
         if (cargoDTO.getPersonalNumber()!=null && cargoDTO.getPersonalNumber().length()!=0) personalNumber = cargoDTO.getPersonalNumber();
         else personalNumber = updated.getPersonalNumber();
+        LOGGER.info("New personalNumber = " + personalNumber);
         if (cargoDTO.getName()!=null && cargoDTO.getName().length()!=0) name = cargoDTO.getName();
         else name = updated.getName();
+        LOGGER.info("New name = " + name);
         if (cargoDTO.getWeight()!=null && cargoDTO.getWeight().length()!=0) weight = Double.parseDouble(cargoDTO.getWeight());
         else weight = updated.getWeight();
+        LOGGER.info("New weight = " + weight);
         if (cargoDTO.getCityFrom()!=null
                 && cargoDTO.getCityFrom().length()!=0
                 && !cargoDTO.getCityFrom().equals("No cities available")) cityFrom = cityRepository.getByName(cargoDTO.getCityFrom());
         else cityFrom = updated.getRoute().getCityFrom();
+        LOGGER.info("New cityFrom = " + cityFrom.getName());
         if (cargoDTO.getCityTo()!=null
                 && cargoDTO.getCityTo().length()!=0
                 && !cargoDTO.getCityTo().equals("No cities available")) cityTo = cityRepository.getByName(cargoDTO.getCityTo());
         else cityTo = updated.getRoute().getCityTo();
+        LOGGER.info("New cityTo = " + cityTo.getName());
         if (cargoDTO.getStatus()!=null && cargoDTO.getStatus().length()!=0 && !cargoDTO.getStatus().equals("Not selected")) status = getCargoStatusFromCargoDTO(cargoDTO);
         else status = updated.getStatus();
+        LOGGER.info("New status = " + status);
         if (cargoDTO.getCityFrom()!=null
                 && cargoDTO.getCityFrom().length()!=0
                 && !cargoDTO.getCityFrom().equals("Not selected")
@@ -149,6 +241,8 @@ public class CargoServiceImpl implements CargoService {
             route = routeRepository.getByCities(cityFrom, cityTo);
         }
         else route = updated.getRoute();
+        LOGGER.info("New route: cityFrom = " + route.getCityFrom() + ", cityTo = " + route.getCityTo() + ", distance = "+ route.getDistance());
         cargoRepository.update(updated.getId(),personalNumber,name,weight,status,route);
+        LOGGER.info("Cargo fields successfully updated with cargoDTO values.");
     }
 }

@@ -29,7 +29,7 @@
 	<div class = "container-fluid">
 		<h2>Fixed-top container</h2>
  		<nav class="nav nav-tabs bg-primary bg-light navbar-light fixed-top">
-			<a class="navbar-brand" href="#">Admin account</a>
+			<a class="navbar-brand" href="/adminmainpage/0">Admin account</a>
 			<!-- Nav tabs -->
 			<ul class="nav nav-tabs bg-primary bg-light navbar-light" role="tablist">
 				<li class="nav-item">
@@ -50,9 +50,11 @@
 				<li class="nav-item">
 					<a class="nav-link" data-toggle="tab" href="#manageroutes">Manage routes</a>
 				</li>
-				<li class="nav-item">
-      		        	<button type="button" class="btn btn-primary">Log out</button>
-				</li>
+				<form action="/logout" method="get">
+					<li class="nav-item">
+							<button type="submit" class="btn btn-primary">Log out</button>
+					</li>
+				</form>
 		       </ul>
 
 		</nav>
@@ -499,6 +501,8 @@
 						 </tbody>
 					 </table>
 				 </div>
+                 <br>
+                 <br>
 			 </div>
 		</div>
 
@@ -513,9 +517,9 @@
 			    <li class="nav-item">
 			    	<a class="nav-link active " data-toggle="tab" href="#home">Home</a>
 		    	    </li>
-			    <li class="nav-item">
-			    	<a class="nav-link" data-toggle="tab" href="#about">About</a>
- 			    </li>
+			    <%--<li class="nav-item">--%>
+			    	<%--<a class="nav-link" data-toggle="tab" href="#about">About</a>--%>
+ 			    <%--</li>--%>
 		       </ul>
 
 		</nav>
@@ -567,5 +571,26 @@ $(document).ready(function(){
   });
 });
 </script>
+<script>
+    $(document).ready(function(){
+        $("#myInput5").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#myTable5 tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+<script>
+    $(document).ready(function(){
+        $("#myInput6").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#myTable6 tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+
 </body>
 </html>

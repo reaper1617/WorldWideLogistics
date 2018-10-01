@@ -22,7 +22,7 @@ public class SecurityServiceImpl implements SecurityService {
 
     private AuthenticationManager authenticationManager;
     private UserDetailsService userDetailsService;
-    private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(SecurityServiceImpl.class);
+    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(SecurityServiceImpl.class);
 
     @Autowired
     public SecurityServiceImpl(AuthenticationManager authenticationManager, UserDetailsService userDetailsService) {
@@ -31,22 +31,28 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     public String findLoggedInUsername() {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: findLoggedInUsername");
         Object userDetails = SecurityContextHolder.getContext().getAuthentication().getDetails();
+        LOGGER.info("userDetails object is " + userDetails);
         if (userDetails instanceof UserDetails){
-            return ((UserDetails) userDetails).getUsername();
+            String username = ((UserDetails) userDetails).getUsername();
+            LOGGER.info("Found loggedInUsername is " + username);
+            return username;
         }
-
+        LOGGER.error("Error: userDetails object is not instance of UserDetails.");
         return null;
     }
 
     public void autoLogin(String username, String password) {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: autoLogin");
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        LOGGER.info("userDetails object is " + userDetails);
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,password,userDetails.getAuthorities());
         authenticationManager.authenticate(authenticationToken);
         if (authenticationToken.isAuthenticated()){
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            logger.debug(String.format("Successfully logged as %s", username));
+            LOGGER.info("Successfully logged as " + username);
         }
-
+        LOGGER.error("Authentication failed.");
     }
 }

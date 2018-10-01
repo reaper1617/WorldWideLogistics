@@ -10,7 +10,10 @@ import com.gerasimchuk.enums.UserRole;
 import com.gerasimchuk.repositories.*;
 import com.gerasimchuk.services.interfaces.*;
 import com.gerasimchuk.utils.OrderWithRoute;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,7 +21,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -46,8 +48,10 @@ public class AdminController {
     private CityService cityService;
     private RouteService routeService;
 
+    private AmqpTemplate amqpTemplate;
+
     @Autowired
-    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService, CityService cityService, RouteService routeService) {
+    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService, CityService cityService, RouteService routeService, AmqpTemplate amqpTemplate) {
         this.orderRepository = orderRepository;
         this.truckRepository = truckRepository;
         this.userRepository = userRepository;
@@ -60,14 +64,30 @@ public class AdminController {
         this.truckService = truckService;
         this.cityService = cityService;
         this.routeService = routeService;
+        this.amqpTemplate = amqpTemplate;
     }
 
-    private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(AdminController.class);
+    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(AdminController.class);
 
 
-    @RequestMapping(value = "/adminmainpage", method = RequestMethod.GET)
-    String adminMainPage(Model ui) {
-        log.info("Controller: AdminController, metod = adminMainPage,  action = \"/adminmainpage\", request = GET");
+    @RequestMapping(value = "/adminmainpage/{id}", method = RequestMethod.GET)
+    public String adminMainPage(@PathVariable("id") int id, Model ui) {
+        LOGGER.info("Controller: AdminController, metod = adminMainPage,  action = \"/adminmainpage\", request = GET");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String personalNumber = authentication.getName();
+        amqpTemplate.convertAndSend("myQueue", "Authenticated user personal number:" + personalNumber);
+        LOGGER.info("Authenticated user personal number:" + personalNumber);
+        User loggedUser = userRepository.getByPersonalNumber(personalNumber);
+        if (loggedUser == null){
+            LOGGER.error("Error: logged user not found!");
+            ui.addAttribute("actionFailed", "Error: logged user not found!");
+            return "failure";
+        }
+        if (loggedUser.getAdmin() == null) {
+            LOGGER.error("Error: access violation - user is not an admin");
+            ui.addAttribute("actionFailed","Error: access violation - user is not an admin");
+            return "failure";
+        }
         Collection<Cargo> cargos = cargoRepository.getAll();
         Collection<User> users = userRepository.getAll();
         Collection<Truck> trucks = truckRepository.getAll();
@@ -78,8 +98,15 @@ public class AdminController {
         Collection<City> citiesList = cityRepository.getAll();
         List<OrderWithRoute> ordersWithRoutes = new ArrayList<OrderWithRoute>();
         for (Order o : orders) {
-            List<City> cities = (List<City>) orderService.getOrderRoute(OrderToDTOConverter.convert(o));
-            ordersWithRoutes.add(new OrderWithRoute(o, cities));
+            try {
+                List<City> cities = (List<City>) orderService.getOrderRoute(OrderToDTOConverter.convert(o), null);
+                if (o.getAssignedTruck() != null) cities.add(0,o.getAssignedTruck().getCurrentCity());
+                ordersWithRoutes.add(new OrderWithRoute(o, cities));
+            }
+            catch (Exception e){
+                e.printStackTrace();
+                LOGGER.error("Error: cannot create route for order " + o.getDescription());
+            }
         }
         ui.addAttribute("cargoList", cargos);
         ui.addAttribute("usersList", users);
@@ -104,19 +131,20 @@ public class AdminController {
     // todo: replace OrderDTO with IdDTO !
     @RequestMapping(value = "/adminmainpage/{id}", method = RequestMethod.POST)
     public String adminMainPagePost(@PathVariable("id") int action, OrderDTO orderDTO, BindingResult bindingResult, Model ui) {
-        log.info("Controller: AdminController, metod = adminMainPage,  action = \"/adminmainpage\", request = POST");
+        LOGGER.info("Controller: AdminController, metod = adminMainPage,  action = \"/adminmainpage\", request = POST");
         if (orderDTO == null) {
-            log.error("Error: order Data Access object is empty!");
+            LOGGER.error("Error: order Data Access object is empty!");
             ui.addAttribute("actionFailed", "Error: order Data Access object is empty");
             return "failure";
         }
         if (action == 1) {
+            LOGGER.info("Trying to edit order");
             // edit order
             int id = parseId(orderDTO);
             Order updated = null;
             if (id != 0) updated = orderRepository.getById(id);
             else {
-                log.error("Error: order id value is zero!");
+                LOGGER.error("Error: order id value is zero!");
                 ui.addAttribute("actionFailed", "Error: order id value is zero!");
                 return "failure";
             }
@@ -131,7 +159,7 @@ public class AdminController {
                 ui.addAttribute("updatedOrder", updated);
                 return "/admin/orderchangepage";
             }
-            log.error("Error: no such order in database");
+            LOGGER.error("Error: no such order in database");
             ui.addAttribute("actionFailed", "Error: no such order in database");
             return "failure";
         }
@@ -141,18 +169,18 @@ public class AdminController {
             int id = parseId(orderDTO);
             if (id != 0) deleted = orderRepository.getById(id);
             else {
-                log.error("Error: order id value is zero!");
+                LOGGER.error("Error: order id value is zero!");
                 ui.addAttribute("actionFailed", "Error: order id value is zero!");
                 return "failure";
             }
             if (deleted != null) {
                 boolean result = orderService.deleteOrder(orderDTO);
                 if (result) {
-                    log.info("Order deleted successfully!");
+                    LOGGER.info("Order deleted successfully!");
                     ui.addAttribute("actionSuccess", "Order deleted successfully!");
                     return "success";
                 } else {
-                    log.error("Error: deleteOrder method in OrderService returned false.");
+                    LOGGER.error("Error: deleteOrder method in OrderService returned false.");
                     ui.addAttribute("actionFailed", "Error while trying to delete order.");
                     return "failure";
                 }
@@ -163,7 +191,7 @@ public class AdminController {
             // edit truck
             int id = parseId(orderDTO);
             if (id == 0) {
-                log.error("Error: truck id value is zero!");
+                LOGGER.error("Error: truck id value is zero!");
                 ui.addAttribute("actionFailed", "Error: truck id value is zero!");
                 return "failure";
             }
@@ -180,17 +208,17 @@ public class AdminController {
             // delete truck
             int id = parseId(orderDTO);
             if (id == 0) {
-                log.error("Error: truck id value is zero!");
+                LOGGER.error("Error: truck id value is zero!");
                 ui.addAttribute("actionFailed", "Error: truck id value is zero!");
                 return "failure";
             }
             boolean result = truckService.deleteTruck(id);
             if (result) {
-                log.info("Truck deleted successfully!");
+                LOGGER.info("Truck deleted successfully!");
                 ui.addAttribute("actionSuccess", "Truck deleted successfully!");
                 return "success";
             } else {
-                log.error("Error: method deleteTruck in TruckService returned false.");
+                LOGGER.error("Error: method deleteTruck in TruckService returned false.");
                 ui.addAttribute("actionFailed", "Error: method deleteTruck in TruckService returned false.");
                 return "failure";
             }
@@ -199,13 +227,13 @@ public class AdminController {
             // edit user
             int id = parseId(orderDTO);
             if (id == 0){
-                log.error("Error: user id value is zero!");
+                LOGGER.error("Error: user id value is zero!");
                 ui.addAttribute("actionFailed", "Error: user id value is zero!");
                 return "failure";
             }
             User updated = userRepository.getById(id);
             if (updated == null){
-                log.error("Error: no such user in database!");
+                LOGGER.error("Error: no such user in database!");
                 ui.addAttribute("actionFailed", "Error: no such user in database!");
                 return "failure";
             }
@@ -226,18 +254,18 @@ public class AdminController {
             // delete user
             int id = parseId(orderDTO);
             if (id == 0){
-                log.error("Error: user id value is zero!");
+                LOGGER.error("Error: user id value is zero!");
                 ui.addAttribute("actionFailed", "Error: user id value is zero!");
                 return "failure";
             }
             boolean result = userService.deleteUser(id);
             if (result){
-                log.info("User deleted successfully!");
+                LOGGER.info("User deleted successfully!");
                 ui.addAttribute("actionSuccess","User deleted successfully!");
                 return "success";
             }
             else {
-                log.error("Error: deleteUser method in UserService returned false!");
+                LOGGER.error("Error: deleteUser method in UserService returned false!");
                 ui.addAttribute("actionFailed","Error: deleteUser method in UserService returned false!");
                 return "failure";
             }
@@ -246,7 +274,7 @@ public class AdminController {
             // change cargo
             int id = parseId(orderDTO);
             if (id == 0){
-                log.error("Error: cargo id value is zero!");
+                LOGGER.error("Error: cargo id value is zero!");
                 ui.addAttribute("actionFailed", "Error: cargo id value is zero!");
                 return "failure";
             }
@@ -259,18 +287,18 @@ public class AdminController {
             // delete cargo
             int id = parseId(orderDTO);
             if (id == 0){
-                log.error("Error: cargo id value is zero!");
+                LOGGER.error("Error: cargo id value is zero!");
                 ui.addAttribute("actionFailed", "Error: cargo id value is zero!");
                 return "failure";
             }
             boolean result = cargoService.deleteCargo(id);
             if (result){
-                log.info("Cargo deleted successfully!");
+                LOGGER.info("Cargo deleted successfully!");
                 ui.addAttribute("actionSuccess", "Cargo deleted successfully!");
                 return "success";
             }
             else {
-                log.error("Error: deleteCargo method in CargoService returned false!");
+                LOGGER.error("Error: deleteCargo method in CargoService returned false!");
                 ui.addAttribute("actionFailed", "Error: deleteCargo method in CargoService returned false!");
                 return "failure";
             }
@@ -279,7 +307,7 @@ public class AdminController {
             // edit city
             int id = parseId(orderDTO);
             if (id == 0) {
-                log.error("Error: city id value is zero!");
+                LOGGER.error("Error: city id value is zero!");
                 ui.addAttribute("actionFailed", "Error: city id value is zero!");
                 return "failure";
             }
@@ -289,7 +317,7 @@ public class AdminController {
         if (action == 10){
             int id = parseId(orderDTO);
             if (id == 0) {
-                log.error("Error: city id value is zero!");
+                LOGGER.error("Error: city id value is zero!");
                 ui.addAttribute("actionFailed", "Error: city id value is zero!");
                 return "failure";
             }
@@ -299,17 +327,17 @@ public class AdminController {
             }
             catch (Exception e){
                 e.printStackTrace();
-                log.error("Error: there are some drivers or trucks in this city. They need to be unassigned from city for successful remove.");
+                LOGGER.error("Error: there are some drivers or trucks in this city. They need to be unassigned from city for successful remove.");
                 ui.addAttribute("actionFailed", "Error: there are some drivers or trucks in this city. They need to be unassigned from city for successful remove.");
                 return "failure";
             }
             if (result){
-                log.info("City deleted successfully!");
+                LOGGER.info("City deleted successfully!");
                 ui.addAttribute("actionSuccess", "City deleted successfully!");
                 return "success";
             }
             else {
-                log.error("Error: deleteCity method in CityService returned false!");
+                LOGGER.error("Error: deleteCity method in CityService returned false!");
                 ui.addAttribute("actionFailed", "Error: deleteCity method in CityService returned false!");
                 return "failure";
             }
@@ -318,7 +346,7 @@ public class AdminController {
             // edit route
             int id = parseId(orderDTO);
             if (id == 0) {
-                log.error("Error: route id value is zero!");
+                LOGGER.error("Error: route id value is zero!");
                 ui.addAttribute("actionFailed", "Error: route id value is zero!");
                 return "failure";
             }
@@ -332,7 +360,7 @@ public class AdminController {
             // delete route
             int id = parseId(orderDTO);
             if (id == 0) {
-                log.error("Error: route id value is zero!");
+                LOGGER.error("Error: route id value is zero!");
                 ui.addAttribute("actionFailed", "Error: route id value is zero!");
                 return "failure";
             }
@@ -342,30 +370,30 @@ public class AdminController {
             }
             catch (Exception e){
                 e.printStackTrace();
-                log.error("Error: there are some cargos with this route. They need to be unassigned from route for successful remove.");
+                LOGGER.error("Error: there are some cargos with this route. They need to be unassigned from route for successful remove.");
                 ui.addAttribute("actionFailed", "Error: there are some cargos with this route. They need to be unassigned from route for successful remove.");
                 return "failure";
             }
             if (result){
-                log.info("Route deleted successfully!");
+                LOGGER.info("Route deleted successfully!");
                 ui.addAttribute("actionSuccess", "Route deleted successfully!");
                 return "success";
             }
             else {
-                log.error("Error: deleteRoute method in RouteService returned false!");
+                LOGGER.error("Error: deleteRoute method in RouteService returned false!");
                 ui.addAttribute("actionFailed", "Error: deleteRoute method in RouteService returned false!");
                 return "failure";
             }
         }
 
-        log.error("Error: no such action!");
+        LOGGER.error("Error: no such action!");
         ui.addAttribute("actionFailed", "Error no such action!");
         return "failure";
     }
 
     @RequestMapping(value = "/changeroutepage", method = RequestMethod.GET)
     public String changeRoute(Model ui){
-        log.info("Controller: AdminController, metod = changeRoute,  action = \"/changeroutepage\", request = GET");
+        LOGGER.info("Controller: AdminController, metod = changeRoute,  action = \"/changeroutepage\", request = GET");
         Collection<City> cities = cityRepository.getAll();
         ui.addAttribute("citiesList", cities);
         return "/admin/changeroutepage";
@@ -373,20 +401,20 @@ public class AdminController {
 
     @RequestMapping(value = "/changeroutepage", method = RequestMethod.POST)
     public String changeRoutePost(RouteDTO routeDTO, BindingResult bindingResult,Model ui){
-        log.info("Controller: AdminController, metod = changeRoute,  action = \"/changeroutepage\", request = POST");
+        LOGGER.info("Controller: AdminController, metod = changeRoute,  action = \"/changeroutepage\", request = POST");
         if (routeDTO == null){
-            log.error("Error: route Data Transfer Object is null!");
+            LOGGER.error("Error: route Data Transfer Object is null!");
             ui.addAttribute("actionFailed", "Error: route Data Transfer Object is null!");
             return "failure";
         }
         boolean result = routeService.updateRoute(routeDTO);
         if (result){
-            log.info("Route successfully updated!");
+            LOGGER.info("Route successfully updated!");
             ui.addAttribute("actionSuccess", "Route successfully updated!");
             return "success";
         }
         else {
-            log.error("Error: updateRoute method in RouteService returned false!");
+            LOGGER.error("Error: updateRoute method in RouteService returned false!");
             ui.addAttribute("actionFailed","Error:  updateRoute method in RouteService returned false!" );
             return "failure";
         }
@@ -395,7 +423,7 @@ public class AdminController {
 
     @RequestMapping(value = "/userchangepage", method = RequestMethod.GET)
     public String userChangePage(Model ui){
-        log.info("Controller: AdminController, metod = userChangePage,  action = \"/userchangepage\", request = GET");
+        LOGGER.info("Controller: AdminController, metod = userChangePage,  action = \"/userchangepage\", request = GET");
         Collection<City> cities = cityRepository.getAll();
         ui.addAttribute("citiesList", cities);
         Collection<Truck> availableTrucks = truckService.getFreeTrucks();
@@ -405,20 +433,20 @@ public class AdminController {
 
     @RequestMapping(value = "/userchangepage", method = RequestMethod.POST)
     public String userChangePagePost(UserDTO userDTO, BindingResult bindingResult,Model ui){
-        log.info("Controller: AdminController, metod = userChangePagePost,  action = \"/userchangepage\", request = POST");
+        LOGGER.info("Controller: AdminController, metod = userChangePagePost,  action = \"/userchangepage\", request = POST");
         if (userDTO == null) {
-            log.error("Error: user Data Transfer Object is null!");
+            LOGGER.error("Error: user Data Transfer Object is null!");
             ui.addAttribute("actionFailed", "Error: user Data Transfer Object is null!");
             return "failure";
         }
         boolean result = userService.updateUser(userDTO);
         if (result){
-            log.info("User successfully updated!");
+            LOGGER.info("User successfully updated!");
             ui.addAttribute("actionSuccess", "User successfully updated!");
             return "success";
         }
         else {
-            log.error("Error: updateUser method in UserService returned false!");
+            LOGGER.error("Error: updateUser method in UserService returned false!");
             ui.addAttribute("actionFailed","Error: updateUser method in UserService returned false!" );
             return "failure";
         }
@@ -426,17 +454,17 @@ public class AdminController {
 
 
     @RequestMapping(value = "/orderchangepage", method = RequestMethod.GET)
-    String orderChangePage(Model ui) {
-        log.info("Controller: AdminController, metod = orderChangePage,  action = \"/orderchangepage\", request = GET");
+    public String orderChangePage(Model ui) {
+        LOGGER.info("Controller: AdminController, metod = orderChangePage,  action = \"/orderchangepage\", request = GET");
         return "/admin/orderchangepage";
     }
 
     //todo: refactor!!
     @RequestMapping(value = "/orderchangepage", method = RequestMethod.POST)
-    String orderChangePagePost(OrderDTO orderDTO, BindingResult bindingResult, Model ui) {
-        log.info("Controller: AdminController, metod = orderChangePage,  action = \"/orderchangepage\", request = POST");
+    public String orderChangePagePost(OrderDTO orderDTO, BindingResult bindingResult, Model ui) {
+        LOGGER.info("Controller: AdminController, metod = orderChangePage,  action = \"/orderchangepage\", request = POST");
         if (orderDTO == null) {
-            log.error("Error: order Data Access object is empty!");
+            LOGGER.error("Error: order Data Access object is empty!");
             ui.addAttribute("actionFailed", "Error: order Data Access object is empty");
             return "failure";
         }
@@ -449,7 +477,7 @@ public class AdminController {
                 id = Integer.parseInt(orderDTO.getId());
             } catch (Exception e) {
                 e.printStackTrace();
-                log.error("Error: order id value is not valid!");
+                LOGGER.error("Error: order id value is not valid!");
                 ui.addAttribute("actionFailed", "Error: order id value is not valid!");
                 return "failure";
             }
@@ -469,26 +497,36 @@ public class AdminController {
                             orderDTO.getStatus(),
                             orderDTO.getAssignedTruckId(),
                             newCargosInOrder);
-                    Collection<Truck> availableTrucks = orderService.getAvailableTrucks(newOrderDTO);
+                    Collection<Truck> availableTrucks = null;
+                    try {
+                        availableTrucks = orderService.getAvailableTrucks(newOrderDTO);
+                    }
+                    catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    if (availableTrucks == null) availableTrucks = new ArrayList<Truck>();
                     availableTrucks.add(order.getAssignedTruck());
                     Collection<Cargo> chosenCargos = orderService.getChosenCargos(newOrderDTO);
                     ui.addAttribute("availableTrucks", availableTrucks);
                     ui.addAttribute("chosenCargos", chosenCargos);
                 } else {
-                    log.error("Error: no such order!");
+                    LOGGER.error("Error: no such order!");
                     ui.addAttribute("actionFailed", "Error: no such order!");
                     return "failure";
                 }
             } else {
-                log.error("Error: order id value is not valid!");
+                LOGGER.error("Error: order id value is not valid!");
                 ui.addAttribute("actionFailed", "Error: order id value is not valid!");
                 return "failure";
             }
 
         } else {
-            Collection<Truck> availableTrucks = orderService.getAvailableTrucks(orderDTO);
-            if (order != null)
-                if (order.getAssignedTruck() != null) availableTrucks.add(order.getAssignedTruck());
+            Collection<Truck> availableTrucks = null;
+            try {
+                availableTrucks = orderService.getAvailableTrucks(orderDTO);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             Collection<Cargo> chosenCargos = orderService.getChosenCargos(orderDTO);
             ui.addAttribute("availableTrucks", availableTrucks);
             ui.addAttribute("chosenCargos", chosenCargos);
@@ -498,27 +536,35 @@ public class AdminController {
 
 
     @RequestMapping(value = "/reassigntrucktoorderpage", method = RequestMethod.GET)
-    String reassignTruckToOrderPage(Model ui) {
-        log.info("Controller: AdminController, metod = reassignTruckToOrderPage,  action = \"/reassigntrucktoorderpage\", request = GET");
+    public String reassignTruckToOrderPage(Model ui) {
+        LOGGER.info("Controller: AdminController, metod = reassignTruckToOrderPage,  action = \"/reassigntrucktoorderpage\", request = GET");
 
         return "/admin/reassigntrucktoorderpage";
     }
 
     @RequestMapping(value = "/reassigntrucktoorderpage", method = RequestMethod.POST)
-    String reassignTruckToOrderPagePost(OrderDTO orderDTO, BindingResult bindingResult, Model ui) {
-        log.info("Controller: AdminController, metod = reassignTruckToOrderPagePost,  action = \"/reassigntrucktoorderpage\", request = POST");
+    public String reassignTruckToOrderPagePost(OrderDTO orderDTO, BindingResult bindingResult, Model ui) {
+        LOGGER.info("Controller: AdminController, metod = reassignTruckToOrderPagePost,  action = \"/reassigntrucktoorderpage\", request = POST");
         if (orderDTO == null) {
-            log.error("Error: order Data Access object is empty!");
+            LOGGER.error("Error: order Data Access object is empty!");
             ui.addAttribute("actionFailed", "Error: order Data Access object is empty");
             return "failure";
         }
-        boolean result = orderService.updateOrder(orderDTO);
+        boolean result = false;
+        try {
+            result = orderService.updateOrder(orderDTO);
+        }
+        catch (Exception e){
+            LOGGER.error("Error: " + e.getMessage());
+            ui.addAttribute("actionFailed", "Error: " + e.getMessage());
+            return "failure";
+        }
         if (result) {
-            log.info("Order successfully edited!");
+            LOGGER.info("Order successfully edited!");
             ui.addAttribute("actionSuccess", "Order successfully edited!");
             return "success";
         } else {
-            log.error("Error: updateOrder method in OrderService returned false.");
+            LOGGER.error("Error: updateOrder method in OrderService returned false.");
             ui.addAttribute("actionFailed", "Error while trying to update order.");
             return "failure";
         }
@@ -527,7 +573,7 @@ public class AdminController {
 
     @RequestMapping(value = "/addnewuserpage", method = RequestMethod.GET)
     String addNewUserPage(Model ui) {
-        log.info("Controller: AdminController, metod = addNewUserPage,  action = \"/addnewuserpage\", request = GET");
+        LOGGER.info("Controller: AdminController, metod = addNewUserPage,  action = \"/addnewuserpage\", request = GET");
         Collection<UserRole> userRoles = userService.getRoles();
         ui.addAttribute("userRoles", userRoles);
         Collection<City> cities = cityRepository.getAll();
@@ -539,19 +585,19 @@ public class AdminController {
 
     @RequestMapping(value = "/addnewuserpage", method = RequestMethod.POST)
     String addNewUserPagePost(UserDTO userDTO, BindingResult bindingResult, Model ui) {
-        log.info("Controller: AdminController, metod = addNewUserPage,  action = \"/addnewuserpage\", request = POST");
+        LOGGER.info("Controller: AdminController, metod = addNewUserPage,  action = \"/addnewuserpage\", request = POST");
         if (userDTO == null) {
-            log.error("Error: user Data Transfer Object is null!");
+            LOGGER.error("Error: user Data Transfer Object is null!");
             ui.addAttribute("actionFailed", "Error: user Data Transfer Object is null!");
             return "failure";
         }
         boolean result = userService.createUser(userDTO);
         if (result) {
-            log.info("New " + userDTO.getRole().toLowerCase() + " created successfully");
+            LOGGER.info("New " + userDTO.getRole().toLowerCase() + " created successfully");
             ui.addAttribute("actionSuccess", "New " + userDTO.getRole().toLowerCase() + " created successfully");
             return "success";
         } else {
-            log.error("Error: createUser method in UserService returned false!");
+            LOGGER.error("Error: createUser method in UserService returned false!");
             ui.addAttribute("actionFailed", "Error: createUser method in UserService returned false!");
             return "failure";
         }
@@ -559,26 +605,26 @@ public class AdminController {
 
     @RequestMapping(value = "/addnewcitypage", method = RequestMethod.GET)
     public String addNewCity(){
-        log.info("Controller: AdminController, metod = addNewCityPage,  action = \"/addnewcitypage\", request = GET");
+        LOGGER.info("Controller: AdminController, metod = addNewCityPage,  action = \"/addnewcitypage\", request = GET");
         return "/admin/addnewcitypage";
     }
 
     @RequestMapping(value = "/addnewcitypage", method = RequestMethod.POST)
     public String addNewCityPost(CityDTO cityDTO, BindingResult bindingResult, Model ui){
-        log.info("Controller: AdminController, metod = addNewCityPage,  action = \"/addnewcitypage\", request = POST");
+        LOGGER.info("Controller: AdminController, metod = addNewCityPage,  action = \"/addnewcitypage\", request = POST");
         if (cityDTO == null){
-            log.error("Error: city Data Transfer Object is null!");
+            LOGGER.error("Error: city Data Transfer Object is null!");
             ui.addAttribute("actionFailed", "Error: city Data Transfer Object is null!");
             return "failure";
         }
         boolean result = cityService.createCity(cityDTO);
         if (result){
-            log.info("City created successfully!");
+            LOGGER.info("City created successfully!");
             ui.addAttribute("actionSuccess", "City created successfully!");
             return "success";
         }
         else {
-            log.error("Error: createCity method in CityService returned false!");
+            LOGGER.error("Error: createCity method in CityService returned false!");
             ui.addAttribute("actionFailed", "Error: createCity method in CityService returned false!");
             return "failure";
         }
@@ -586,26 +632,26 @@ public class AdminController {
 
     @RequestMapping(value = "/changecitypage", method = RequestMethod.GET)
     public String changeCity(){
-        log.info("Controller: AdminController, metod = changeCityPage,  action = \"/addnewcitypage\", request = GET");
+        LOGGER.info("Controller: AdminController, metod = changeCityPage,  action = \"/addnewcitypage\", request = GET");
         return "/admin/changecitypage";
     }
 
     @RequestMapping(value = "/changecitypage", method = RequestMethod.POST)
     public String changeCityPost(CityDTO cityDTO, BindingResult bindingResult, Model ui){
-        log.info("Controller: AdminController, metod = changeCityPage,  action = \"/changecitypage\", request = POST");
+        LOGGER.info("Controller: AdminController, metod = changeCityPage,  action = \"/changecitypage\", request = POST");
         if (cityDTO == null){
-            log.error("Error: city Data Transfer Object is null!");
+            LOGGER.error("Error: city Data Transfer Object is null!");
             ui.addAttribute("actionFailed", "Error: city Data Transfer Object is null!");
             return "failure";
         }
         boolean result = cityService.updateCity(cityDTO);
         if (result){
-            log.info("City updated successfully!");
+            LOGGER.info("City updated successfully!");
             ui.addAttribute("actionSuccess", "City updated successfully!");
             return "success";
         }
         else {
-            log.error("Error: updateCity method in CityService returned false!");
+            LOGGER.error("Error: updateCity method in CityService returned false!");
             ui.addAttribute("actionFailed", "Error: updateCity method in CityService returned false!");
             return "failure";
         }
@@ -613,7 +659,7 @@ public class AdminController {
 
     @RequestMapping(value = "/addnewroutepage", method = RequestMethod.GET)
     public String addNewRoute(Model ui){
-        log.info("Controller: AdminController, metod = addNewRoute,  action = \"/addnewroutepage\", request = GET");
+        LOGGER.info("Controller: AdminController, metod = addNewRoute,  action = \"/addnewroutepage\", request = GET");
         Collection<City> citiesList = cityRepository.getAll();
         ui.addAttribute("citiesList", citiesList);
         return "/admin/addnewroutepage";
@@ -621,20 +667,20 @@ public class AdminController {
 
     @RequestMapping(value = "/addnewroutepage", method = RequestMethod.POST)
     public String addNewRoutePost(RouteDTO routeDTO, BindingResult bindingResult, Model ui){
-        log.info("Controller: AdminController, metod = addNewRoute,  action = \"/addnewroutepage\", request = POST");
+        LOGGER.info("Controller: AdminController, metod = addNewRoute,  action = \"/addnewroutepage\", request = POST");
         if (routeDTO == null){
-            log.error("Error: route Data Transfer Object is null!");
+            LOGGER.error("Error: route Data Transfer Object is null!");
             ui.addAttribute("actionFailed", "Error: route Data Transfer Object is null!");
             return "failure";
         }
         boolean result = routeService.createRoute(routeDTO);
         if (result){
-            log.info("Route created successfully!");
+            LOGGER.info("Route created successfully!");
             ui.addAttribute("actionSuccess", "Route created successfully!");
             return "success";
         }
         else {
-            log.error("Error: createRoute method in RouteService returned false!");
+            LOGGER.error("Error: createRoute method in RouteService returned false!");
             ui.addAttribute("actionFailed", "Error: createRoute method in RouteService returned false!");
             return "failure";
         }

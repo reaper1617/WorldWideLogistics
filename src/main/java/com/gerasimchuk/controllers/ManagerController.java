@@ -4,6 +4,7 @@ package com.gerasimchuk.controllers;
 import com.gerasimchuk.converters.OrderToDTOConverter;
 import com.gerasimchuk.dto.*;
 import com.gerasimchuk.entities.*;
+import com.gerasimchuk.exceptions.routeexceptions.RouteException;
 import com.gerasimchuk.repositories.*;
 import com.gerasimchuk.services.interfaces.CargoService;
 import com.gerasimchuk.services.interfaces.OrderService;
@@ -11,6 +12,8 @@ import com.gerasimchuk.services.interfaces.TruckService;
 import com.gerasimchuk.services.interfaces.UserService;
 import com.gerasimchuk.utils.OrderWithRoute;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -54,12 +57,30 @@ public class ManagerController {
         this.orderService = orderService;
     }
 
-    @RequestMapping(value = "/managermainpage", method = RequestMethod.GET)
-    String managerMainPage(Model ui){
+    @RequestMapping(value = "/managermainpage/{id}", method = RequestMethod.GET)
+    String managerMainPage(@PathVariable("id") int id, Model ui){
 //        if (id == 0 || id == 1 || id == 2){
 //            return "/manager/managermainpage";
 //        }
         log.info("Controller: ManagerController, metod = managerMainPage,  action = \"/managermainpage\", request = GET");
+        //
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String personalNumber = authentication.getName();
+        log.info("Authenticated user personal number:" + personalNumber);
+        User loggedUser = userRepository.getByPersonalNumber(personalNumber);
+        if (loggedUser == null){
+            log.error("Error: logged user not found!");
+            ui.addAttribute("actionFailed", "Error: logged user not found!");
+            return "failure";
+        }
+        if (loggedUser.getManager() == null) {
+            log.error("Error: access violation - user is not a manager");
+            ui.addAttribute("actionFailed","Error: access violation - user is not a manager");
+            return "failure";
+        }
+
+        //
+
         Collection<Cargo> cargos = cargoRepository.getAll();
         Collection<User> drivers = userService.getAllDrivers();
         Collection<Truck> trucks = truckRepository.getAll();
@@ -69,8 +90,16 @@ public class ManagerController {
         // todo: routePoints !!
         List<OrderWithRoute> ordersWithRoutes = new ArrayList<OrderWithRoute>();
         for(Order o: orders){
-            List<City> cities = (List<City>) orderService.getOrderRoute(OrderToDTOConverter.convert(o));
-            ordersWithRoutes.add(new OrderWithRoute(o, cities));
+            try {
+                List<City> cities = (List<City>) orderService.getOrderRoute(OrderToDTOConverter.convert(o), null);
+                if (o.getAssignedTruck() != null) cities.add(0,o.getAssignedTruck().getCurrentCity());
+                ordersWithRoutes.add(new OrderWithRoute(o, cities));
+            }
+            catch (RouteException e){
+                log.error("Error: " + e.getMessage());
+                ui.addAttribute("actionFailed","Error: " + e.getMessage());
+                return "failure";
+            }
         }
         ui.addAttribute("cargoList", cargos);
         ui.addAttribute("driversList", drivers);
@@ -235,8 +264,15 @@ public class ManagerController {
             cargos = (ArrayList<Cargo>)attr.get("chosenCargos");
         }
         if (cargos!=null) {
-            Collection<Truck> availableTrucks = orderService.getAvailableTrucks(orderDTO);
-            ui.addAttribute("availableTrucks", availableTrucks);
+            try {
+                Collection<Truck> availableTrucks = orderService.getAvailableTrucks(orderDTO);
+                ui.addAttribute("availableTrucks", availableTrucks);
+            }
+            catch (RouteException e){
+                log.error("Error: " + e.getMessage());
+                ui.addAttribute("actionFailed", "Error: " + e.getMessage());
+                return "failure";
+            }
         }
         ui.addAttribute("orderDTO", orderDTO);
         return "/manager/assigntrucktoorderpage";
@@ -254,8 +290,15 @@ public class ManagerController {
           if (ui.containsAttribute("orderDTO")) {
               if (ui.asMap().get("orderDTO") instanceof OrderDTO) {
                   OrderDTO orderDTO = ((OrderDTO) ui.asMap().get("orderDTO"));
-                  Collection<Truck> availableTrucks = orderService.getAvailableTrucks(orderDTO);
-                  ui.addAttribute("availableTrucks", availableTrucks);
+                  try {
+                      Collection<Truck> availableTrucks = orderService.getAvailableTrucks(orderDTO);
+                      ui.addAttribute("availableTrucks", availableTrucks);
+                  }
+                  catch (RouteException e){
+                      log.error("Error: " + e.getMessage());
+                      ui.addAttribute("actionFailed", "Error: " + e.getMessage());
+                      return "failure";
+                  }
               }
               else {
                   log.error("Error: attribute 'orderDTO' is not instance of OrderDTO!");
@@ -279,7 +322,15 @@ public class ManagerController {
             ui.addAttribute("actionFailed", "Error while trying to create order!");
             return "failure";
         }
-        boolean result = orderService.createOrder(orderDTO);
+        boolean result = false;
+        try {
+            result = orderService.createOrder(orderDTO);
+        }
+        catch (Exception e){
+            log.error("Error: " + e.getMessage());
+            ui.addAttribute("actionFailed", "Error: " + e.getMessage());
+            return "failure";
+        }
         if (result){
             log.info("New order successfully created!");
             ui.addAttribute("actionSuccess", "New order successfully created!");
@@ -315,7 +366,15 @@ public class ManagerController {
             ui.addAttribute("actionFailed", "Error while trying to create truck!");
             return "failure";
         }
-        boolean result = truckService.createTruck(truckDTO);
+        boolean result = false;
+        try {
+            result = truckService.createTruck(truckDTO);
+        }
+        catch (Exception e){
+            log.error("Error: " + e.getMessage());
+            ui.addAttribute("actionFailed", "Error: " + e.getMessage());
+            return "failure";
+        }
         if (result){
             log.info("New truck successfully created!");
             ui.addAttribute("actionSuccess", "New truck successfully created!");
@@ -399,6 +458,7 @@ public class ManagerController {
     String truckChangePage(Model ui){
         log.info("Controller: ManagerController, metod = truckChangePage,  action = \"/truckchangepage\", request = GET");
         Collection<City> cities = cityRepository.getAll();
+        // todo: get free drivers!!! status =free!
         Collection<User> freeDrivers = userService.getAllDrivers();
         ui.addAttribute("citiesList", cities);
         ui.addAttribute("driversList", freeDrivers);
@@ -407,6 +467,7 @@ public class ManagerController {
 
     @RequestMapping(value = "/truckchangepage", method = RequestMethod.POST)
     String truckChangePagePost(TruckDTO truckDTO, BindingResult bindingResult,Model ui){
+
         log.info("Controller: ManagerController, metod = truckChangePage,  action = \"/truckchangepage\", request = POST");
         if (truckDTO == null){
             log.error("Error: Truck Data Transfer Object is not valid");

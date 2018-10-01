@@ -23,11 +23,6 @@
             <set />
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/../helloHibernateAppRepo-tryToMakeWebAppBranch/src/main/webapp/WEB-INF/web.xml">
-          <value>
-            <set />
-          </value>
-        </entry>
         <entry key="$PROJECT_DIR$/mywwldatabase.txt">
           <value>
             <set />
@@ -39,6 +34,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/Main.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/config/AppConfig.java">
           <value>
             <set />
           </value>
@@ -634,6 +634,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/webapp/web.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../helloHibernateAppRepo-tryToMakeWebAppBranch/src/main/webapp/WEB-INF/web.xml">
           <value>
             <set />
           </value>

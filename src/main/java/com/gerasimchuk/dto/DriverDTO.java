@@ -3,7 +3,7 @@ package com.gerasimchuk.dto;
 import com.gerasimchuk.entities.City;
 import com.gerasimchuk.enums.DriverStatus;
 
-/** Cargo Data Transfer Object
+/** Driver Data Transfer Object
  * @author Reaper
  * @version 1.0
  */

@@ -1,5 +1,10 @@
 package com.gerasimchuk.dto;
 
+/** City Data Transfer Object
+ * @author Reaper
+ * @version 1.0
+ */
+
 public class CityDTO {
     private String id;
     private String name;
