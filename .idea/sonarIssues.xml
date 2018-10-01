@@ -653,6 +653,26 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../wwlclient/pom.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../wwlclient/src/main/java/com/gerasimchuk/controllers/MainController.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../wwlclient/src/main/java/com/gerasimchuk/entities/Order.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../wwlclient/src/main/java/com/gerasimchuk/entities/OrderDTO.java">
+          <value>
+            <set />
+          </value>
+        </entry>
       </map>
     </option>
   </component>

@@ -10,6 +10,12 @@ import com.gerasimchuk.enums.UserRole;
 import com.gerasimchuk.repositories.*;
 import com.gerasimchuk.services.interfaces.*;
 import com.gerasimchuk.utils.OrderWithRoute;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.GenericType;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -21,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -114,6 +121,44 @@ public class AdminController {
         ui.addAttribute("ordersList", ordersWithRoutes);
         ui.addAttribute("citiesList", citiesList);
         ui.addAttribute("routesList", routesList);
+        //
+//        ClientConfig clientConfig = new DefaultClientConfig();
+//        //clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
+//        Client client = Client.create(clientConfig);
+//
+//        WebResource webResource = client.resource("http://localhost:8080/rest/mainservice/orders");
+//
+//        WebResource.Builder builder = webResource.accept(MediaType.APPLICATION_JSON).header("content-type", MediaType.APPLICATION_JSON);
+//
+//        ClientResponse response = builder.get(ClientResponse.class);
+//
+//        if (response.getStatus() != 200){
+//            // bad
+//            System.out.println("Error 200");
+//            return null;
+//        }
+//
+//        GenericType<List<OrderDTO>> generic = new GenericType<List<OrderDTO>>(){
+//
+//        };
+//
+//        List<OrderDTO> list = response.getEntity(generic);
+//        for(OrderDTO o: list){
+//            System.out.println(o);
+//        }
+
+
+        //        // json as string
+//        Client client = Client.create();
+//        WebResource webResource = client.resource("http://localhost:8080/WWLnewproject/rest/mainservice/orders");
+//        ClientResponse response = webResource.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+//        if (response.getStatus()!=200){
+//            System.out.println("failed");
+//        }
+//        String output = response.getEntity(String.class);
+//        System.out.println("Output from server:" + output);
+//        //
+
         return "/admin/adminmainpage";
     }
 

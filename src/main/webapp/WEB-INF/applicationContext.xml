@@ -31,8 +31,8 @@
         <intercept-url pattern="/login.jsp" access="isFullyAuthenticated() or isAnonymous()"/>
         <intercept-url pattern="/logged.jsp" access="isFullyAuthenticated()"/>
         <intercept-url pattern="/logout.jsp" access="isFullyAuthenticated()"/>
-        <intercept-url pattern="/**" access="isFullyAuthenticated()"/>
-
+        <!--<intercept-url pattern="/**" access="isFullyAuthenticated()"/>-->
+        <intercept-url pattern="/rest/**" access="isAnonymous()"/>
 
         <form-login login-page="/login.jsp" authentication-failure-url="/login.jsp?login_error=1" authentication-success-handler-ref="authenticationSuccessHandler"/>
                     <!--default-target-url="/login/logged.jsp"-->
