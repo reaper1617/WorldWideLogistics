@@ -2,10 +2,11 @@
 <b:beans xmlns="http://www.springframework.org/schema/security"
          xmlns:b="http://www.springframework.org/schema/beans"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+         xmlns:rabbit="http://www.springframework.org/schema/rabbit"
          xsi:schemaLocation="http://www.springframework.org/schema/security
 	http://www.springframework.org/schema/security/spring-security.xsd
 	http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+	http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit.xsd">
 
     <!--<http realm="JavaStudy example" use-expressions="true">-->
         <!--<intercept-url pattern="/" access="isFullyAuthenticated() or isAnonymous()"/>-->
@@ -63,4 +64,18 @@
     </b:bean>
 
     <b:bean id="authenticationSuccessHandler" class="com.gerasimchuk.services.impls.AuthenticationSuccessHandler"/>
+
+
+
+    <rabbit:connection-factory id="connectionFactory" username="user" password="password"  />
+
+    <rabbit:admin connection-factory="connectionFactory"/>
+
+    <rabbit:template id="amqpTemplate" connection-factory="connectionFactory" />
+
+    <rabbit:queue name="myQueue"/>
+
+
+
+
 </b:beans>

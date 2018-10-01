@@ -58,4 +58,19 @@
         <location>/WEB-INF/views/errors/uncaughtexception.jsp</location>
     </error-page>
 
+    <!--<servlet>-->
+        <!--<servlet-name>jerseyServlet</servlet-name>-->
+        <!--<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>-->
+        <!--<init-param>-->
+            <!--<param-name>com.sun.jersey.config.property.packages</param-name>-->
+            <!--<param-value>com.gerasimchuk.webservices</param-value>-->
+        <!--</init-param>-->
+        <!--<load-on-startup>1</load-on-startup>-->
+    <!--</servlet>-->
+    <!--<servlet-mapping>-->
+        <!--<servlet-name>jerseyServlet</servlet-name>-->
+        <!--<url-pattern>/rest/*</url-pattern>-->
+    <!--</servlet-mapping>-->
+
+
 </web-app>

@@ -61,7 +61,7 @@
 						</div>
 						<div class="form-group">
 							<label for="user_role">Define role:</label>
-							<select class="form-control" id="user_role"  name="role">
+							<select class="form-control" id="user_role"  name="role" onmouseover="showDriverFields()" onchange="showDriverFields()">
 								<c:if test="${userRoles != null}">
 									<c:forEach items="${userRoles}" var="role">
 										<option>${role}</option>
@@ -72,7 +72,7 @@
 								</c:if>
 							</select>
 						</div>
-
+						<div id="driverFields" style="display: none">
 						<div class="form-group">
 					      		<label for="hours_worked">Hours worked:</label>
       							<input type="text" class="form-control" id="hours_worked" placeholder="Enter number of hours worked" name="hoursWorked" style="width:350px" >
@@ -102,6 +102,7 @@
 										 <option>No trucks available</option>
 								 </c:if>
       							</select>
+						</div>
 						</div>
 						<div>
 							<button type="submit" class="btn btn-primary">Save changes</button>
@@ -146,6 +147,22 @@ $(document).ready(function(){
   });
 });
 </script>
+
+<script>
+	function showDriverFields() {
+	    var value = document.getElementById("user_role");
+        var chosen = value.options[value.selectedIndex].text;
+	  //  alert(chosen);
+		if (chosen === "DRIVER"){
+			document.getElementById("driverFields").style.display="block";
+		}
+		else {
+            document.getElementById("driverFields").style.display="none";
+		}
+    }
+
+</script>
+
 
 </body>
 </html>
