@@ -5,6 +5,7 @@ import com.gerasimchuk.converters.OrderToDTOConverter;
 import com.gerasimchuk.dto.*;
 import com.gerasimchuk.entities.*;
 import com.gerasimchuk.exceptions.routeexceptions.RouteException;
+import com.gerasimchuk.rabbit.RabbitMQSender;
 import com.gerasimchuk.repositories.*;
 import com.gerasimchuk.services.interfaces.CargoService;
 import com.gerasimchuk.services.interfaces.OrderService;
@@ -44,8 +45,10 @@ public class ManagerController {
     private TruckService truckService;
     private OrderService orderService;
 
+    private RabbitMQSender rabbitMQSender;
+
     @Autowired
-    public ManagerController(CargoRepository cargoRepository, CityRepository cityRepository, TruckRepository truckRepository, UserRepository userRepository, OrderRepository orderRepository, CargoService cargoService, UserService userService, TruckService truckService, OrderService orderService) {
+    public ManagerController(CargoRepository cargoRepository, CityRepository cityRepository, TruckRepository truckRepository, UserRepository userRepository, OrderRepository orderRepository, CargoService cargoService, UserService userService, TruckService truckService, OrderService orderService, RabbitMQSender rabbitMQSender) {
         this.cargoRepository = cargoRepository;
         this.cityRepository = cityRepository;
         this.truckRepository = truckRepository;
@@ -55,6 +58,7 @@ public class ManagerController {
         this.userService = userService;
         this.truckService = truckService;
         this.orderService = orderService;
+        this.rabbitMQSender = rabbitMQSender;
     }
 
     @RequestMapping(value = "/managermainpage/{id}", method = RequestMethod.GET)
@@ -67,6 +71,7 @@ public class ManagerController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String personalNumber = authentication.getName();
         log.info("Authenticated user personal number:" + personalNumber);
+        rabbitMQSender.sendMessage("Message by RabbitMQSender: manager in da house!");
         User loggedUser = userRepository.getByPersonalNumber(personalNumber);
         if (loggedUser == null){
             log.error("Error: logged user not found!");

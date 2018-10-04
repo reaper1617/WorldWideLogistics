@@ -4,7 +4,12 @@ package com.gerasimchuk.entities;
 import com.gerasimchuk.enums.OrderStatus;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Set;
+
+
 
 @Entity(name = "Orders")
 @Table(name = "orders", schema = "mywwldatabase", catalog = "")

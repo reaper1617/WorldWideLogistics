@@ -7,10 +7,11 @@ import com.gerasimchuk.dto.RouteDTO;
 import com.gerasimchuk.dto.UserDTO;
 import com.gerasimchuk.entities.*;
 import com.gerasimchuk.enums.UserRole;
+import com.gerasimchuk.rabbit.RabbitMQReceiver;
+import com.gerasimchuk.rabbit.RabbitMQSender;
 import com.gerasimchuk.repositories.*;
 import com.gerasimchuk.services.interfaces.*;
 import com.gerasimchuk.utils.OrderWithRoute;
-import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -47,11 +48,13 @@ public class AdminController {
     private TruckService truckService;
     private CityService cityService;
     private RouteService routeService;
+    private RabbitMQSender rabbitMQSender;
+   // private AmqpTemplate amqpTemplate;
+//    private RabbitMQReceiver rabbitMQReceiver;
 
-    private AmqpTemplate amqpTemplate;
 
     @Autowired
-    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService, CityService cityService, RouteService routeService, AmqpTemplate amqpTemplate) {
+    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService, CityService cityService, RouteService routeService, RabbitMQSender rabbitMQSender) {
         this.orderRepository = orderRepository;
         this.truckRepository = truckRepository;
         this.userRepository = userRepository;
@@ -64,7 +67,7 @@ public class AdminController {
         this.truckService = truckService;
         this.cityService = cityService;
         this.routeService = routeService;
-        this.amqpTemplate = amqpTemplate;
+        this.rabbitMQSender = rabbitMQSender;
     }
 
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(AdminController.class);
@@ -75,7 +78,8 @@ public class AdminController {
         LOGGER.info("Controller: AdminController, metod = adminMainPage,  action = \"/adminmainpage\", request = GET");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String personalNumber = authentication.getName();
-        amqpTemplate.convertAndSend("myQueue", "Authenticated user personal number:" + personalNumber);
+       // amqpTemplate.convertAndSend("myQueue", "Authenticated user personal number:" + personalNumber);
+        rabbitMQSender.sendMessage("Message by RabbitMQSender: admin in da house!");
         LOGGER.info("Authenticated user personal number:" + personalNumber);
         User loggedUser = userRepository.getByPersonalNumber(personalNumber);
         if (loggedUser == null){
@@ -114,6 +118,44 @@ public class AdminController {
         ui.addAttribute("ordersList", ordersWithRoutes);
         ui.addAttribute("citiesList", citiesList);
         ui.addAttribute("routesList", routesList);
+        //
+//        ClientConfig clientConfig = new DefaultClientConfig();
+//        //clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
+//        Client client = Client.create(clientConfig);
+//
+//        WebResource webResource = client.resource("http://localhost:8080/rest/mainservice/orders");
+//
+//        WebResource.Builder builder = webResource.accept(MediaType.APPLICATION_JSON).header("content-type", MediaType.APPLICATION_JSON);
+//
+//        ClientResponse response = builder.get(ClientResponse.class);
+//
+//        if (response.getStatus() != 200){
+//            // bad
+//            System.out.println("Error 200");
+//            return null;
+//        }
+//
+//        GenericType<List<OrderDTO>> generic = new GenericType<List<OrderDTO>>(){
+//
+//        };
+//
+//        List<OrderDTO> list = response.getEntity(generic);
+//        for(OrderDTO o: list){
+//            System.out.println(o);
+//        }
+
+
+        //        // json as string
+//        Client client = Client.create();
+//        WebResource webResource = client.resource("http://localhost:8080/WWLnewproject/rest/mainservice/orders");
+//        ClientResponse response = webResource.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+//        if (response.getStatus()!=200){
+//            System.out.println("failed");
+//        }
+//        String output = response.getEntity(String.class);
+//        System.out.println("Output from server:" + output);
+//        //
+
         return "/admin/adminmainpage";
     }
 
