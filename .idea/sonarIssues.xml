@@ -218,6 +218,36 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/rabbit/RabbitMQListener.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/rabbit/RabbitMQReceiver.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/rabbit/RabbitMQReceiverImpl.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/rabbit/RabbitMQSender.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/rabbit/RabbitMQSenderImpl.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/rabbit/RabbitMQSenderIn.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/repositories/AdminRepository.java">
           <value>
             <set />
@@ -643,6 +673,26 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../ejbgreeting/pom.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ejbgreeting/src/main/java/org/jboss/as/quickstarts/ejbinwar/controller/Greeter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ejbgreeting/src/main/java/org/jboss/as/quickstarts/ejbinwar/ejb/MyStatelessEJB.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ejbgreeting/src/main/java/org/jboss/as/quickstarts/ejbinwar/rabbitmq/RabbitMQReceiverImpl.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../helloHibernateAppRepo-tryToMakeWebAppBranch/src/main/webapp/WEB-INF/web.xml">
           <value>
             <set />
@@ -669,6 +719,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/../wwlclient/src/main/java/com/gerasimchuk/entities/OrderDTO.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../wwlclient/src/main/webapp/WEB-INF/views/mainpage.jsp">
           <value>
             <set />
           </value>

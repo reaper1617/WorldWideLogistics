@@ -7,16 +7,11 @@ import com.gerasimchuk.dto.RouteDTO;
 import com.gerasimchuk.dto.UserDTO;
 import com.gerasimchuk.entities.*;
 import com.gerasimchuk.enums.UserRole;
+import com.gerasimchuk.rabbit.RabbitMQReceiver;
+import com.gerasimchuk.rabbit.RabbitMQSender;
 import com.gerasimchuk.repositories.*;
 import com.gerasimchuk.services.interfaces.*;
 import com.gerasimchuk.utils.OrderWithRoute;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.GenericType;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,7 +22,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -54,11 +48,13 @@ public class AdminController {
     private TruckService truckService;
     private CityService cityService;
     private RouteService routeService;
+    private RabbitMQSender rabbitMQSender;
+   // private AmqpTemplate amqpTemplate;
+//    private RabbitMQReceiver rabbitMQReceiver;
 
-    private AmqpTemplate amqpTemplate;
 
     @Autowired
-    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService, CityService cityService, RouteService routeService, AmqpTemplate amqpTemplate) {
+    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService, CityService cityService, RouteService routeService, RabbitMQSender rabbitMQSender) {
         this.orderRepository = orderRepository;
         this.truckRepository = truckRepository;
         this.userRepository = userRepository;
@@ -71,7 +67,7 @@ public class AdminController {
         this.truckService = truckService;
         this.cityService = cityService;
         this.routeService = routeService;
-        this.amqpTemplate = amqpTemplate;
+        this.rabbitMQSender = rabbitMQSender;
     }
 
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(AdminController.class);
@@ -82,7 +78,8 @@ public class AdminController {
         LOGGER.info("Controller: AdminController, metod = adminMainPage,  action = \"/adminmainpage\", request = GET");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String personalNumber = authentication.getName();
-        amqpTemplate.convertAndSend("myQueue", "Authenticated user personal number:" + personalNumber);
+       // amqpTemplate.convertAndSend("myQueue", "Authenticated user personal number:" + personalNumber);
+        rabbitMQSender.sendMessage("Message by RabbitMQSender: admin in da house!");
         LOGGER.info("Authenticated user personal number:" + personalNumber);
         User loggedUser = userRepository.getByPersonalNumber(personalNumber);
         if (loggedUser == null){
