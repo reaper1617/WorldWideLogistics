@@ -15,6 +15,7 @@
                 </configuration>
             </plugin>
         </plugins>
+        <finalName>${project.artifactId}</finalName>
     </build>
     <groupId>com.gerasimchuk</groupId>
     <artifactId>worldwidelogistics</artifactId>
@@ -22,6 +23,9 @@
     <properties>
         <org.springframework.version>5.0.8.RELEASE</org.springframework.version>
     </properties>
+
+
+
     <dependencies>
 
 
@@ -151,11 +155,11 @@
         </dependency>
 
 
-        <dependency>
-            <groupId>asm</groupId>
-            <artifactId>asm</artifactId>
-            <version>3.3.1</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>asm</groupId>-->
+            <!--<artifactId>asm</artifactId>-->
+            <!--<version>3.3.1</version>-->
+        <!--</dependency>-->
 
         <!-- https://mvnrepository.com/artifact/com.sun.jersey/jersey-bundle -->
         <dependency>

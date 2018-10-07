@@ -23,6 +23,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$USER_HOME$/Downloads/WorldWideLogistics-master/src/main/java/com/gerasimchuk/webservices/MainService.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/mywwldatabase.txt">
           <value>
             <set />
@@ -209,6 +214,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/enums/TruckState.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/enums/UpdateMessageType.java">
           <value>
             <set />
           </value>
@@ -628,6 +638,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/main/webapp/error.jsp">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/main/webapp/failure.jsp">
           <value>
             <set />
@@ -683,12 +698,27 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../ejbgreeting/src/main/java/org/jboss/as/quickstarts/ejbinwar/dto/OrderDTO.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../ejbgreeting/src/main/java/org/jboss/as/quickstarts/ejbinwar/ejb/MyStatelessEJB.java">
           <value>
             <set />
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/../ejbgreeting/src/main/java/org/jboss/as/quickstarts/ejbinwar/rabbitmq/RabbitMQReceiverImpl.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ejbgreeting/src/main/java/org/jboss/as/quickstarts/ejbinwar/socket/MyWebSocket.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ejbgreeting/src/main/webapp/greeter.xhtml">
           <value>
             <set />
           </value>

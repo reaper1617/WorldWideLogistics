@@ -4,6 +4,8 @@ import com.gerasimchuk.dto.OrderDTO;
 import com.gerasimchuk.entities.Order;
 import com.gerasimchuk.enums.OrderStatus;
 
+import javax.jws.WebService;
+import javax.servlet.annotation.WebServlet;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -14,9 +16,12 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+
 @Path("/mainservice")
 public class MainService {
 
+
+    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(MainService.class);
     public MainService() {
     }
 
@@ -25,6 +30,7 @@ public class MainService {
     @Path("/get")
     @Produces(MediaType.APPLICATION_JSON)
     public String get(){
+        LOGGER.info("In REST: /get");
         return "{" //
                 + "'date': '" + new Date() + "'," //
                 + "'location': '" + "London" + "'," //
@@ -36,7 +42,7 @@ public class MainService {
     @Path("/orders")
     @Produces(MediaType.APPLICATION_JSON)
     public List<OrderDTO> getOrders(){
-
+        LOGGER.info("In REST: /orders");
         List<OrderDTO> collection = new ArrayList<OrderDTO>();
 //        collection.add(new Order());
 //        collection.add(new Order());
@@ -63,22 +69,34 @@ public class MainService {
         Connection connection = null;
         Statement statement = null;
         try{
+            LOGGER.info("Trying to get connection");
             connection = DriverManager.getConnection(url,"root", "root");
+            LOGGER.info("Connection:" + connection);
+            LOGGER.info("Trying to create statement.");
             statement = connection.createStatement();
+            LOGGER.info("Statement:" + statement);
+            LOGGER.info("Trying to get result set");
             ResultSet resultSet = statement.executeQuery("select * from orders");
-
+            LOGGER.info("Result set:" + resultSet);
             while(resultSet.next()){
-
+                LOGGER.info("in result set iter:");
+                System.out.println("///////////////////////////////////////////////////");
                 int id = resultSet.getInt("id");
+                LOGGER.info("Order id:" + id);
                 String personalNumber = resultSet.getString("personal_number");
+                LOGGER.info("PNUM:" + personalNumber);
                 String description = resultSet.getString("description");
+                LOGGER.info("DESCR:"+description);
                 String date = resultSet.getString("date");
-                int status = resultSet.getInt("status"); //????
-                collection.add(new OrderDTO(Integer.toString(id),personalNumber,description,Integer.toString(status),null,null));
-
+                LOGGER.info("DATE:" + date);
+                String status = resultSet.getString("status"); //????
+                LOGGER.info("STATUS" + status);
+                System.out.println("///////////////////////////////////////////////////");
+                collection.add(new OrderDTO(Integer.toString(id),personalNumber,description,status,null,null));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            LOGGER.error("Catched sqlEx");
+            e.printStackTrace();
         }
         finally {
             if (statement !=null) {
@@ -97,10 +115,6 @@ public class MainService {
             }
         }
 
-
-
-
-        //
 
 
         return collection;

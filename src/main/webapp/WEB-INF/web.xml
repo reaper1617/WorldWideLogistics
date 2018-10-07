@@ -49,24 +49,35 @@
     <welcome-file-list>
         <welcome-file>login.jsp</welcome-file>
     </welcome-file-list>
-    <error-page>
-        <error-code>404</error-code>
-        <location>/WEB-INF/views/errors/error404.jsp</location>
-    </error-page>
+
     <error-page>
         <exception-type>java.lang.Exception</exception-type>
         <location>/WEB-INF/views/errors/uncaughtexception.jsp</location>
     </error-page>
 
+    <error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/views/errors/error404.jsp</location>
+    </error-page>
+    <!--<servlet>-->
+        <!--<servlet-name>jerseyServlet</servlet-name>-->
+        <!--<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>-->
+        <!--<init-param>-->
+            <!--<param-name>com.sun.jersey.config.property.packages</param-name>-->
+            <!--<param-value>com.gerasimchuk.webservices</param-value>-->
+        <!--</init-param>-->
+        <!--<load-on-startup>2</load-on-startup>-->
+    <!--</servlet>-->
     <servlet>
-        <servlet-name>jerseyServlet</servlet-name>
-        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
-        <init-param>
-            <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>com.gerasimchuk.webservices</param-value>
-        </init-param>
-        <load-on-startup>1</load-on-startup>
+    <servlet-name>jerseyServlet</servlet-name>
+    <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+    <init-param>
+    <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+    <param-value>true</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
     </servlet>
+
     <servlet-mapping>
         <servlet-name>jerseyServlet</servlet-name>
         <url-pattern>/rest/*</url-pattern>
