@@ -13,4 +13,9 @@ public interface DriverRepository {
     Driver getById(int id);
     Collection<Driver> getAll();
     void remove(int id);
+
+
+    int getNumOfDriversTotal();
+    int getNumOfDriversExecutingOrders();
+    int getNumOfDriversFree();
 }

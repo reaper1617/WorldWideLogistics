@@ -4,10 +4,7 @@ import com.gerasimchuk.constants.WWLConstants;
 import com.gerasimchuk.converters.OrderToDTOConverter;
 import com.gerasimchuk.dto.OrderDTO;
 import com.gerasimchuk.entities.*;
-import com.gerasimchuk.enums.CargoActionType;
-import com.gerasimchuk.enums.CargoStatus;
-import com.gerasimchuk.enums.OrderStatus;
-import com.gerasimchuk.enums.TruckState;
+import com.gerasimchuk.enums.*;
 import com.gerasimchuk.exceptions.driverexceptions.TooManyHoursWorkedForOrderException;
 import com.gerasimchuk.exceptions.routeexceptions.NullRouteException;
 import com.gerasimchuk.exceptions.routeexceptions.RouteException;
@@ -228,11 +225,11 @@ public class OrderServiceImpl implements OrderService {
 //        return normalizedRoute;
 //    }
 
-    public boolean createOrder(OrderDTO orderDTO) throws RouteException {
+    public UpdateMessageType createOrder(OrderDTO orderDTO) throws RouteException {
         LOGGER.info("Class: " + this.getClass().getName() + " method: createOrder");
         if (!dtoValidator.validate(orderDTO)) {
             LOGGER.error("Error: orderDTO is not valid.");
-            return false;
+            return UpdateMessageType.ERROR_ORDER_DTO_IS_NOT_VALID;
         }
         String personalNumber = PersonalNumberGenerator.generate(10);
         Date date = new Date();
@@ -244,12 +241,12 @@ public class OrderServiceImpl implements OrderService {
         catch (Exception e){
             e.printStackTrace();
             LOGGER.error("Error: cannot parse id value.");
-            return false;
+            return UpdateMessageType.ERROR_CAN_NOT_PARSE_ORDER_ID;
         }
         Truck assignedTruck = truckRepository.getById(truckId);
         if (assignedTruck == null){
             LOGGER.error("Error: there is no truck with id = " + truckId + " in database");
-            return false;
+            return UpdateMessageType.ERROR_NO_TRUCK_WITH_THIS_ID;
         }
         LOGGER.info("Checking if there are drivers with too much hours worked.");
         double orderExecutingTime = getExecutingTime(orderDTO);
@@ -266,7 +263,7 @@ public class OrderServiceImpl implements OrderService {
             if (hoursWorked + orderExecutingTime > WWLConstants.MAX_DRIVER_HOURS_WORKED_IN_MONTH
                     && !nextMonthDuringOrderExecuting) {
                 LOGGER.error("Driver " + d.getUser().getPersonalNumber() + " cannot execute this order.");
-                return false; // todo: HoursWorkedOverLimitException
+                return UpdateMessageType.ERROR_DRIVER_HOURS_WORKED_OVER_LIMIT; // todo: HoursWorkedOverLimitException
             }
         }
         LOGGER.info("All drivers are able to execute this order");
@@ -283,23 +280,23 @@ public class OrderServiceImpl implements OrderService {
             }
             LOGGER.info("All cargos are assigned to order.");
             LOGGER.info("Order " + newOrder.getDescription() + " successfully created");
-            return true;
+            return UpdateMessageType.ORDER_CREATED;
         }
         LOGGER.error("Error: failed to create order.");
-        return false;
+        return UpdateMessageType.ERROR_CAN_NOT_CREATE_ORDER;
     }
 
 
-    public boolean updateOrder(OrderDTO orderDTO) throws RouteException, TooManyHoursWorkedForOrderException {
+    public UpdateMessageType updateOrder(OrderDTO orderDTO) throws RouteException, TooManyHoursWorkedForOrderException {
         LOGGER.info("Class: " + this.getClass().getName() + " method: updateOrder");
         if (!dtoValidator.validate(orderDTO)){
             LOGGER.error("Error: orderDTO is not valid.");
-            return false;
+            return UpdateMessageType.ERROR_ORDER_DTO_IS_NOT_VALID;
         }
 
         if (orderDTO.getId() == null) {
             LOGGER.error("Error: id field in orderDTO is null");
-            return false;
+            return UpdateMessageType.ERROR_ORDER_DTO_IS_NOT_VALID;
         }
         int id = 0;
         try {
@@ -308,7 +305,7 @@ public class OrderServiceImpl implements OrderService {
         catch (Exception e){
             e.printStackTrace();
             LOGGER.info("Error: cannot parse id value.");
-            return false;
+            return UpdateMessageType.ERROR_CAN_NOT_PARSE_ORDER_ID;
         }
         Order updated = null;
         if (id != 0){
@@ -316,15 +313,15 @@ public class OrderServiceImpl implements OrderService {
         }
         else {
             LOGGER.error("Error: id value is not valid (id = 0)");
-            return false;
+            return UpdateMessageType.ERROR_ID_IS_NOT_VALID;
         }
         if (updated != null){
             updateOrderWithFieldsFromDTO(updated,orderDTO);
             LOGGER.info("Order " + updated.getDescription() + " successfully updated");
-            return true;
+            return UpdateMessageType.ORDER_EDITED;
         }
         LOGGER.error("Error: failed to update order.");
-        return false;
+        return UpdateMessageType.ERROR_CAN_NOT_UPDATE_ORDER;
     }
 
     //todo: refactor!!
@@ -455,15 +452,15 @@ public class OrderServiceImpl implements OrderService {
         return true;
     }
 
-    public boolean deleteOrder(OrderDTO orderDTO) {
+    public UpdateMessageType deleteOrder(OrderDTO orderDTO) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: deleteOrder");
         if (!dtoValidator.validate(orderDTO)) {
             LOGGER.error("Error: orderDTO is not valid.");
-            return false;
+            return UpdateMessageType.ERROR_ORDER_DTO_IS_NOT_VALID;
         }
         if (orderDTO.getId() == null || orderDTO.getId().length()==0){
             LOGGER.error("Error: orderDTO is null or empty.");
-            return false;
+            return UpdateMessageType.ERROR_ORDER_DTO_IS_NOT_VALID;
         }
         int id = 0;
         try{
@@ -472,20 +469,20 @@ public class OrderServiceImpl implements OrderService {
         catch (Exception e){
             e.printStackTrace();
             LOGGER.error("Error: cannot parse order id.");
-            return false;
+            return UpdateMessageType.ERROR_CAN_NOT_PARSE_ORDER_ID;
         }
         if (id == 0) {
             LOGGER.error("Error: order id value is not valid (id = 0)");
-            return false;
+            return UpdateMessageType.ERROR_ID_IS_NOT_VALID;
         }
         Order deleted = orderRepository.getById(id);
         if (deleted == null){
             LOGGER.error("Error: there is no order with id = " + id + " in database");
-            return false;
+            return UpdateMessageType.ERROR_NO_ORDER_WITH_THIS_ID;
         }
         if (deleted.getStatus().equals(OrderStatus.EXECUTED) || deleted.getStatus().equals(OrderStatus.EXECUTING)){
             LOGGER.error("Error: can not delete order with status =" + deleted.getStatus());
-            return false;
+            return UpdateMessageType.ERROR_CAN_NOT_DELETE_ORDER_WITH_SUCH_STATUS;
         }
         Collection<Cargo> cargosInOrder = deleted.getCargosInOrder();
         LOGGER.info("Unassigning cargos from order before deleting...");
@@ -496,7 +493,7 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.info("All cargos are unassigned successfully.");
         orderRepository.remove(deleted.getId());
         LOGGER.info("Order " + deleted.getDescription() + " deleted successfully");
-        return true;
+        return UpdateMessageType.ORDER_DELETED;
     }
 
     @Override

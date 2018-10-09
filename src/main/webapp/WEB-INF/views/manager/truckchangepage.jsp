@@ -44,7 +44,7 @@
 		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
 				<%--</div>--%>
 				<div>
-					<form action="/truckchangepage" method="post">
+					<form action="${pageContext.request.contextPath}/truckchangepage" method="post">
 						<div>
 							<c:if test="${updatedTruckId != null}">
 								<input type="text" hidden name="id" value="${updatedTruckId}">
@@ -158,7 +158,7 @@
 							<br>
 						</div>
 					</form>
-					<form action="/index" method="get" id="rollback"></form>
+					<form action="${pageContext.request.contextPath}/index" method="get" id="rollback"></form>
 				</div>
 			
 					

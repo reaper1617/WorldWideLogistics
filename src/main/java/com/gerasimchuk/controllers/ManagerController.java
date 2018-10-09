@@ -4,6 +4,7 @@ package com.gerasimchuk.controllers;
 import com.gerasimchuk.converters.OrderToDTOConverter;
 import com.gerasimchuk.dto.*;
 import com.gerasimchuk.entities.*;
+import com.gerasimchuk.enums.UpdateMessageType;
 import com.gerasimchuk.exceptions.routeexceptions.RouteException;
 import com.gerasimchuk.rabbit.RabbitMQSender;
 import com.gerasimchuk.repositories.*;
@@ -11,6 +12,7 @@ import com.gerasimchuk.services.interfaces.CargoService;
 import com.gerasimchuk.services.interfaces.OrderService;
 import com.gerasimchuk.services.interfaces.TruckService;
 import com.gerasimchuk.services.interfaces.UserService;
+import com.gerasimchuk.utils.MessageConstructor;
 import com.gerasimchuk.utils.OrderWithRoute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -46,9 +48,10 @@ public class ManagerController {
     private OrderService orderService;
 
     private RabbitMQSender rabbitMQSender;
+    private MessageConstructor messageConstructor;
 
     @Autowired
-    public ManagerController(CargoRepository cargoRepository, CityRepository cityRepository, TruckRepository truckRepository, UserRepository userRepository, OrderRepository orderRepository, CargoService cargoService, UserService userService, TruckService truckService, OrderService orderService, RabbitMQSender rabbitMQSender) {
+    public ManagerController(CargoRepository cargoRepository, CityRepository cityRepository, TruckRepository truckRepository, UserRepository userRepository, OrderRepository orderRepository, CargoService cargoService, UserService userService, TruckService truckService, OrderService orderService, RabbitMQSender rabbitMQSender, MessageConstructor messageConstructor) {
         this.cargoRepository = cargoRepository;
         this.cityRepository = cityRepository;
         this.truckRepository = truckRepository;
@@ -59,6 +62,7 @@ public class ManagerController {
         this.truckService = truckService;
         this.orderService = orderService;
         this.rabbitMQSender = rabbitMQSender;
+        this.messageConstructor = messageConstructor;
     }
 
     @RequestMapping(value = "/managermainpage/{id}", method = RequestMethod.GET)
@@ -210,8 +214,8 @@ public class ManagerController {
             return "failure";
         }
 
-        boolean result = userService.createDriver(driverDTO);
-        if (result){
+        UpdateMessageType result = userService.createDriver(driverDTO);
+        if (result.equals(UpdateMessageType.DRIVER_CREATED)){
             log.info("New driver successfully created!");
             ui.addAttribute("actionSuccess", "New driver successfully created!");
             return "success";
@@ -327,7 +331,7 @@ public class ManagerController {
             ui.addAttribute("actionFailed", "Error while trying to create order!");
             return "failure";
         }
-        boolean result = false;
+        UpdateMessageType result = null;
         try {
             result = orderService.createOrder(orderDTO);
         }
@@ -336,9 +340,10 @@ public class ManagerController {
             ui.addAttribute("actionFailed", "Error: " + e.getMessage());
             return "failure";
         }
-        if (result){
+        if (result.equals(UpdateMessageType.ORDER_CREATED)){
             log.info("New order successfully created!");
             ui.addAttribute("actionSuccess", "New order successfully created!");
+            rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.ORDER_CREATED,orderRepository.getByPersonalNumber(orderDTO.getPersonalNumber())));
             return "success";
         }
         else {
@@ -371,7 +376,7 @@ public class ManagerController {
             ui.addAttribute("actionFailed", "Error while trying to create truck!");
             return "failure";
         }
-        boolean result = false;
+        UpdateMessageType result = null;
         try {
             result = truckService.createTruck(truckDTO);
         }
@@ -380,7 +385,7 @@ public class ManagerController {
             ui.addAttribute("actionFailed", "Error: " + e.getMessage());
             return "failure";
         }
-        if (result){
+        if (result.equals(UpdateMessageType.TRUCK_CREATED)){
             log.info("New truck successfully created!");
             ui.addAttribute("actionSuccess", "New truck successfully created!");
             return "success";
@@ -444,8 +449,8 @@ public class ManagerController {
             ui.addAttribute("actionFailed", "Error while trying to update driver!");
             return "failure";
         }
-        boolean result = userService.updateDriver(driverDTO);
-        if (result){
+        UpdateMessageType result = userService.updateDriver(driverDTO);
+        if (result.equals(UpdateMessageType.DRIVER_EDITED)){
             log.info("Driver updated successfully");
             ui.addAttribute("actionSuccess", "Driver updated successfully!");
             return "success";
@@ -478,8 +483,8 @@ public class ManagerController {
             log.error("Error: Truck Data Transfer Object is not valid");
             ui.addAttribute("actionFailed", "Error while trying to update truck!");
         }
-        boolean result = truckService.updateTruck(truckDTO);
-        if (result){
+        UpdateMessageType result = truckService.updateTruck(truckDTO);
+        if (result.equals(UpdateMessageType.TRUCK_EDITED)){
             log.info("Truck updated successfully");
             ui.addAttribute("actionSuccess", "Truck updated successfully!");
             return "success";

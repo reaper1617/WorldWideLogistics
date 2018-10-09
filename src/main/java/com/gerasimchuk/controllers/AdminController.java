@@ -6,11 +6,13 @@ import com.gerasimchuk.dto.OrderDTO;
 import com.gerasimchuk.dto.RouteDTO;
 import com.gerasimchuk.dto.UserDTO;
 import com.gerasimchuk.entities.*;
+import com.gerasimchuk.enums.OrderStatus;
+import com.gerasimchuk.enums.UpdateMessageType;
 import com.gerasimchuk.enums.UserRole;
-import com.gerasimchuk.rabbit.RabbitMQReceiver;
 import com.gerasimchuk.rabbit.RabbitMQSender;
 import com.gerasimchuk.repositories.*;
 import com.gerasimchuk.services.interfaces.*;
+import com.gerasimchuk.utils.MessageConstructor;
 import com.gerasimchuk.utils.OrderWithRoute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -41,6 +44,7 @@ public class AdminController {
     private CargoRepository cargoRepository;
     private CityRepository cityRepository;
     private RouteRepository routeRepository;
+    private DriverRepository driverRepository;
 
     private UserService userService;
     private OrderService orderService;
@@ -49,18 +53,20 @@ public class AdminController {
     private CityService cityService;
     private RouteService routeService;
     private RabbitMQSender rabbitMQSender;
+    private MessageConstructor messageConstructor;
    // private AmqpTemplate amqpTemplate;
 //    private RabbitMQReceiver rabbitMQReceiver;
 
 
     @Autowired
-    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService, CityService cityService, RouteService routeService, RabbitMQSender rabbitMQSender) {
+    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, DriverRepository driverRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService, CityService cityService, RouteService routeService, RabbitMQSender rabbitMQSender, MessageConstructor messageConstructor) {
         this.orderRepository = orderRepository;
         this.truckRepository = truckRepository;
         this.userRepository = userRepository;
         this.cargoRepository = cargoRepository;
         this.cityRepository = cityRepository;
         this.routeRepository = routeRepository;
+        this.driverRepository = driverRepository;
         this.userService = userService;
         this.orderService = orderService;
         this.cargoService = cargoService;
@@ -68,13 +74,16 @@ public class AdminController {
         this.cityService = cityService;
         this.routeService = routeService;
         this.rabbitMQSender = rabbitMQSender;
+        this.messageConstructor = messageConstructor;
     }
 
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(AdminController.class);
 
 
     @RequestMapping(value = "/adminmainpage/{id}", method = RequestMethod.GET)
-    public String adminMainPage(@PathVariable("id") int id, Model ui) {
+    public String adminMainPage(@PathVariable("id") int id, Model ui, HttpServletRequest req) {
+//        req.getContextPath();
+        ui.addAttribute("context", req.getContextPath());
         LOGGER.info("Controller: AdminController, metod = adminMainPage,  action = \"/adminmainpage\", request = GET");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String personalNumber = authentication.getName();
@@ -216,10 +225,11 @@ public class AdminController {
                 return "failure";
             }
             if (deleted != null) {
-                boolean result = orderService.deleteOrder(orderDTO);
-                if (result) {
+                UpdateMessageType result = orderService.deleteOrder(orderDTO);
+                if (result.equals(UpdateMessageType.ORDER_DELETED)) {
                     LOGGER.info("Order deleted successfully!");
                     ui.addAttribute("actionSuccess", "Order deleted successfully!");
+                    rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.ORDER_DELETED, deleted));
                     return "success";
                 } else {
                     LOGGER.error("Error: deleteOrder method in OrderService returned false.");
@@ -227,7 +237,6 @@ public class AdminController {
                     return "failure";
                 }
             }
-
         }
         if (action == 3) {
             // edit truck
@@ -300,8 +309,8 @@ public class AdminController {
                 ui.addAttribute("actionFailed", "Error: user id value is zero!");
                 return "failure";
             }
-            boolean result = userService.deleteUser(id);
-            if (result){
+            UpdateMessageType result = userService.deleteUser(id);
+            if (result.equals(UpdateMessageType.USER_DELETED)){
                 LOGGER.info("User deleted successfully!");
                 ui.addAttribute("actionSuccess","User deleted successfully!");
                 return "success";
@@ -481,8 +490,8 @@ public class AdminController {
             ui.addAttribute("actionFailed", "Error: user Data Transfer Object is null!");
             return "failure";
         }
-        boolean result = userService.updateUser(userDTO);
-        if (result){
+        UpdateMessageType result = userService.updateUser(userDTO);
+        if (result.equals(UpdateMessageType.USER_EDITED)){
             LOGGER.info("User successfully updated!");
             ui.addAttribute("actionSuccess", "User successfully updated!");
             return "success";
@@ -592,7 +601,7 @@ public class AdminController {
             ui.addAttribute("actionFailed", "Error: order Data Access object is empty");
             return "failure";
         }
-        boolean result = false;
+        UpdateMessageType result = null;
         try {
             result = orderService.updateOrder(orderDTO);
         }
@@ -601,9 +610,10 @@ public class AdminController {
             ui.addAttribute("actionFailed", "Error: " + e.getMessage());
             return "failure";
         }
-        if (result) {
+        if (result.equals(UpdateMessageType.ORDER_EDITED)) {
             LOGGER.info("Order successfully edited!");
             ui.addAttribute("actionSuccess", "Order successfully edited!");
+            rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.ORDER_EDITED,orderRepository.getByPersonalNumber(orderDTO.getPersonalNumber())));
             return "success";
         } else {
             LOGGER.error("Error: updateOrder method in OrderService returned false.");
@@ -633,8 +643,8 @@ public class AdminController {
             ui.addAttribute("actionFailed", "Error: user Data Transfer Object is null!");
             return "failure";
         }
-        boolean result = userService.createUser(userDTO);
-        if (result) {
+        UpdateMessageType result = userService.createUser(userDTO);
+        if (result.equals(UpdateMessageType.USER_CREATED)) {
             LOGGER.info("New " + userDTO.getRole().toLowerCase() + " created successfully");
             ui.addAttribute("actionSuccess", "New " + userDTO.getRole().toLowerCase() + " created successfully");
             return "success";

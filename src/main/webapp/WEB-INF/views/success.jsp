@@ -44,7 +44,7 @@
 			<c:if test="${actionSuccess == null}">
 				<h1>Whatever you did, it was successful:)</h1>
 			</c:if>
-			<form action="/index" method="get">
+			<form action="${pageContext.request.contextPath}/index" method="get">
 				<button type="submit" class="btn btn-primary">Go home</button>
 			</form>
 		</div>

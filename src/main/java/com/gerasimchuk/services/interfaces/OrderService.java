@@ -6,6 +6,7 @@ import com.gerasimchuk.entities.City;
 import com.gerasimchuk.entities.Order;
 import com.gerasimchuk.entities.Truck;
 import com.gerasimchuk.enums.OrderStatus;
+import com.gerasimchuk.enums.UpdateMessageType;
 import com.gerasimchuk.exceptions.driverexceptions.TooManyHoursWorkedForOrderException;
 import com.gerasimchuk.exceptions.routeexceptions.RouteException;
 
@@ -23,10 +24,14 @@ public interface OrderService {
     Collection<City> getOrderRoute(OrderDTO orderDTO, Truck truck) throws RouteException;
 //    Map<Order, Collection<City>> getRoutes(Collection<Order> orders);
 //    Collection<Truck> getAvailableTrucks(List<Cargo> cargosInOrder);
-    boolean createOrder(OrderDTO orderDTO) throws RouteException;
-    boolean updateOrder(OrderDTO orderDTO) throws RouteException, TooManyHoursWorkedForOrderException;
+
+
+    UpdateMessageType createOrder(OrderDTO orderDTO) throws RouteException;
+    UpdateMessageType updateOrder(OrderDTO orderDTO) throws RouteException, TooManyHoursWorkedForOrderException;
     OrderStatus getOrderStatusFromString(String status);
     boolean areAllCargosDelivered(Order order);
-    boolean deleteOrder(OrderDTO orderDTO);
+    UpdateMessageType deleteOrder(OrderDTO orderDTO);
+
+
     double getExecutingTime(OrderDTO orderDTO) throws RouteException;
 }

@@ -2,6 +2,7 @@ package com.gerasimchuk.entities;
 
 
 import com.gerasimchuk.enums.OrderStatus;
+import com.gerasimchuk.utils.JSONconvertable;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,7 +14,7 @@ import java.util.Set;
 
 @Entity(name = "Orders")
 @Table(name = "orders", schema = "mywwldatabase", catalog = "")
-public class Order {
+public class Order implements JSONconvertable {
     private int id;
     private String personalNumber;
     private String description;
@@ -105,4 +106,16 @@ public class Order {
     }
 
 
+    @Override
+    public String convertToJSONString() {
+        // todo: add fields (assignedTruck, cargosInOrders) to result!
+        StringBuilder result = new StringBuilder();
+        result.append("{");
+        result.append("\"id\":").append("\"").append(id).append("\"").append(",");
+        result.append("\"personalNumber\":").append("\"").append(personalNumber).append("\"").append(",");
+        result.append("\"description\":").append("\"").append(description).append("\"").append(",");
+        result.append("\"date\":").append("\"").append(date).append("\"").append(",");
+        result.append("\"status\":").append("\"").append(status).append("\"").append("}");
+        return result.toString();
+    }
 }

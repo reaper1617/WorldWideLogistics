@@ -19,6 +19,7 @@ public interface OrderRepository {
                  OrderStatus status,
                  Truck assignedTruck);
     Order getById(int id);
+    Order getByPersonalNumber(String personalNumber);
     Collection<Order> getAll();
     void remove(int id);
 }

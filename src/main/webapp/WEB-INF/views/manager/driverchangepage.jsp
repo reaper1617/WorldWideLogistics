@@ -44,7 +44,7 @@
 		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
 				<%--</div>--%>
 				<div>
-					<form action="/driverchangepage" method="post">
+					<form action="${pageContext.request.contextPath}/driverchangepage" method="post">
 						<c:if test="${updatedDriverId != null}">
 							<div>
 								<input type="text" hidden name="id" value="${updatedDriverId}">
@@ -122,7 +122,7 @@
 							<br>
 						</div>
 					</form>
-					<form action="/index" method="get" id="rollback"></form>
+					<form action="${pageContext.request.contextPath}/index" method="get" id="rollback"></form>
 				</div>
 
 					

@@ -29,4 +29,12 @@ public interface TruckRepository {
     Truck getByRegistrationNumber(String registrationNumber);
     Collection<Truck> getAll();
     void remove(int id);
+
+
+    // for statistics
+    int getNumberOfTrucksTotal();
+    int getNumberOfTrucksFree();
+    int getNumberOfTrucksNotReady();
+    int getNumberOfTrucksExecutingOrder();
+
 }

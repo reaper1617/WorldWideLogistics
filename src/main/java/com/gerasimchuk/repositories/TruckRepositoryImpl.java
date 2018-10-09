@@ -6,6 +6,7 @@ import com.gerasimchuk.entities.Order;
 import com.gerasimchuk.entities.Truck;
 import com.gerasimchuk.enums.TruckState;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,5 +91,52 @@ public class TruckRepositoryImpl implements TruckRepository {
         Truck removed = sessionFactory.getCurrentSession().get(Truck.class,id);
         sessionFactory.getCurrentSession().remove(removed);
         LOGGER.info("Removed truck: " + removed.getRegistrationNumber());
+    }
+
+
+    @Override
+    @Transactional
+    public int getNumberOfTrucksTotal() {
+        //return (Integer) sessionFactory.getCurrentSession().createQuery("SELECT count (ALL)  from Trucks").uniqueResult();
+        //return getAll().size();
+        Number number = (Number) sessionFactory.getCurrentSession().createCriteria(Truck.class).setProjection(Projections.rowCount()).uniqueResult();
+        return number.intValue();
+    }
+
+    @Override
+    @Transactional
+    public int getNumberOfTrucksFree() {
+        // todo: make right query instead!
+      //return sessionFactory.getCurrentSession().createQuery("from Trucks t where t.assignedOrder = null").getResultList().size();
+        Collection<Truck> allTrucks = getAll();
+        int res = 0;
+        for(Truck t: allTrucks){
+            if (t.getAssignedOrder() == null) res ++;
+        }
+        return res;
+    }
+
+    @Override
+    @Transactional
+    public int getNumberOfTrucksNotReady() {
+        // todo: make right query instead!
+        Collection<Truck> allTrucks = getAll();
+        int res = 0;
+        for(Truck t: allTrucks){
+            if (t.getState().equals(TruckState.NOT_READY)) res++ ;
+        }
+        return res;
+    }
+
+    @Override
+    @Transactional
+    public int getNumberOfTrucksExecutingOrder() {
+        // todo: make right query instead!
+        Collection<Truck> allTrucks = getAll();
+        int res = 0;
+        for(Truck t: allTrucks){
+            if (t.getAssignedOrder() != null) res++;
+        }
+        return res;
     }
 }

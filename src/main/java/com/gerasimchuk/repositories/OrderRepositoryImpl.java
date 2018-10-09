@@ -58,6 +58,15 @@ public class OrderRepositoryImpl implements OrderRepository {
         return res;
     }
 
+    @Override
+    public Order getByPersonalNumber(String personalNumber) {
+        Collection<Order> allOrders = getAll();
+        for(Order o: allOrders){
+            if (o.getPersonalNumber().equals(personalNumber)) return o;
+        }
+        return null;
+    }
+
     @Transactional
     public Collection<Order> getAll() {
         LOGGER.info("Class: " + this.getClass().getName() + " method: getAll");

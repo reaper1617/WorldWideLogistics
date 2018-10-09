@@ -40,7 +40,7 @@
                 <br>
                 <h1>Error! Something goes wrong! :(</h1>
                 <h1>Please call the administrator</h1>
-                <form action="/index" method="get">
+                <form action="${pageContext.request.contextPath}/index" method="get">
                     <button type="submit" class="btn btn-primary">Go home</button>
                 </form>
             </div>

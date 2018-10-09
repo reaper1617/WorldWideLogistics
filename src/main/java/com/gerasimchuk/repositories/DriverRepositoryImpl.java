@@ -76,4 +76,34 @@ public class DriverRepositoryImpl implements DriverRepository {
         sessionFactory.getCurrentSession().remove(removed);
         LOGGER.info("Removed driver: id = " + removed.getId());
     }
+
+    @Override
+    @Transactional
+    public int getNumOfDriversTotal() {
+        return getAll().size();
+    }
+
+    @Override
+    @Transactional
+    public int getNumOfDriversExecutingOrders() {
+        Collection<Driver> allDrivers = getAll();
+        int res = 0;
+        for(Driver d: allDrivers){
+            if (d.getCurrentTruck()!=null){
+                if (d.getCurrentTruck().getAssignedOrder()!=null) res++;
+            }
+        }
+        return res;
+    }
+
+    @Override
+    @Transactional
+    public int getNumOfDriversFree() {
+        Collection<Driver> allDrivers = getAll();
+        int res = 0;
+        for(Driver d: allDrivers){
+            if (d.getStatus().equals(DriverStatus.FREE)) res++;
+        }
+        return res;
+    }
 }

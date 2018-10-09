@@ -42,7 +42,7 @@
 		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
 				<%--</div>--%>
 				<div>
-					<form action="/assigntrucktoorderpage", method="post">
+					<form action="${pageContext.request.contextPath}/assigntrucktoorderpage", method="post">
 						<div class="form-group">
 							<input type="text" hidden class="form-control" id="item_descr"  name="description" style="width:350px" value="${orderDTO.description}">
 						</div>
@@ -90,7 +90,7 @@
 							<button type="submit" class="btn btn-primary" form="rollback">Rollback changes</button>
 						</div>
 					</form>
-					<form action="/index" method="get" id="rollback"></form>
+					<form action="${pageContext.request.contextPath}/index" method="get" id="rollback"></form>
 				</div>
 			
 					

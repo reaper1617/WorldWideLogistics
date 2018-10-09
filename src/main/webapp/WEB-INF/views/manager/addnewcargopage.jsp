@@ -44,7 +44,7 @@
 		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
 				<%--</div>--%>
 				<div>
-					<form action="/addnewcargopage" method="post" id="addNewCargoForm">
+					<form action="${pageContext.request.contextPath}/addnewcargopage" method="post" id="addNewCargoForm">
 						<div class="form-group">
 					      		<label for="cargo_name">Cargo name</label>
       							<input type="text" class="form-control" id="cargo_name" placeholder="Enter cargo name" name="name" style="width:350px" required="required">
@@ -84,7 +84,7 @@
 							<button type="submit" class="btn btn-primary" form="rollback">Rollback changes</button>
 						</div>
 					</form>
-					<form action="/index" method="get" id="rollback"></form>
+					<form action="${pageContext.request.contextPath}/index" method="get" id="rollback"></form>
 
 				</div>
 			

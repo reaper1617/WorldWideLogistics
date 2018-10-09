@@ -39,7 +39,7 @@
                 <h1 class="text-primary">Action failed!</h1>
                 <br>
                 <h1>Error! There is no such page :(</h1>
-                <form action="/index" method="get">
+                <form action="${pageContext.request.contextPath}/index" method="get">
                     <button type="submit" class="btn btn-primary">Go home</button>
                 </form>
             </div>
