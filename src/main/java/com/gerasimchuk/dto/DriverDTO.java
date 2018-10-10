@@ -2,13 +2,14 @@ package com.gerasimchuk.dto;
 
 import com.gerasimchuk.entities.City;
 import com.gerasimchuk.enums.DriverStatus;
+import com.gerasimchuk.utils.JSONconvertable;
 
 /** Driver Data Transfer Object
  * @author Reaper
  * @version 1.0
  */
 
-public class DriverDTO {
+public class DriverDTO  {
     private String id;
     private String firstName;
     private String middleName;
@@ -158,4 +159,13 @@ public class DriverDTO {
         result = 31 * result + (currentTruckRegistrationNumber != null ? currentTruckRegistrationNumber.hashCode() : 0);
         return result;
     }
+
+//    @Override
+//    public String convertToJSONString() {
+//        StringBuilder result = new StringBuilder("{");
+//        result.append("\"id\":").append("\"").append(id).append("\"").append(",");
+//        result.append("\"firstName\":").append("\"").append(firstName).append("\"").append(",");
+//        result.append("\"middleName\":").append("\"").append(middleName).append("\"").append(",");
+//        result.append("\"lastName\":").append("\"").append(lastName).append("\"").append(",");
+//    }
 }

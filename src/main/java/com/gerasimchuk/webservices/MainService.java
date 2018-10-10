@@ -44,19 +44,6 @@ public class MainService {
     public List<OrderDTO> getOrders(){
         LOGGER.info("In REST: /orders");
         List<OrderDTO> collection = new ArrayList<OrderDTO>();
-//        collection.add(new Order());
-//        collection.add(new Order());
-//        collection.add(new Order());
-//        collection.add(new Order());
-//        collection.add(new OrderDTO("id", "pN1","descr1", "status1", "at1", null));
-//        collection.add(new OrderDTO("id2", "pN2","descr2", "status2", "at1", null));
-//        collection.add(new OrderDTO("id3", "pN3","descr3", "status3", "at1", null));
-//        collection.add(new OrderDTO("id4", "pN4","descr4", "status4", "at1", null));
-//        collection.add(new OrderDTO("id5", "pN5","descr5", "status5", "at1", null));
-//        collection.add(new OrderDTO("id5", "pN5","descr5", "status5", "at1", null));
-//        collection.add(new OrderDTO("id5", "pN5","descr5", "status5", "at1", null));
-
-        //
         String url = "jdbc:mysql://localhost:3306/mywwldatabase"+
                 "?verifyServerCertificate=false"+
                 "&useSSL=false"+
@@ -64,8 +51,6 @@ public class MainService {
                 "&useLegacyDatetimeCode=false"+
                 "&amp"+
                 "&serverTimezone=UTC";
-
-
         Connection connection = null;
         Statement statement = null;
         try{
@@ -76,7 +61,7 @@ public class MainService {
             statement = connection.createStatement();
             LOGGER.info("Statement:" + statement);
             LOGGER.info("Trying to get result set");
-            ResultSet resultSet = statement.executeQuery("select * from orders");
+            ResultSet resultSet = statement.executeQuery("select * from orders order by id desc limit 10");
             LOGGER.info("Result set:" + resultSet);
             while(resultSet.next()){
                 LOGGER.info("in result set iter:");
@@ -114,10 +99,102 @@ public class MainService {
                 }
             }
         }
-
-
-
         return collection;
     }
 
+    @GET
+    @Path("/stats")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Integer> getStats(){
+        LOGGER.info("In REST: /stats");
+        List<Integer> list = new ArrayList<Integer>();
+        String url = "jdbc:mysql://localhost:3306/mywwldatabase"+
+                "?verifyServerCertificate=false"+
+                "&useSSL=false"+
+                "&requireSSL=false"+
+                "&useLegacyDatetimeCode=false"+
+                "&amp"+
+                "&serverTimezone=UTC";
+        Connection connection = null;
+        Statement statement = null;
+        try{
+            LOGGER.info("Trying to get connection");
+            connection = DriverManager.getConnection(url,"root", "root");
+            LOGGER.info("Connection:" + connection);
+            LOGGER.info("Trying to create statement.");
+            statement = connection.createStatement();
+            LOGGER.info("Statement:" + statement);
+            LOGGER.info("Trying to get result set");
+            //ResultSet resultSet = statement.executeQuery("select count (ALL *) from trucks;");
+            ResultSet resultSet = statement.executeQuery("select count(*) from trucks");
+            int trucksTotal = 0;
+            while (resultSet.next()){
+                trucksTotal =  resultSet.getInt(1);
+            }
+            ResultSet resultSet2 = statement.executeQuery("select count(*) from trucks t inner join orders o on t.id != o.assigned_truck_id");
+            int trucksFree = 0;
+            while (resultSet2.next()){
+                trucksFree =  resultSet2.getInt(1);
+            }
+
+            ResultSet resultSet3 = statement.executeQuery("select count(*) from trucks t where t.state = 'NOT_READY'");
+            int trucksNotReady = 0;
+            while (resultSet3.next()){
+                trucksNotReady =  resultSet3.getInt(1);
+            }
+
+            ResultSet resultSet4 = statement.executeQuery("select count(*) from trucks t inner join orders o on t.id = o.assigned_truck_id");
+            int trucksExecOrder = 0;
+            while (resultSet4.next()){
+                trucksExecOrder=  resultSet4.getInt(1);
+            }
+
+            ResultSet resultSet5 = statement.executeQuery("select count(*) from drivers");
+            int driversTotal = 0;
+            while (resultSet5.next()){
+                driversTotal =  resultSet5.getInt(1);
+            }
+
+            ResultSet resultSet6 = statement.executeQuery("select count(*) from drivers d where d.status = 'FREE'");
+            int driversFree = 0;
+            while (resultSet6.next()){
+                driversFree =  resultSet6.getInt(1);
+            }
+
+            ResultSet resultSet7 = statement.executeQuery("select count(*) from drivers d where d.status != 'FREE'");
+            int driversExecOrders = 0;
+            while (resultSet7.next()){
+                driversFree =  resultSet7.getInt(1);
+            }
+            list.add(trucksTotal);
+            list.add(trucksFree);
+            list.add(trucksNotReady);
+            list.add(trucksExecOrder);
+
+            list.add(driversTotal);
+            list.add(driversFree);
+            list.add(driversExecOrders);
+
+        } catch (SQLException e) {
+            LOGGER.error("Catched sqlEx");
+            e.printStackTrace();
+        }
+        finally {
+            if (statement !=null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connection!= null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return list;
+    }
 }

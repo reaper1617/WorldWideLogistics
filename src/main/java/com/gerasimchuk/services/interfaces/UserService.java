@@ -43,6 +43,9 @@ public interface UserService {
     UpdateMessageType createUser(UserDTO userDTO);
     UpdateMessageType updateUser(UserDTO userDTO);
     UpdateMessageType deleteUser(int id);
+
+
+
 //    Collection<Manager> getAllManagers();
 //    Collection<Admin> getAllAdmins();
 

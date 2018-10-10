@@ -3,11 +3,12 @@ package com.gerasimchuk.services.impls;
 import com.gerasimchuk.repositories.DriverRepository;
 import com.gerasimchuk.repositories.TruckRepository;
 import com.gerasimchuk.services.interfaces.StatisticService;
+import com.gerasimchuk.utils.JSONconvertable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class StatisticServiceImpl implements StatisticService {
+public class StatisticServiceImpl implements StatisticService, JSONconvertable {
 
     private DriverRepository driverRepository;
     private TruckRepository truckRepository;
@@ -51,5 +52,18 @@ public class StatisticServiceImpl implements StatisticService {
     @Override
     public int getNumOfDriversExecutingOrders() {
         return driverRepository.getNumOfDriversExecutingOrders();
+    }
+
+    @Override
+    public String convertToJSONString() {
+        StringBuilder result = new StringBuilder("{");
+        result.append("\"trucksTotal\":").append("\"").append(getNumOfTrucksTotal()).append("\"").append(",");
+        result.append("\"trucksFree\":").append("\"").append(getNumOfTrucksFree()).append("\"").append(",");
+        result.append("\"trucksNotReady\":").append("\"").append(getNumOfTrucksNotReady()).append("\"").append(",");
+        result.append("\"trucksExecOrders\":").append("\"").append(getNumOfTrucksNotReady()).append("\"").append(",");
+        result.append("\"driversTotal\":").append("\"").append(getNumOfDriversTotal()).append("\"").append(",");
+        result.append("\"driversFree\":").append("\"").append(getNumOfDriversFree()).append("\"").append(",");
+        result.append("\"driversExecOrders\":").append("\"").append(getNumOfDriversExecutingOrders()).append("\"").append("}");
+        return result.toString();
     }
 }

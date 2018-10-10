@@ -8,12 +8,10 @@ import com.gerasimchuk.enums.UpdateMessageType;
 import com.gerasimchuk.exceptions.routeexceptions.RouteException;
 import com.gerasimchuk.rabbit.RabbitMQSender;
 import com.gerasimchuk.repositories.*;
-import com.gerasimchuk.services.interfaces.CargoService;
-import com.gerasimchuk.services.interfaces.OrderService;
-import com.gerasimchuk.services.interfaces.TruckService;
-import com.gerasimchuk.services.interfaces.UserService;
+import com.gerasimchuk.services.interfaces.*;
 import com.gerasimchuk.utils.MessageConstructor;
 import com.gerasimchuk.utils.OrderWithRoute;
+import com.gerasimchuk.utils.ReturnValuesContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,8 +48,10 @@ public class ManagerController {
     private RabbitMQSender rabbitMQSender;
     private MessageConstructor messageConstructor;
 
+    private StatisticService statisticService;
+
     @Autowired
-    public ManagerController(CargoRepository cargoRepository, CityRepository cityRepository, TruckRepository truckRepository, UserRepository userRepository, OrderRepository orderRepository, CargoService cargoService, UserService userService, TruckService truckService, OrderService orderService, RabbitMQSender rabbitMQSender, MessageConstructor messageConstructor) {
+    public ManagerController(CargoRepository cargoRepository, CityRepository cityRepository, TruckRepository truckRepository, UserRepository userRepository, OrderRepository orderRepository, CargoService cargoService, UserService userService, TruckService truckService, OrderService orderService, RabbitMQSender rabbitMQSender, MessageConstructor messageConstructor, StatisticService statisticService) {
         this.cargoRepository = cargoRepository;
         this.cityRepository = cityRepository;
         this.truckRepository = truckRepository;
@@ -63,6 +63,7 @@ public class ManagerController {
         this.orderService = orderService;
         this.rabbitMQSender = rabbitMQSender;
         this.messageConstructor = messageConstructor;
+        this.statisticService = statisticService;
     }
 
     @RequestMapping(value = "/managermainpage/{id}", method = RequestMethod.GET)
@@ -218,6 +219,7 @@ public class ManagerController {
         if (result.equals(UpdateMessageType.DRIVER_CREATED)){
             log.info("New driver successfully created!");
             ui.addAttribute("actionSuccess", "New driver successfully created!");
+            rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.DRIVER_CREATED, statisticService));
             return "success";
         }
         else {
@@ -331,19 +333,21 @@ public class ManagerController {
             ui.addAttribute("actionFailed", "Error while trying to create order!");
             return "failure";
         }
-        UpdateMessageType result = null;
+        //UpdateMessageType result = null;
+        ReturnValuesContainer<Order> result = null;
+
         try {
-            result = orderService.createOrder(orderDTO);
+            result = orderService.createOrder(orderDTO, 0);
         }
         catch (Exception e){
             log.error("Error: " + e.getMessage());
             ui.addAttribute("actionFailed", "Error: " + e.getMessage());
             return "failure";
         }
-        if (result.equals(UpdateMessageType.ORDER_CREATED)){
+        if (result.getUpdateMessageType().equals(UpdateMessageType.ORDER_CREATED)){
             log.info("New order successfully created!");
             ui.addAttribute("actionSuccess", "New order successfully created!");
-            rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.ORDER_CREATED,orderRepository.getByPersonalNumber(orderDTO.getPersonalNumber())));
+            rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.ORDER_CREATED,result.getReturnedValue()));
             return "success";
         }
         else {
@@ -388,6 +392,7 @@ public class ManagerController {
         if (result.equals(UpdateMessageType.TRUCK_CREATED)){
             log.info("New truck successfully created!");
             ui.addAttribute("actionSuccess", "New truck successfully created!");
+            rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.TRUCK_CREATED, statisticService));
             return "success";
         }
         else {
@@ -453,6 +458,7 @@ public class ManagerController {
         if (result.equals(UpdateMessageType.DRIVER_EDITED)){
             log.info("Driver updated successfully");
             ui.addAttribute("actionSuccess", "Driver updated successfully!");
+            rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.DRIVER_EDITED, statisticService));
             return "success";
         }
         else {
@@ -487,6 +493,7 @@ public class ManagerController {
         if (result.equals(UpdateMessageType.TRUCK_EDITED)){
             log.info("Truck updated successfully");
             ui.addAttribute("actionSuccess", "Truck updated successfully!");
+            rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.TRUCK_EDITED, statisticService));
             return "success";
         }
         else {

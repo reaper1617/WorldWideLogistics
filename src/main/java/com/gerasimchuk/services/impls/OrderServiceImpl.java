@@ -12,6 +12,7 @@ import com.gerasimchuk.repositories.*;
 import com.gerasimchuk.services.interfaces.OrderService;
 import com.gerasimchuk.utils.DateParser;
 import com.gerasimchuk.utils.PersonalNumberGenerator;
+import com.gerasimchuk.utils.ReturnValuesContainer;
 import com.gerasimchuk.utils.RoutePoint;
 import com.gerasimchuk.validators.DTOValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -284,6 +285,68 @@ public class OrderServiceImpl implements OrderService {
         }
         LOGGER.error("Error: failed to create order.");
         return UpdateMessageType.ERROR_CAN_NOT_CREATE_ORDER;
+    }
+
+    @Override
+    public ReturnValuesContainer<Order> createOrder(OrderDTO orderDTO, int val) throws RouteException {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: createOrder");
+        if (!dtoValidator.validate(orderDTO)) {
+            LOGGER.error("Error: orderDTO is not valid.");
+            return new ReturnValuesContainer<Order>(UpdateMessageType.ERROR_ORDER_DTO_IS_NOT_VALID,null);
+        }
+        String personalNumber = PersonalNumberGenerator.generate(10);
+        Date date = new Date();
+        String currentDate = date.toString();
+        int truckId = 0;
+        try{
+            truckId = Integer.parseInt(orderDTO.getAssignedTruckId());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            LOGGER.error("Error: cannot parse id value.");
+            return new ReturnValuesContainer<Order>(UpdateMessageType.ERROR_CAN_NOT_PARSE_ORDER_ID,null);
+        }
+        Truck assignedTruck = truckRepository.getById(truckId);
+        if (assignedTruck == null){
+            LOGGER.error("Error: there is no truck with id = " + truckId + " in database");
+            return new ReturnValuesContainer<Order>(UpdateMessageType.ERROR_NO_TRUCK_WITH_THIS_ID,null);
+        }
+        LOGGER.info("Checking if there are drivers with too much hours worked.");
+        double orderExecutingTime = getExecutingTime(orderDTO);
+        LOGGER.info("Order executing time = " + orderExecutingTime + " hours");
+        Collection<Driver> driversInTruck = assignedTruck.getDriversInTruck();
+        for(Driver d : driversInTruck){
+            LOGGER.info("Driver: " + d.getUser().getPersonalNumber());
+            double hoursWorked = d.getHoursWorked();
+            LOGGER.info("Hours worked = " + hoursWorked);
+            long createOrderTimeMs = date.getTime();
+            Date orderExecDate = new Date(createOrderTimeMs + (long)orderExecutingTime*WWLConstants.MILLISECONDS_IN_HOUR);
+            boolean nextMonthDuringOrderExecuting = false;
+            if (date.getMonth() != orderExecDate.getMonth()) nextMonthDuringOrderExecuting = true;
+            if (hoursWorked + orderExecutingTime > WWLConstants.MAX_DRIVER_HOURS_WORKED_IN_MONTH
+                    && !nextMonthDuringOrderExecuting) {
+                LOGGER.error("Driver " + d.getUser().getPersonalNumber() + " cannot execute this order.");
+                return new ReturnValuesContainer<Order>(UpdateMessageType.ERROR_DRIVER_HOURS_WORKED_OVER_LIMIT,null);
+            }
+        }
+        LOGGER.info("All drivers are able to execute this order");
+        ///
+        Order newOrder = orderRepository.create(personalNumber, orderDTO.getDescription(), currentDate, OrderStatus.NOT_PREPARED, assignedTruck);
+
+        if (newOrder!=null) {
+            Collection<Cargo> cargosInOrder = getChosenCargos(orderDTO);
+            LOGGER.info("Assigning cargos to order...");
+            for (Cargo c : cargosInOrder) {
+                LOGGER.info("Cargo " + c.getName());
+                cargoRepository.update(c.getId(), c.getPersonalNumber(), c.getName(), c.getWeight(), c.getStatus(), c.getRoute(),newOrder);
+                LOGGER.info("Cargo successfully associated");
+            }
+            LOGGER.info("All cargos are assigned to order.");
+            LOGGER.info("Order " + newOrder.getDescription() + " successfully created");
+            return new ReturnValuesContainer<Order>(UpdateMessageType.ORDER_CREATED,newOrder);
+        }
+        LOGGER.error("Error: failed to create order.");
+        return new ReturnValuesContainer<Order>(UpdateMessageType.ERROR_CAN_NOT_CREATE_ORDER,null);
     }
 
 

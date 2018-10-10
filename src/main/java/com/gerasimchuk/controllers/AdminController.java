@@ -54,12 +54,13 @@ public class AdminController {
     private RouteService routeService;
     private RabbitMQSender rabbitMQSender;
     private MessageConstructor messageConstructor;
+    private StatisticService statisticService;
    // private AmqpTemplate amqpTemplate;
 //    private RabbitMQReceiver rabbitMQReceiver;
 
 
     @Autowired
-    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, DriverRepository driverRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService, CityService cityService, RouteService routeService, RabbitMQSender rabbitMQSender, MessageConstructor messageConstructor) {
+    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, DriverRepository driverRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService, CityService cityService, RouteService routeService, RabbitMQSender rabbitMQSender, MessageConstructor messageConstructor, StatisticService statisticService) {
         this.orderRepository = orderRepository;
         this.truckRepository = truckRepository;
         this.userRepository = userRepository;
@@ -75,6 +76,7 @@ public class AdminController {
         this.routeService = routeService;
         this.rabbitMQSender = rabbitMQSender;
         this.messageConstructor = messageConstructor;
+        this.statisticService = statisticService;
     }
 
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(AdminController.class);
@@ -263,10 +265,11 @@ public class AdminController {
                 ui.addAttribute("actionFailed", "Error: truck id value is zero!");
                 return "failure";
             }
-            boolean result = truckService.deleteTruck(id);
-            if (result) {
+            UpdateMessageType result = truckService.deleteTruck(id);
+            if (result.equals(UpdateMessageType.TRUCK_DELETED)) {
                 LOGGER.info("Truck deleted successfully!");
                 ui.addAttribute("actionSuccess", "Truck deleted successfully!");
+                rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.TRUCK_DELETED, statisticService));
                 return "success";
             } else {
                 LOGGER.error("Error: method deleteTruck in TruckService returned false.");
@@ -313,6 +316,7 @@ public class AdminController {
             if (result.equals(UpdateMessageType.USER_DELETED)){
                 LOGGER.info("User deleted successfully!");
                 ui.addAttribute("actionSuccess","User deleted successfully!");
+                rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.USER_DELETED, statisticService));
                 return "success";
             }
             else {
@@ -494,6 +498,7 @@ public class AdminController {
         if (result.equals(UpdateMessageType.USER_EDITED)){
             LOGGER.info("User successfully updated!");
             ui.addAttribute("actionSuccess", "User successfully updated!");
+            rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.USER_EDITED, statisticService));
             return "success";
         }
         else {
@@ -647,6 +652,7 @@ public class AdminController {
         if (result.equals(UpdateMessageType.USER_CREATED)) {
             LOGGER.info("New " + userDTO.getRole().toLowerCase() + " created successfully");
             ui.addAttribute("actionSuccess", "New " + userDTO.getRole().toLowerCase() + " created successfully");
+            rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.USER_CREATED, statisticService));
             return "success";
         } else {
             LOGGER.error("Error: createUser method in UserService returned false!");

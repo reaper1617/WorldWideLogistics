@@ -1,6 +1,8 @@
 package com.gerasimchuk.services.interfaces;
 
-public interface StatisticService {
+import com.gerasimchuk.utils.JSONconvertable;
+
+public interface StatisticService extends JSONconvertable {
     int getNumOfTrucksTotal();
     int getNumOfTrucksFree();
     int getNumOfTrucksNotReady();

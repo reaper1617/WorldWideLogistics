@@ -508,6 +508,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/utils/ReturnValuesContainer.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/utils/RoutePoint.java">
           <value>
             <set />
@@ -758,7 +763,32 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../ejbgreeting/src/main/java/org/jboss/as/quickstarts/ejbinwar/dto/StatisticBean.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ejbgreeting/src/main/java/org/jboss/as/quickstarts/ejbinwar/dto/StatisticsDTO.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ejbgreeting/src/main/java/org/jboss/as/quickstarts/ejbinwar/dto/StatsDTO.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../ejbgreeting/src/main/java/org/jboss/as/quickstarts/ejbinwar/ejb/MyStatelessEJB.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ejbgreeting/src/main/java/org/jboss/as/quickstarts/ejbinwar/ejb/StatisticBean.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ejbgreeting/src/main/java/org/jboss/as/quickstarts/ejbinwar/ejb/StatisticBeanImpl.java">
           <value>
             <set />
           </value>
@@ -769,6 +799,21 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/../ejbgreeting/src/main/java/org/jboss/as/quickstarts/ejbinwar/socket/MyWebSocket.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ejbgreeting/src/main/resources/log4j.properties">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ejbgreeting/src/main/webapp/WEB-INF/config/log4j.properties">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ejbgreeting/src/main/webapp/WEB-INF/web.xml">
           <value>
             <set />
           </value>

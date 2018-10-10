@@ -9,6 +9,7 @@ import com.gerasimchuk.enums.OrderStatus;
 import com.gerasimchuk.enums.UpdateMessageType;
 import com.gerasimchuk.exceptions.driverexceptions.TooManyHoursWorkedForOrderException;
 import com.gerasimchuk.exceptions.routeexceptions.RouteException;
+import com.gerasimchuk.utils.ReturnValuesContainer;
 
 import java.util.Collection;
 
@@ -27,6 +28,7 @@ public interface OrderService {
 
 
     UpdateMessageType createOrder(OrderDTO orderDTO) throws RouteException;
+    ReturnValuesContainer<Order> createOrder(OrderDTO orderDTO, int val) throws RouteException;
     UpdateMessageType updateOrder(OrderDTO orderDTO) throws RouteException, TooManyHoursWorkedForOrderException;
     OrderStatus getOrderStatusFromString(String status);
     boolean areAllCargosDelivered(Order order);
