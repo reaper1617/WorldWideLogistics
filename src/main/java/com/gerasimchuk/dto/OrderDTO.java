@@ -16,7 +16,7 @@ public class OrderDTO implements Serializable {
     private String id;
     private String personalNumber;
     private String description;
-  //  private String dateAndTime;
+    private String date;
     private String status;
     private String assignedTruckId;
   //  private String[] assignedDrivers;
@@ -33,6 +33,24 @@ public class OrderDTO implements Serializable {
         this.status = status;
         this.assignedTruckId = assignedTruckId;
         this.cargosInOrder = cargosInOrder;
+    }
+
+    public OrderDTO(String id, String personalNumber, String description, String date, String status, String assignedTruckId, String[] cargosInOrder) {
+        this.id = id;
+        this.personalNumber = personalNumber;
+        this.description = description;
+        this.date = date;
+        this.status = status;
+        this.assignedTruckId = assignedTruckId;
+        this.cargosInOrder = cargosInOrder;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getId() {

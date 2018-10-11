@@ -74,10 +74,10 @@ public class MainService {
                 LOGGER.info("DESCR:"+description);
                 String date = resultSet.getString("date");
                 LOGGER.info("DATE:" + date);
-                String status = resultSet.getString("status"); //????
+                String status = resultSet.getString("status");
                 LOGGER.info("STATUS" + status);
                 System.out.println("///////////////////////////////////////////////////");
-                collection.add(new OrderDTO(Integer.toString(id),personalNumber,description,status,null,null));
+                collection.add(new OrderDTO(Integer.toString(id),personalNumber,description,date,status,null,null));
             }
         } catch (SQLException e) {
             LOGGER.error("Catched sqlEx");
@@ -131,41 +131,43 @@ public class MainService {
             while (resultSet.next()){
                 trucksTotal =  resultSet.getInt(1);
             }
-            ResultSet resultSet2 = statement.executeQuery("select count(*) from trucks t inner join orders o on t.id != o.assigned_truck_id");
+            LOGGER.info("In REST: /stats" + " trucksTotal:" + trucksTotal);
+            ResultSet resultSet2 = statement.executeQuery("select count(*) from trucks, orders where trucks.id != orders.assigned_truck_id");
             int trucksFree = 0;
             while (resultSet2.next()){
                 trucksFree =  resultSet2.getInt(1);
             }
-
+            LOGGER.info("In REST: /stats" + " trucksFree:" + trucksFree);
             ResultSet resultSet3 = statement.executeQuery("select count(*) from trucks t where t.state = 'NOT_READY'");
             int trucksNotReady = 0;
             while (resultSet3.next()){
                 trucksNotReady =  resultSet3.getInt(1);
             }
-
-            ResultSet resultSet4 = statement.executeQuery("select count(*) from trucks t inner join orders o on t.id = o.assigned_truck_id");
+            LOGGER.info("In REST: /stats" + " trucksNotReady:" + trucksNotReady);
+            ResultSet resultSet4 = statement.executeQuery("select count(*) from trucks, orders where trucks.id = orders.assigned_truck_id");
             int trucksExecOrder = 0;
             while (resultSet4.next()){
                 trucksExecOrder=  resultSet4.getInt(1);
             }
-
+            LOGGER.info("In REST: /stats" + " trucksExecOrders:" + trucksExecOrder);
             ResultSet resultSet5 = statement.executeQuery("select count(*) from drivers");
             int driversTotal = 0;
             while (resultSet5.next()){
                 driversTotal =  resultSet5.getInt(1);
             }
-
+            LOGGER.info("In REST: /stats" + " driversTotal:" + driversTotal);
             ResultSet resultSet6 = statement.executeQuery("select count(*) from drivers d where d.status = 'FREE'");
             int driversFree = 0;
             while (resultSet6.next()){
                 driversFree =  resultSet6.getInt(1);
             }
-
+            LOGGER.info("In REST: /stats" + " driversFree:" + driversFree);
             ResultSet resultSet7 = statement.executeQuery("select count(*) from drivers d where d.status != 'FREE'");
             int driversExecOrders = 0;
             while (resultSet7.next()){
                 driversFree =  resultSet7.getInt(1);
             }
+            LOGGER.info("In REST: /stats" + " driversExecOrders:" + driversExecOrders);
             list.add(trucksTotal);
             list.add(trucksFree);
             list.add(trucksNotReady);
