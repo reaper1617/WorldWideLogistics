@@ -21,5 +21,7 @@ public interface OrderRepository {
     Order getById(int id);
     Order getByPersonalNumber(String personalNumber);
     Collection<Order> getAll();
+
+    Collection<Order> getOrdersForOnePage(int size, int pageNumber);
     void remove(int id);
 }

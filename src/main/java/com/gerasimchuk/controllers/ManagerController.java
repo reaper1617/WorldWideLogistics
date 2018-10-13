@@ -1,7 +1,7 @@
 package com.gerasimchuk.controllers;
 
 
-import com.gerasimchuk.converters.OrderToDTOConverter;
+import com.gerasimchuk.converters.OrderToDTOConverterImpl;
 import com.gerasimchuk.dto.*;
 import com.gerasimchuk.entities.*;
 import com.gerasimchuk.enums.UpdateMessageType;
@@ -101,7 +101,7 @@ public class ManagerController {
         List<OrderWithRoute> ordersWithRoutes = new ArrayList<OrderWithRoute>();
         for(Order o: orders){
             try {
-                List<City> cities = (List<City>) orderService.getOrderRoute(OrderToDTOConverter.convert(o), null);
+                List<City> cities = (List<City>) orderService.getOrderRoute(OrderToDTOConverterImpl.convert(o), null);
                 if (o.getAssignedTruck() != null) cities.add(0,o.getAssignedTruck().getCurrentCity());
                 ordersWithRoutes.add(new OrderWithRoute(o, cities));
             }

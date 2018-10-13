@@ -1,28 +1,25 @@
 package com.gerasimchuk.controllers;
 
 import com.gerasimchuk.converters.OrderToDTOConverter;
-import com.gerasimchuk.dto.CityDTO;
-import com.gerasimchuk.dto.OrderDTO;
-import com.gerasimchuk.dto.RouteDTO;
-import com.gerasimchuk.dto.UserDTO;
+import com.gerasimchuk.converters.OrderToDTOConverterImpl;
+import com.gerasimchuk.dto.*;
 import com.gerasimchuk.entities.*;
-import com.gerasimchuk.enums.OrderStatus;
 import com.gerasimchuk.enums.UpdateMessageType;
 import com.gerasimchuk.enums.UserRole;
+import com.gerasimchuk.exceptions.routeexceptions.RouteException;
 import com.gerasimchuk.rabbit.RabbitMQSender;
 import com.gerasimchuk.repositories.*;
 import com.gerasimchuk.services.interfaces.*;
 import com.gerasimchuk.utils.MessageConstructor;
 import com.gerasimchuk.utils.OrderWithRoute;
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -55,12 +52,13 @@ public class AdminController {
     private RabbitMQSender rabbitMQSender;
     private MessageConstructor messageConstructor;
     private StatisticService statisticService;
+    private OrderToDTOConverter orderToDTOConverter;
    // private AmqpTemplate amqpTemplate;
 //    private RabbitMQReceiver rabbitMQReceiver;
 
 
     @Autowired
-    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, DriverRepository driverRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService, CityService cityService, RouteService routeService, RabbitMQSender rabbitMQSender, MessageConstructor messageConstructor, StatisticService statisticService) {
+    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, DriverRepository driverRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService, CityService cityService, RouteService routeService, RabbitMQSender rabbitMQSender, MessageConstructor messageConstructor, StatisticService statisticService, OrderToDTOConverter orderToDTOConverter) {
         this.orderRepository = orderRepository;
         this.truckRepository = truckRepository;
         this.userRepository = userRepository;
@@ -77,6 +75,7 @@ public class AdminController {
         this.rabbitMQSender = rabbitMQSender;
         this.messageConstructor = messageConstructor;
         this.statisticService = statisticService;
+        this.orderToDTOConverter = orderToDTOConverter;
     }
 
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(AdminController.class);
@@ -114,7 +113,7 @@ public class AdminController {
         List<OrderWithRoute> ordersWithRoutes = new ArrayList<OrderWithRoute>();
         for (Order o : orders) {
             try {
-                List<City> cities = (List<City>) orderService.getOrderRoute(OrderToDTOConverter.convert(o), null);
+                List<City> cities = (List<City>) orderService.getOrderRoute(OrderToDTOConverterImpl.convert(o), null);
                 if (o.getAssignedTruck() != null) cities.add(0,o.getAssignedTruck().getCurrentCity());
                 ordersWithRoutes.add(new OrderWithRoute(o, cities));
             }
@@ -129,46 +128,56 @@ public class AdminController {
         ui.addAttribute("ordersList", ordersWithRoutes);
         ui.addAttribute("citiesList", citiesList);
         ui.addAttribute("routesList", routesList);
-        //
-//        ClientConfig clientConfig = new DefaultClientConfig();
-//        //clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
-//        Client client = Client.create(clientConfig);
-//
-//        WebResource webResource = client.resource("http://localhost:8080/rest/mainservice/orders");
-//
-//        WebResource.Builder builder = webResource.accept(MediaType.APPLICATION_JSON).header("content-type", MediaType.APPLICATION_JSON);
-//
-//        ClientResponse response = builder.get(ClientResponse.class);
-//
-//        if (response.getStatus() != 200){
-//            // bad
-//            System.out.println("Error 200");
-//            return null;
-//        }
-//
-//        GenericType<List<OrderDTO>> generic = new GenericType<List<OrderDTO>>(){
-//
-//        };
-//
-//        List<OrderDTO> list = response.getEntity(generic);
-//        for(OrderDTO o: list){
-//            System.out.println(o);
-//        }
 
 
-        //        // json as string
-//        Client client = Client.create();
-//        WebResource webResource = client.resource("http://localhost:8080/WWLnewproject/rest/mainservice/orders");
-//        ClientResponse response = webResource.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
-//        if (response.getStatus()!=200){
-//            System.out.println("failed");
-//        }
-//        String output = response.getEntity(String.class);
-//        System.out.println("Output from server:" + output);
-//        //
 
         return "/admin/adminmainpage";
     }
+
+
+    @RequestMapping(value = "/adminmainpagepgntd", method = RequestMethod.GET)
+    public String adminPgntd(Model ui){
+        /**test section*/
+        LOGGER.info("Controller: AdminController, metod = adminPgntd,  action = \"/adminmainpagepgntd\", request = GET");
+        Collection<Order> ordersPgntd = orderRepository.getOrdersForOnePage(2,0);
+
+        List<OrderWithRouteDTO> orderWithRouteDTOS = new ArrayList<OrderWithRouteDTO>();
+        for(Order o: ordersPgntd){
+            try {
+                orderWithRouteDTOS.add(orderToDTOConverter.convertToDTOWithRoute(o));
+            } catch (RouteException e) {
+                LOGGER.info("Controller: AdminController, metod = adminPgntd, catched exception:" + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        ui.addAttribute("ordersPgntd", orderWithRouteDTOS);
+        LOGGER.info("Controller: AdminController, out from metod = adminPgntd");
+        return "/admin/adminmainpagepgntd";
+    }
+
+    @RequestMapping(value = "/getpaginatedorderslist", method = RequestMethod.GET)
+    @ResponseBody
+    public String getPaginatedOrdersList(@RequestParam(name = "pageSize") int pageSize, @RequestParam(name = "pageNumber") int pageNum){
+        LOGGER.info("Controller: AdminController, metod = getPaginatedOrdersList,  action = \"/getpaginatedorderslist\", request = GET");
+        LOGGER.info("Controller: AdminController, metod = getPaginatedOrdersList, pageSize = " + pageSize + " , pageNumber = " + pageNum);
+        List<Order> orders = (List<Order>)orderRepository.getOrdersForOnePage(pageSize, pageNum);
+//        List<OrderDTO> orderDTOS = new ArrayList<OrderDTO>();
+        List<OrderWithRouteDTO> orderDTOS = new ArrayList<OrderWithRouteDTO>();
+        for(Order o: orders){
+            try {
+                orderDTOS.add(orderToDTOConverter.convertToDTOWithRoute(o));
+            } catch (RouteException e) {
+                LOGGER.info("Controller: AdminController, metod = getPaginatedOrdersList, catched exception: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        Gson gson = new Gson();
+        //OrderDTO dto =  OrderToDTOConverter.convert(orders.get(0));
+        String s = gson.toJson(orderDTOS);
+        LOGGER.info("Controller: AdminController, metod = getPaginatedOrdersList, GSON = " + s);
+        return s;
+    }
+
 
     private int parseId(OrderDTO orderDTO){
         int id = 0;

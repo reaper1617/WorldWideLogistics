@@ -1,7 +1,7 @@
 package com.gerasimchuk.controllers;
 
 import com.gerasimchuk.constants.WWLConstants;
-import com.gerasimchuk.converters.OrderToDTOConverter;
+import com.gerasimchuk.converters.OrderToDTOConverterImpl;
 import com.gerasimchuk.dto.DriverAccountDTO;
 import com.gerasimchuk.dto.OrderDTO;
 import com.gerasimchuk.entities.*;
@@ -10,7 +10,6 @@ import com.gerasimchuk.enums.DriverStatus;
 import com.gerasimchuk.enums.OrderStatus;
 import com.gerasimchuk.enums.UpdateMessageType;
 import com.gerasimchuk.exceptions.routeexceptions.RouteException;
-import com.gerasimchuk.rabbit.RabbitMQReceiver;
 import com.gerasimchuk.rabbit.RabbitMQSender;
 import com.gerasimchuk.repositories.*;
 import com.gerasimchuk.services.interfaces.CargoService;
@@ -96,7 +95,7 @@ public class DriverController {
             ui.addAttribute("driversInTruck", driversInTruck);
             Order order = loggedUser.getDriver().getCurrentTruck().getAssignedOrder();
             if (order != null) {
-                OrderDTO orderDTO = OrderToDTOConverter.convert(order);
+                OrderDTO orderDTO = OrderToDTOConverterImpl.convert(order);
                 try {
                     List<City> cities =  (List<City>)orderService.getOrderRoute(orderDTO, null);
                     if (order.getAssignedTruck() != null) cities.add(0, order.getAssignedTruck().getCurrentCity());
@@ -219,7 +218,7 @@ public class DriverController {
                         Set<Driver> drivers = t.getDriversInTruck();
                         ArrayList<City> cities = null;
                         try {
-                            cities = (ArrayList<City>) orderService.getOrderRoute(OrderToDTOConverter.convert(order), null);
+                            cities = (ArrayList<City>) orderService.getOrderRoute(OrderToDTOConverterImpl.convert(order), null);
                         } catch (RouteException e) {
                             e.printStackTrace();
                         }
@@ -228,7 +227,7 @@ public class DriverController {
                         for(Driver d: drivers){
                             double orderHours = 0;
                             try {
-                                orderHours = orderService.getExecutingTime(OrderToDTOConverter.convert(order));
+                                orderHours = orderService.getExecutingTime(OrderToDTOConverterImpl.convert(order));
                             } catch (RouteException e) {
                                 e.printStackTrace();
                                 return "failure";

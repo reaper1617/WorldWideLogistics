@@ -19,9 +19,12 @@ public class OrderDTO implements Serializable {
     private String date;
     private String status;
     private String assignedTruckId;
+    private String assignedTruckRegistrationNumber;
   //  private String[] assignedDrivers;
   //  private String[] route;
     private String[] cargosInOrder;
+    //
+    private String[] assignedDrivers;
 
     public OrderDTO() {
     }
@@ -43,6 +46,46 @@ public class OrderDTO implements Serializable {
         this.status = status;
         this.assignedTruckId = assignedTruckId;
         this.cargosInOrder = cargosInOrder;
+    }
+
+    public OrderDTO(String id, String personalNumber, String description, String date, String status, String assignedTruckId, String[] cargosInOrder, String[] assignedDrivers) {
+        this.id = id;
+        this.personalNumber = personalNumber;
+        this.description = description;
+        this.date = date;
+        this.status = status;
+        this.assignedTruckId = assignedTruckId;
+        this.cargosInOrder = cargosInOrder;
+        this.assignedDrivers = assignedDrivers;
+    }
+
+
+    public OrderDTO(String id, String personalNumber, String description, String date, String status, String assignedTruckId, String assignedTruckRegistrationNumber, String[] cargosInOrder, String[] assignedDrivers) {
+        this.id = id;
+        this.personalNumber = personalNumber;
+        this.description = description;
+        this.date = date;
+        this.status = status;
+        this.assignedTruckId = assignedTruckId;
+        this.assignedTruckRegistrationNumber = assignedTruckRegistrationNumber;
+        this.cargosInOrder = cargosInOrder;
+        this.assignedDrivers = assignedDrivers;
+    }
+
+    public String[] getAssignedDrivers() {
+        return assignedDrivers;
+    }
+
+    public void setAssignedDrivers(String[] assignedDrivers) {
+        this.assignedDrivers = assignedDrivers;
+    }
+
+    public String getAssignedTruckRegistrationNumber() {
+        return assignedTruckRegistrationNumber;
+    }
+
+    public void setAssignedTruckRegistrationNumber(String assignedTruckRegistrationNumber) {
+        this.assignedTruckRegistrationNumber = assignedTruckRegistrationNumber;
     }
 
     public String getDate() {

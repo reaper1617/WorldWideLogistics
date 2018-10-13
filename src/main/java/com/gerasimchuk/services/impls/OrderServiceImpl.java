@@ -1,7 +1,7 @@
 package com.gerasimchuk.services.impls;
 
 import com.gerasimchuk.constants.WWLConstants;
-import com.gerasimchuk.converters.OrderToDTOConverter;
+import com.gerasimchuk.converters.OrderToDTOConverterImpl;
 import com.gerasimchuk.dto.OrderDTO;
 import com.gerasimchuk.entities.*;
 import com.gerasimchuk.enums.*;
@@ -13,7 +13,6 @@ import com.gerasimchuk.services.interfaces.OrderService;
 import com.gerasimchuk.utils.DateParser;
 import com.gerasimchuk.utils.PersonalNumberGenerator;
 import com.gerasimchuk.utils.ReturnValuesContainer;
-import com.gerasimchuk.utils.RoutePoint;
 import com.gerasimchuk.validators.DTOValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -604,7 +603,7 @@ public class OrderServiceImpl implements OrderService {
         Map<Order, Collection<City>> routes = new HashMap<Order, Collection<City>>();
         for(Order o: orders){
             LOGGER.info("Order " + o.getDescription());
-            OrderDTO orderDTO = OrderToDTOConverter.convert(o);
+            OrderDTO orderDTO = OrderToDTOConverterImpl.convert(o);
             Collection<City> route = getOrderRoute(orderDTO,o.getAssignedTruck());
             LOGGER.info("Order route: " + route + ", siz = " + route.size());
             routes.put(o,route);
