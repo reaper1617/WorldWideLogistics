@@ -699,10 +699,10 @@ $(document).ready(function(){
         };
 		var pageSize = 2; //document.getElementById('currentOrderPage').value();
 		var pageNumber = document.getElementById('currentOrderPage').getAttribute('value');
-		var neseccaryPageNumber = (Number)(pageNumber + 1);
+		var necessaryPageNumber = (Number)(pageNumber + 1);
 		// alert("pageNumberT = " + pageNumberT);
 		// var pageNumber=1;
-		var reqURL = 'http://localhost:8080/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+neseccaryPageNumber;
+		var reqURL = 'http://localhost:8080/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
 		// alert("req opening... :" + reqURL);
 		req.open("GET", reqURL, true);
         // alert("req sending...");

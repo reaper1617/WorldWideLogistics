@@ -23,5 +23,6 @@ public interface OrderRepository {
     Collection<Order> getAll();
 
     Collection<Order> getOrdersForOnePage(int size, int pageNumber);
+    Collection<Order> getTopNonExecutedOrders(int size);
     void remove(int id);
 }

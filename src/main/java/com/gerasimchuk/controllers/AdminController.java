@@ -161,16 +161,7 @@ public class AdminController {
         LOGGER.info("Controller: AdminController, metod = getPaginatedOrdersList,  action = \"/getpaginatedorderslist\", request = GET");
         LOGGER.info("Controller: AdminController, metod = getPaginatedOrdersList, pageSize = " + pageSize + " , pageNumber = " + pageNum);
         List<Order> orders = (List<Order>)orderRepository.getOrdersForOnePage(pageSize, pageNum);
-//        List<OrderDTO> orderDTOS = new ArrayList<OrderDTO>();
-        List<OrderWithRouteDTO> orderDTOS = new ArrayList<OrderWithRouteDTO>();
-        for(Order o: orders){
-            try {
-                orderDTOS.add(orderToDTOConverter.convertToDTOWithRoute(o));
-            } catch (RouteException e) {
-                LOGGER.info("Controller: AdminController, metod = getPaginatedOrdersList, catched exception: " + e.getMessage());
-                e.printStackTrace();
-            }
-        }
+        List<OrderWithRouteDTO> orderDTOS = makeOrderDtoWithRouteFromOrdersList(orders);
         Gson gson = new Gson();
         //OrderDTO dto =  OrderToDTOConverter.convert(orders.get(0));
         String s = gson.toJson(orderDTOS);
@@ -178,6 +169,52 @@ public class AdminController {
         return s;
     }
 
+    private List<OrderWithRouteDTO> makeOrderDtoWithRouteFromOrdersList(List<Order> orders){
+        LOGGER.info("Controller: AdminController, metod = makeOrderDtoWithRouteFromOrdersList");
+        if (orders == null) {
+            LOGGER.info("Controller: AdminController, out from makeOrderDtoWithRouteFromOrdersList method: input orders list is null");
+            return null;
+        }
+        List<OrderWithRouteDTO> orderDTOS = new ArrayList<OrderWithRouteDTO>();
+        for(Order o: orders){
+            try {
+                orderDTOS.add(orderToDTOConverter.convertToDTOWithRoute(o));
+            } catch (RouteException e) {
+                LOGGER.info("Controller: AdminController, metod = makeOrderDtoWithRouteFromOrdersList, catched exception: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        LOGGER.info("Controller: AdminController, metod = makeOrderDtoWithRouteFromOrdersList, result collection: " + orderDTOS);
+        LOGGER.info("Controller: AdminController, out from makeOrderDtoWithRouteFromOrdersList");
+        return orderDTOS;
+    }
+
+    @RequestMapping(value = "/gettoporders")
+    @ResponseBody
+    public String getTopOrders(@RequestParam(name = "size")  int size){
+        LOGGER.info("Controller: AdminController, metod = getTopOrders,  action = \"/gettoporders\", request = GET");
+        if (size == 0) return null;
+        List<Order> orders = (List<Order>)orderRepository.getTopNonExecutedOrders(size);
+
+        List<GoogleMarkerDTO> googleMarkerDTOS = new ArrayList<GoogleMarkerDTO>();
+        for(Order o: orders){
+            try {
+                googleMarkerDTOS.add( orderToDTOConverter.convertToGoogleMarkerDto(o));
+            } catch (RouteException e) {
+                e.printStackTrace();
+            }
+        }
+        Gson gson = new Gson();
+        String res = gson.toJson(googleMarkerDTOS);
+        LOGGER.info("Controller: AdminController, metod = getTopOrders, result json string: " + res);
+        LOGGER.info("Controller: AdminController, out from getTopOrders method");
+        return res;
+    }
+
+    @RequestMapping(value = "/adminmainpagegoogle", method = RequestMethod.GET)
+    public String getGoogleMap(){
+        return "/admin/adminmainpagegoogle";
+    }
 
     private int parseId(OrderDTO orderDTO){
         int id = 0;

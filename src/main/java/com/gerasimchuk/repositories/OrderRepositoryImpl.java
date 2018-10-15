@@ -109,6 +109,24 @@ public class OrderRepositoryImpl implements OrderRepository {
 //        return resultList;
     }
 
+    @Override
+    @Transactional
+    public Collection<Order> getTopNonExecutedOrders(int size) {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getTopNonExecutedOrders()");
+        if (size <= 0) {
+            LOGGER.info("Class: " + this.getClass().getName() + " out from getTopNonExecutedOrders() method: requested size less or equals 0");
+            return null;
+        }
+        //String query = "select * from Orders where status != 'EXECUTED' limit " + size;
+        //String query = "select * from orders o where o.status != 'EXECUTED' limit " + size;
+        String query = "from Orders where status!='EXECUTED'";
+        Query q = sessionFactory.getCurrentSession().createQuery(query);
+        q.setMaxResults(size);
+        List<Order> res =(List<Order>)(q.list());
+        LOGGER.info("Class: " + this.getClass().getName() + " out from getTopNonExecutedOrders(), result orders collection: " + res);
+        return res;
+    }
+
     @Transactional
     public void remove(int id) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: remove");

@@ -33,6 +33,8 @@
         <intercept-url pattern="/logout.jsp" access="isFullyAuthenticated()"/>
         <!--<intercept-url pattern="/**" access="isFullyAuthenticated()"/>-->
         <intercept-url pattern="/rest/**" access="isAnonymous() or isFullyAuthenticated()"/>
+        <intercept-url pattern="/adminmainpagegoogle.jsp" access="isFullyAuthenticated() or isAnonymous()"/>
+        <intercept-url pattern="/gettoporders" access="isFullyAuthenticated() or isAnonymous()"/>
 
         <form-login login-page="/login.jsp" authentication-failure-url="/login.jsp?login_error=1" authentication-success-handler-ref="authenticationSuccessHandler"/>
                     <!--default-target-url="/login/logged.jsp"-->

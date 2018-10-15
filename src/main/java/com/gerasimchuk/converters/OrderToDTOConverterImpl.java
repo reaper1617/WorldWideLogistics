@@ -1,5 +1,6 @@
 package com.gerasimchuk.converters;
 
+import com.gerasimchuk.dto.GoogleMarkerDTO;
 import com.gerasimchuk.dto.OrderDTO;
 import com.gerasimchuk.dto.OrderWithRouteDTO;
 import com.gerasimchuk.entities.Cargo;
@@ -105,6 +106,25 @@ public class OrderToDTOConverterImpl implements OrderToDTOConverter{
                 dto.getAssignedTruckRegistrationNumber(),
                 dto.getCargosInOrder(),
                 dto.getAssignedDrivers(), route);
+    }
+
+    @Override
+    public GoogleMarkerDTO convertToGoogleMarkerDto(Order order) throws RouteException {
+        OrderWithRouteDTO orderWithRouteDTO = convertToDTOWithRoute(order);
+        String currentCity = null;
+        if (order.getAssignedTruck() != null) {
+            currentCity = order.getAssignedTruck().getCurrentCity().getName();
+        }
+        return new GoogleMarkerDTO(orderWithRouteDTO.getId(),
+                orderWithRouteDTO.getPersonalNumber(),
+                orderWithRouteDTO.getDescription(),
+                orderWithRouteDTO.getDate(),
+                orderWithRouteDTO.getStatus(),
+                orderWithRouteDTO.getAssignedTruckId(),
+                orderWithRouteDTO.getAssignedTruckRegistrationNumber(),
+                orderWithRouteDTO.getCargosInOrder(),
+                orderWithRouteDTO.getAssignedDrivers(),
+                orderWithRouteDTO.getRoute(), currentCity);
     }
 
 
