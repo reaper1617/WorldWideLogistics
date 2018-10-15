@@ -32,7 +32,9 @@
         <intercept-url pattern="/logged.jsp" access="isFullyAuthenticated()"/>
         <intercept-url pattern="/logout.jsp" access="isFullyAuthenticated()"/>
         <!--<intercept-url pattern="/**" access="isFullyAuthenticated()"/>-->
-        <intercept-url pattern="/rest/**" access="isAnonymous()"/>
+        <intercept-url pattern="/rest/**" access="isAnonymous() or isFullyAuthenticated()"/>
+        <intercept-url pattern="/adminmainpagegoogle.jsp" access="isFullyAuthenticated() or isAnonymous()"/>
+        <intercept-url pattern="/gettoporders" access="isFullyAuthenticated() or isAnonymous()"/>
 
         <form-login login-page="/login.jsp" authentication-failure-url="/login.jsp?login_error=1" authentication-success-handler-ref="authenticationSuccessHandler"/>
                     <!--default-target-url="/login/logged.jsp"-->
@@ -44,7 +46,7 @@
     </http>
 
     <b:bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
-        <b:constructor-arg name="strength" value="4"></b:constructor-arg>
+        <b:constructor-arg name="strength" value="4"/>
     </b:bean>
 
     <authentication-manager>
@@ -54,6 +56,7 @@
     </authentication-manager>
 
     <mvc:resources mapping="/resources/**" location="/resources/" />
+
 
     <b:bean id="customUserDetailsService" class="com.gerasimchuk.services.impls.CustomUserDetailsService">
         <!--<b:constructor-arg ref="customUserDetailsService"/>-->

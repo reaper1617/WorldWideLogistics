@@ -1,18 +1,22 @@
 package com.gerasimchuk.controllers;
 
 import com.gerasimchuk.constants.WWLConstants;
-import com.gerasimchuk.converters.OrderToDTOConverter;
+import com.gerasimchuk.converters.OrderToDTOConverterImpl;
 import com.gerasimchuk.dto.DriverAccountDTO;
 import com.gerasimchuk.dto.OrderDTO;
 import com.gerasimchuk.entities.*;
 import com.gerasimchuk.enums.CargoStatus;
 import com.gerasimchuk.enums.DriverStatus;
 import com.gerasimchuk.enums.OrderStatus;
+import com.gerasimchuk.enums.UpdateMessageType;
 import com.gerasimchuk.exceptions.routeexceptions.RouteException;
+import com.gerasimchuk.rabbit.RabbitMQSender;
 import com.gerasimchuk.repositories.*;
 import com.gerasimchuk.services.interfaces.CargoService;
 import com.gerasimchuk.services.interfaces.DriverService;
 import com.gerasimchuk.services.interfaces.OrderService;
+import com.gerasimchuk.services.interfaces.StatisticService;
+import com.gerasimchuk.utils.MessageConstructor;
 import com.gerasimchuk.utils.OrderWithRoute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -48,9 +52,12 @@ public class DriverController {
     private DriverService driverService;
     private OrderService orderService;
     private CargoService cargoService;
+    private RabbitMQSender rabbitMQSender;
+    private StatisticService statisticService;
+    private MessageConstructor messageConstructor;
 
     @Autowired
-    public DriverController(UserRepository userRepository, TruckRepository truckRepository, DriverRepository driverRepository, OrderRepository orderRepository, CargoRepository cargoRepository, DriverService driverService, OrderService orderService, CargoService cargoService) {
+    public DriverController(UserRepository userRepository, TruckRepository truckRepository, DriverRepository driverRepository, OrderRepository orderRepository, CargoRepository cargoRepository, DriverService driverService, OrderService orderService, CargoService cargoService, RabbitMQSender rabbitMQSender, StatisticService statisticService, MessageConstructor messageConstructor) {
         this.userRepository = userRepository;
         this.truckRepository = truckRepository;
         this.driverRepository = driverRepository;
@@ -59,6 +66,9 @@ public class DriverController {
         this.driverService = driverService;
         this.orderService = orderService;
         this.cargoService = cargoService;
+        this.rabbitMQSender = rabbitMQSender;
+        this.statisticService = statisticService;
+        this.messageConstructor = messageConstructor;
     }
 
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(DriverController.class);
@@ -85,7 +95,7 @@ public class DriverController {
             ui.addAttribute("driversInTruck", driversInTruck);
             Order order = loggedUser.getDriver().getCurrentTruck().getAssignedOrder();
             if (order != null) {
-                OrderDTO orderDTO = OrderToDTOConverter.convert(order);
+                OrderDTO orderDTO = OrderToDTOConverterImpl.convert(order);
                 try {
                     List<City> cities =  (List<City>)orderService.getOrderRoute(orderDTO, null);
                     if (order.getAssignedTruck() != null) cities.add(0, order.getAssignedTruck().getCurrentCity());
@@ -166,6 +176,7 @@ public class DriverController {
                 }
                 driverRepository.update(driver.getId(),driver.getHoursWorked(),status, driver.getCurrentCity(), driver.getCurrentTruck());
                 ui.addAttribute("driverStatusUpdatedSuccessfully", "Updated successfully!");
+                rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.DRIVER_EDITED, statisticService));
                 return setDriverMainPageAttributes(ui);
             }
             ui.addAttribute("actionFailed", "Error: driver object is not valid");
@@ -189,6 +200,7 @@ public class DriverController {
             if (order != null){
                 OrderStatus orderStatus = orderService.getOrderStatusFromString(driverAccountDTO.getOrderStatus());
                 if (orderStatus != null) {
+                    Order updatedOrder = null;
                     if (!orderService.areAllCargosDelivered(order)&&orderStatus.equals(OrderStatus.EXECUTED)){
                         log.error("Error: not all cargos in order are delivered!");
                         ui.addAttribute("actionFailed", "Error: not all of cargos in order are delivered!");
@@ -206,7 +218,7 @@ public class DriverController {
                         Set<Driver> drivers = t.getDriversInTruck();
                         ArrayList<City> cities = null;
                         try {
-                            cities = (ArrayList<City>) orderService.getOrderRoute(OrderToDTOConverter.convert(order), null);
+                            cities = (ArrayList<City>) orderService.getOrderRoute(OrderToDTOConverterImpl.convert(order), null);
                         } catch (RouteException e) {
                             e.printStackTrace();
                         }
@@ -215,7 +227,7 @@ public class DriverController {
                         for(Driver d: drivers){
                             double orderHours = 0;
                             try {
-                                orderHours = orderService.getExecutingTime(OrderToDTOConverter.convert(order));
+                                orderHours = orderService.getExecutingTime(OrderToDTOConverterImpl.convert(order));
                             } catch (RouteException e) {
                                 e.printStackTrace();
                                 return "failure";
@@ -225,13 +237,14 @@ public class DriverController {
                             if (newCurrentCity != null) driverRepository.update(d.getId(),d.getHoursWorked() + orderHours,DriverStatus.RESTING,newCurrentCity,d.getCurrentTruck());
                             else driverRepository.update(d.getId(),d.getHoursWorked() + orderHours,DriverStatus.RESTING,d.getCurrentCity(),d.getCurrentTruck());
                         }
-                        orderRepository.update(order.getId(),order.getPersonalNumber(),order.getDescription(),order.getDate(),OrderStatus.EXECUTED,null);
+                        updatedOrder = orderRepository.update(order.getId(),order.getPersonalNumber(),order.getDescription(),order.getDate(),OrderStatus.EXECUTED,null);
 
                         if (newCurrentCity != null){
                             truckRepository.update(t.getId(),t.getRegistrationNumber(),t.getNumOfDrivers(),t.getCapacity(),t.getState(), newCurrentCity);
                         }
                     }
                     ui.addAttribute("orderStatusUpdatedSuccessfully", "Updated successfully!");
+                    rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.ORDER_EDITED, updatedOrder));
                     return setDriverMainPageAttributes(ui);
                 }
                 else {

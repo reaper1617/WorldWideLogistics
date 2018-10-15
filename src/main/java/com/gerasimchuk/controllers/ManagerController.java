@@ -1,17 +1,17 @@
 package com.gerasimchuk.controllers;
 
 
-import com.gerasimchuk.converters.OrderToDTOConverter;
+import com.gerasimchuk.converters.OrderToDTOConverterImpl;
 import com.gerasimchuk.dto.*;
 import com.gerasimchuk.entities.*;
+import com.gerasimchuk.enums.UpdateMessageType;
 import com.gerasimchuk.exceptions.routeexceptions.RouteException;
 import com.gerasimchuk.rabbit.RabbitMQSender;
 import com.gerasimchuk.repositories.*;
-import com.gerasimchuk.services.interfaces.CargoService;
-import com.gerasimchuk.services.interfaces.OrderService;
-import com.gerasimchuk.services.interfaces.TruckService;
-import com.gerasimchuk.services.interfaces.UserService;
+import com.gerasimchuk.services.interfaces.*;
+import com.gerasimchuk.utils.MessageConstructor;
 import com.gerasimchuk.utils.OrderWithRoute;
+import com.gerasimchuk.utils.ReturnValuesContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,7 +32,7 @@ import java.util.*;
 @Controller
 public class ManagerController {
 
-    private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ManagerController.class);
+    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(ManagerController.class);
 
     private CargoRepository cargoRepository;
     private CityRepository cityRepository;
@@ -46,9 +46,12 @@ public class ManagerController {
     private OrderService orderService;
 
     private RabbitMQSender rabbitMQSender;
+    private MessageConstructor messageConstructor;
+
+    private StatisticService statisticService;
 
     @Autowired
-    public ManagerController(CargoRepository cargoRepository, CityRepository cityRepository, TruckRepository truckRepository, UserRepository userRepository, OrderRepository orderRepository, CargoService cargoService, UserService userService, TruckService truckService, OrderService orderService, RabbitMQSender rabbitMQSender) {
+    public ManagerController(CargoRepository cargoRepository, CityRepository cityRepository, TruckRepository truckRepository, UserRepository userRepository, OrderRepository orderRepository, CargoService cargoService, UserService userService, TruckService truckService, OrderService orderService, RabbitMQSender rabbitMQSender, MessageConstructor messageConstructor, StatisticService statisticService) {
         this.cargoRepository = cargoRepository;
         this.cityRepository = cityRepository;
         this.truckRepository = truckRepository;
@@ -59,6 +62,8 @@ public class ManagerController {
         this.truckService = truckService;
         this.orderService = orderService;
         this.rabbitMQSender = rabbitMQSender;
+        this.messageConstructor = messageConstructor;
+        this.statisticService = statisticService;
     }
 
     @RequestMapping(value = "/managermainpage/{id}", method = RequestMethod.GET)
@@ -66,20 +71,20 @@ public class ManagerController {
 //        if (id == 0 || id == 1 || id == 2){
 //            return "/manager/managermainpage";
 //        }
-        log.info("Controller: ManagerController, metod = managerMainPage,  action = \"/managermainpage\", request = GET");
+        LOGGER.info("Controller: ManagerController, metod = managerMainPage,  action = \"/managermainpage\", request = GET");
         //
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String personalNumber = authentication.getName();
-        log.info("Authenticated user personal number:" + personalNumber);
+        LOGGER.info("Authenticated user personal number:" + personalNumber);
         rabbitMQSender.sendMessage("Message by RabbitMQSender: manager in da house!");
         User loggedUser = userRepository.getByPersonalNumber(personalNumber);
         if (loggedUser == null){
-            log.error("Error: logged user not found!");
+            LOGGER.error("Error: logged user not found!");
             ui.addAttribute("actionFailed", "Error: logged user not found!");
             return "failure";
         }
         if (loggedUser.getManager() == null) {
-            log.error("Error: access violation - user is not a manager");
+            LOGGER.error("Error: access violation - user is not a manager");
             ui.addAttribute("actionFailed","Error: access violation - user is not a manager");
             return "failure";
         }
@@ -96,12 +101,12 @@ public class ManagerController {
         List<OrderWithRoute> ordersWithRoutes = new ArrayList<OrderWithRoute>();
         for(Order o: orders){
             try {
-                List<City> cities = (List<City>) orderService.getOrderRoute(OrderToDTOConverter.convert(o), null);
+                List<City> cities = (List<City>) orderService.getOrderRoute(OrderToDTOConverterImpl.convert(o), null);
                 if (o.getAssignedTruck() != null) cities.add(0,o.getAssignedTruck().getCurrentCity());
                 ordersWithRoutes.add(new OrderWithRoute(o, cities));
             }
             catch (RouteException e){
-                log.error("Error: " + e.getMessage());
+                LOGGER.error("Error: " + e.getMessage());
                 ui.addAttribute("actionFailed","Error: " + e.getMessage());
                 return "failure";
             }
@@ -115,20 +120,20 @@ public class ManagerController {
 
     @RequestMapping(value = "/managermainpage/{id}", method = RequestMethod.POST)
     String managerMainPagePost(@PathVariable("id") int action, IdDTO idDTO, BindingResult bindingResult, Model ui){
-        log.info("Controller: ManagerController, metod = managerMainPage,  action = \"/managermainpage\", request = POST");
+        LOGGER.info("Controller: ManagerController, metod = managerMainPage,  action = \"/managermainpage\", request = POST");
         if (idDTO == null){
-            log.error("Error: Id Data Transfer Object is not valid");
+            LOGGER.error("Error: Id Data Transfer Object is not valid");
             ui.addAttribute("actionFailed","Error while trying to make changes!");
             return "failure";
         }
         int id = Integer.parseInt(idDTO.getId());
         if (id == 0) {
-            log.error("Error: Id in Data Transfer Object is zero");
+            LOGGER.error("Error: Id in Data Transfer Object is zero");
             ui.addAttribute("actionFailed", "Error while trying to make changes!");
             return "failure";
         }
         if (action == 0) {
-            log.info("Trying to change cargo with id = " + idDTO.getId());
+            LOGGER.info("Trying to change cargo with id = " + idDTO.getId());
             ui.addAttribute("updatedCargoId", id);
             Collection<City> citiesList = cityRepository.getAll();
             ui.addAttribute("citiesList", citiesList);
@@ -136,7 +141,7 @@ public class ManagerController {
         }
         if (action == 1){
             // driver change page
-            log.info("Trying to change driver with id = " + idDTO.getId());
+            LOGGER.info("Trying to change driver with id = " + idDTO.getId());
             Collection<City> citiesList = cityRepository.getAll();
             Collection<Truck> trucksList = truckRepository.getAll(); // todo: get only trucks that fit
             ui.addAttribute("citiesList", citiesList);
@@ -165,7 +170,7 @@ public class ManagerController {
 
     @RequestMapping(value = "/addnewcargopage", method = RequestMethod.GET)
     String addNewCargoPage(Model ui){
-        log.info("Controller: ManagerController, metod = addNewCargoPage,  action = \"/addnewcargopage\", request = GET");
+        LOGGER.info("Controller: ManagerController, metod = addNewCargoPage,  action = \"/addnewcargopage\", request = GET");
         Collection<City> citiesList = cityRepository.getAll();
         ui.addAttribute("citiesList",citiesList);
         return "/manager/addnewcargopage";
@@ -173,16 +178,16 @@ public class ManagerController {
 
     @RequestMapping(value = "/addnewcargopage", method = RequestMethod.POST)
     String addNewCargoPagePost(CargoDTO cargoDTO, BindingResult bindingResult, Model ui){
-        log.info("Controller: ManagerController, metod = addNewCargoPage,  action = \"/addnewcargopage\", request = POST");
+        LOGGER.info("Controller: ManagerController, metod = addNewCargoPage,  action = \"/addnewcargopage\", request = POST");
 
         boolean result = cargoService.createCargo(cargoDTO);
         if (result){
-            log.info("New cargo successfully added!");
+            LOGGER.info("New cargo successfully added!");
             ui.addAttribute("actionSuccess","New cargo successfully added!");
             return "success";
         }
         else {
-            log.error("Error: createCargo method in CargoService returned false.");
+            LOGGER.error("Error: createCargo method in CargoService returned false.");
             ui.addAttribute("actionFailed","Error while trying to add new cargo!");
             return "failure";
         }
@@ -192,7 +197,7 @@ public class ManagerController {
 
     @RequestMapping(value = "/addnewdriverpage", method = RequestMethod.GET)
     String addNewDriverPage(Model ui){
-        log.info("Controller: ManagerController, metod = addNewDriverPage,  action = \"/addnewdriverpage\", request = GET");
+        LOGGER.info("Controller: ManagerController, metod = addNewDriverPage,  action = \"/addnewdriverpage\", request = GET");
 
         Collection<City> citiesList = cityRepository.getAll();
         Collection<Truck> trucksList = truckRepository.getAll(); // todo: get only trucks that fit
@@ -203,21 +208,22 @@ public class ManagerController {
 
     @RequestMapping(value = "/addnewdriverpage", method = RequestMethod.POST)
     String addNewDriverPagePost(DriverDTO driverDTO, BindingResult bindingResult, Model ui){
-        log.info("Controller: ManagerController, metod = addNewDriverPage,  action = \"/addnewdriverpage\", request = POST");
+        LOGGER.info("Controller: ManagerController, metod = addNewDriverPage,  action = \"/addnewdriverpage\", request = POST");
         if (driverDTO == null){
-            log.error("Error: Driver Data Transfer Object is not valid!");
+            LOGGER.error("Error: Driver Data Transfer Object is not valid!");
             ui.addAttribute("actionFailed", "Error while trying to create driver!");
             return "failure";
         }
 
-        boolean result = userService.createDriver(driverDTO);
-        if (result){
-            log.info("New driver successfully created!");
+        UpdateMessageType result = userService.createDriver(driverDTO);
+        if (result.equals(UpdateMessageType.DRIVER_CREATED)){
+            LOGGER.info("New driver successfully created!");
             ui.addAttribute("actionSuccess", "New driver successfully created!");
+            rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.DRIVER_CREATED, statisticService));
             return "success";
         }
         else {
-            log.error("Error: createDriver method in UserService returned false.");
+            LOGGER.error("Error: createDriver method in UserService returned false.");
             ui.addAttribute("actionFailed", "Error while trying to create driver.");
             return "failure";
         }
@@ -231,7 +237,7 @@ public class ManagerController {
 
     @RequestMapping(value = "/addneworderpage", method = RequestMethod.GET)
     String addNewOrderPage(Model ui){
-        log.info("Controller: ManagerController, metod = addNewOrderPage,  action = \"/addneworderpage\", request = GET");
+        LOGGER.info("Controller: ManagerController, metod = addNewOrderPage,  action = \"/addneworderpage\", request = GET");
         Collection<Cargo> availableCargos = cargoService.getAvailableCargos();
         ui.addAttribute("availableCargos", availableCargos);
 
@@ -240,9 +246,9 @@ public class ManagerController {
 
     @RequestMapping(value = "/addneworderpage", method = RequestMethod.POST)
     String addNewOrderPagePost(OrderDTO orderDTO, BindingResult bindingResult, Model ui){
-        log.info("Controller: ManagerController, metod = addNewOrderPage,  action = \"/addneworderpage\", request = POST");
+        LOGGER.info("Controller: ManagerController, metod = addNewOrderPage,  action = \"/addneworderpage\", request = POST");
         if(orderDTO == null){
-            log.error("Error: Order Data Transfer Object is not valid!");
+            LOGGER.error("Error: Order Data Transfer Object is not valid!");
             ui.addAttribute("actionFailed", "Error while trying to create order!");
             return "failure";
         }
@@ -250,7 +256,7 @@ public class ManagerController {
 //            ui.addAttribute("orderDescription", orderDTO.getDescription());
 //        }
 //        else {
-//            log.error("Error: order description data is empty.");
+//            LOGGER.error("Error: order description data is empty.");
 //            ui.addAttribute("actionFailed", "Error while trying to create order.");
 //            return "failure";
 //        }
@@ -259,7 +265,7 @@ public class ManagerController {
             ui.addAttribute("chosenCargos",chosenCargos);
         }
         else {
-            log.error("Error: getChosenCargos method in OrderService returned false.");
+            LOGGER.error("Error: getChosenCargos method in OrderService returned false.");
             ui.addAttribute("actionFailed", "Error while trying to create order.");
             return "failure";
         }
@@ -274,7 +280,7 @@ public class ManagerController {
                 ui.addAttribute("availableTrucks", availableTrucks);
             }
             catch (RouteException e){
-                log.error("Error: " + e.getMessage());
+                LOGGER.error("Error: " + e.getMessage());
                 ui.addAttribute("actionFailed", "Error: " + e.getMessage());
                 return "failure";
             }
@@ -285,7 +291,7 @@ public class ManagerController {
 
     @RequestMapping(value = "/assigntrucktoorderpage", method = RequestMethod.GET)
     public String assignTruckToOrderPage(Model ui){
-        log.info("Controller: ManagerController, metod = assignTruckToOrderPage,  action = \"/assigntrucktoorderpage\", request = GET");
+        LOGGER.info("Controller: ManagerController, metod = assignTruckToOrderPage,  action = \"/assigntrucktoorderpage\", request = GET");
 //        Collection<Cargo> cargos = null;
 //        if (ui.containsAttribute("chosenCargos")){
 //            Map attr = ui.asMap();
@@ -300,19 +306,19 @@ public class ManagerController {
                       ui.addAttribute("availableTrucks", availableTrucks);
                   }
                   catch (RouteException e){
-                      log.error("Error: " + e.getMessage());
+                      LOGGER.error("Error: " + e.getMessage());
                       ui.addAttribute("actionFailed", "Error: " + e.getMessage());
                       return "failure";
                   }
               }
               else {
-                  log.error("Error: attribute 'orderDTO' is not instance of OrderDTO!");
+                  LOGGER.error("Error: attribute 'orderDTO' is not instance of OrderDTO!");
                   ui.addAttribute("actionFailed", "Error: attribute 'orderDTO' is not instance of OrderDTO!");
                   return "failure";
               }
           }
           else{
-              log.error("Error: model doesn't contain attribute 'orderDTO' !");
+              LOGGER.error("Error: model doesn't contain attribute 'orderDTO' !");
               ui.addAttribute("actionFailed", "Error: model doesn't contain attribute 'orderDTO' !");
               return "failure";
           }
@@ -321,28 +327,33 @@ public class ManagerController {
 
     @RequestMapping(value = "/assigntrucktoorderpage", method = RequestMethod.POST)
     public String assignTruckToOrderPagePost(OrderDTO orderDTO, BindingResult bindingResult,Model ui){
-        log.info("Controller: ManagerController, metod = assignTruckToOrderPage,  action = \"/assigntrucktoorderpage\", request = POST");
+        LOGGER.info("Controller: ManagerController, metod = assignTruckToOrderPage,  action = \"/assigntrucktoorderpage\", request = POST");
         if (orderDTO == null){
-            log.error("Error: Order Data Transfer Object is not valid!");
+            LOGGER.error("Error: Order Data Transfer Object is not valid!");
             ui.addAttribute("actionFailed", "Error while trying to create order!");
             return "failure";
         }
-        boolean result = false;
+        //UpdateMessageType result = null;
+        ReturnValuesContainer<Order> result = null;
+
         try {
-            result = orderService.createOrder(orderDTO);
+            result = orderService.createOrder(orderDTO, 0);
         }
         catch (Exception e){
-            log.error("Error: " + e.getMessage());
+            LOGGER.error("Error: " + e.getMessage());
             ui.addAttribute("actionFailed", "Error: " + e.getMessage());
             return "failure";
         }
-        if (result){
-            log.info("New order successfully created!");
+        if (result.getUpdateMessageType().equals(UpdateMessageType.ORDER_CREATED)){
+            LOGGER.info("New order successfully created!");
             ui.addAttribute("actionSuccess", "New order successfully created!");
+            String msg = messageConstructor.createMessage(UpdateMessageType.ORDER_CREATED,result.getReturnedValue());
+            rabbitMQSender.sendMessage(msg);
+            LOGGER.info("Controller: ManagerController, metod = assignTruckToOrderPage,  message sent:" + msg);
             return "success";
         }
         else {
-            log.error("Error: createOrder method in OrderService returned false.");
+            LOGGER.error("Error: createOrder method in OrderService returned false.");
             ui.addAttribute("actionFailed", "Error while trying to create order.");
             return "failure";
         }
@@ -350,7 +361,7 @@ public class ManagerController {
 
     @RequestMapping(value = "/addnewtruckpage", method = RequestMethod.GET)
     String addNewTruckPage(Model ui){
-        log.info("Controller: ManagerController, metod = addNewTruckPage,  action = \"/addnewtruckpage\", request = GET");
+        LOGGER.info("Controller: ManagerController, metod = addNewTruckPage,  action = \"/addnewtruckpage\", request = GET");
         Collection<City> citiesList = cityRepository.getAll(); // todo: get available !! (may not has agency)
         ui.addAttribute("citiesList",citiesList);
         Collection<User> freeDrivers = userService.getFreeDrivers();
@@ -360,33 +371,34 @@ public class ManagerController {
 
     @RequestMapping(value = "/addnewtruckpage", method = RequestMethod.POST)
     String addNewTruckPagePost(TruckDTO truckDTO, BindingResult bindingResult, Model ui){
-        log.info("Controller: ManagerController, metod = addNewTruckPage,  action = \"/addnewtruckpage\", request = POST");
+        LOGGER.info("Controller: ManagerController, metod = addNewTruckPage,  action = \"/addnewtruckpage\", request = POST");
 //        Collection<City> citiesList = cityRepository.getAll(); // todo: get available !! (may not has agency)
 //        ui.addAttribute("citiesList",citiesList);
 //        Collection<User> freeDrivers = userService.getFreeDrivers();
 //        ui.addAttribute("freeDrivers", freeDrivers);
 
         if(truckDTO == null){
-            log.error("Error: Truck Data Transfer Object is not valid!");
+            LOGGER.error("Error: Truck Data Transfer Object is not valid!");
             ui.addAttribute("actionFailed", "Error while trying to create truck!");
             return "failure";
         }
-        boolean result = false;
+        UpdateMessageType result = null;
         try {
             result = truckService.createTruck(truckDTO);
         }
         catch (Exception e){
-            log.error("Error: " + e.getMessage());
+            LOGGER.error("Error: " + e.getMessage());
             ui.addAttribute("actionFailed", "Error: " + e.getMessage());
             return "failure";
         }
-        if (result){
-            log.info("New truck successfully created!");
+        if (result.equals(UpdateMessageType.TRUCK_CREATED)){
+            LOGGER.info("New truck successfully created!");
             ui.addAttribute("actionSuccess", "New truck successfully created!");
+            rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.TRUCK_CREATED, statisticService));
             return "success";
         }
         else {
-            log.error("Error: createTruck method in TruckService returned false.");
+            LOGGER.error("Error: createTruck method in TruckService returned false.");
             ui.addAttribute("actionFailed", "Error while trying to create truck.");
             return "failure";
         }
@@ -394,7 +406,7 @@ public class ManagerController {
 
     @RequestMapping(value = "/cargochangepage", method = RequestMethod.GET)
     String cargoChangePage(Model ui){
-        log.info("Controller: ManagerController, metod = cargoChangePage,  action = \"/cargochangepage\", request = GET");
+        LOGGER.info("Controller: ManagerController, metod = cargoChangePage,  action = \"/cargochangepage\", request = GET");
         Collection<City> citiesList = cityRepository.getAll();
         ui.addAttribute("citiesList", citiesList);
         return "/manager/cargochangepage";
@@ -402,20 +414,20 @@ public class ManagerController {
 
     @RequestMapping(value = "/cargochangepage", method = RequestMethod.POST)
     String cargoChangePagePost(CargoDTO cargoDTO, BindingResult bindingResult, Model ui){
-        log.info("Controller: ManagerController, metod = cargoChangePage,  action = \"/cargochangepage\", request = POST");
+        LOGGER.info("Controller: ManagerController, metod = cargoChangePage,  action = \"/cargochangepage\", request = POST");
         if (cargoDTO == null){
-            log.error("Error: Id Data Transfer Object is not valid");
+            LOGGER.error("Error: Id Data Transfer Object is not valid");
             ui.addAttribute("actionFailed", "Error while trying to update cargo!");
             return "failure";
         }
         boolean result = cargoService.updateCargo(cargoDTO);
         if (result){
-            log.info("Cargo updated successfully");
+            LOGGER.info("Cargo updated successfully");
             ui.addAttribute("actionSuccess", "Cargo updated successfully!");
             return "success";
         }
         else {
-            log.error("Error: updateCargo method in CargoService returned false");
+            LOGGER.error("Error: updateCargo method in CargoService returned false");
             ui.addAttribute("actionFailed", "Error while trying to update cargo!");
             return "failure";
         }
@@ -423,7 +435,7 @@ public class ManagerController {
 
     @RequestMapping(value = "/driverchangepage", method = RequestMethod.GET)
     String driverChangePage(Model ui){
-        log.info("Controller: ManagerController, metod = driverChangePage,  action = \"/driverchangepage\", request = GET");
+        LOGGER.info("Controller: ManagerController, metod = driverChangePage,  action = \"/driverchangepage\", request = GET");
         Collection<City> citiesList = cityRepository.getAll();
         Collection<Truck> trucksList = truckRepository.getAll(); // todo: get only trucks that fit
         ui.addAttribute("citiesList", citiesList);
@@ -433,25 +445,26 @@ public class ManagerController {
 
     @RequestMapping(value = "/driverchangepage", method = RequestMethod.POST)
     String driverChangePagePost(DriverDTO driverDTO, BindingResult bindingResult, Model ui){
-        log.info("Controller: ManagerController, metod = driverChangePage,  action = \"/driverchangepage\", request = POST");
+        LOGGER.info("Controller: ManagerController, metod = driverChangePage,  action = \"/driverchangepage\", request = POST");
 //        Collection<City> citiesList = cityRepository.getAll();
 //        Collection<Truck> trucksList = truckRepository.getAll(); // todo: get only trucks that fit
 //        ui.addAttribute("citiesList", citiesList);
 //        ui.addAttribute("trucksList", trucksList);
 
         if (driverDTO == null){
-            log.error("Error: Driver Data Transfer Object is not valid");
+            LOGGER.error("Error: Driver Data Transfer Object is not valid");
             ui.addAttribute("actionFailed", "Error while trying to update driver!");
             return "failure";
         }
-        boolean result = userService.updateDriver(driverDTO);
-        if (result){
-            log.info("Driver updated successfully");
+        UpdateMessageType result = userService.updateDriver(driverDTO);
+        if (result.equals(UpdateMessageType.DRIVER_EDITED)){
+            LOGGER.info("Driver updated successfully");
             ui.addAttribute("actionSuccess", "Driver updated successfully!");
+            rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.DRIVER_EDITED, statisticService));
             return "success";
         }
         else {
-            log.error("Error: updateDriver method in UserService returned false");
+            LOGGER.error("Error: updateDriver method in UserService returned false");
             ui.addAttribute("actionFailed", "Error while trying to update driver!");
             return "failure";
         }
@@ -461,7 +474,7 @@ public class ManagerController {
 
     @RequestMapping(value = "/truckchangepage", method = RequestMethod.GET)
     String truckChangePage(Model ui){
-        log.info("Controller: ManagerController, metod = truckChangePage,  action = \"/truckchangepage\", request = GET");
+        LOGGER.info("Controller: ManagerController, metod = truckChangePage,  action = \"/truckchangepage\", request = GET");
         Collection<City> cities = cityRepository.getAll();
         // todo: get free drivers!!! status =free!
         Collection<User> freeDrivers = userService.getAllDrivers();
@@ -473,19 +486,20 @@ public class ManagerController {
     @RequestMapping(value = "/truckchangepage", method = RequestMethod.POST)
     String truckChangePagePost(TruckDTO truckDTO, BindingResult bindingResult,Model ui){
 
-        log.info("Controller: ManagerController, metod = truckChangePage,  action = \"/truckchangepage\", request = POST");
+        LOGGER.info("Controller: ManagerController, metod = truckChangePage,  action = \"/truckchangepage\", request = POST");
         if (truckDTO == null){
-            log.error("Error: Truck Data Transfer Object is not valid");
+            LOGGER.error("Error: Truck Data Transfer Object is not valid");
             ui.addAttribute("actionFailed", "Error while trying to update truck!");
         }
-        boolean result = truckService.updateTruck(truckDTO);
-        if (result){
-            log.info("Truck updated successfully");
+        UpdateMessageType result = truckService.updateTruck(truckDTO);
+        if (result.equals(UpdateMessageType.TRUCK_EDITED)){
+            LOGGER.info("Truck updated successfully");
             ui.addAttribute("actionSuccess", "Truck updated successfully!");
+            rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.TRUCK_EDITED, statisticService));
             return "success";
         }
         else {
-            log.error("Error: updateTruck method in TruckService returned false");
+            LOGGER.error("Error: updateTruck method in TruckService returned false");
             ui.addAttribute("actionFailed", "Error while trying to update truck!");
             return "failure";
         }

@@ -42,7 +42,7 @@
 		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
 				<%--</div>--%>
 				<div>
-					<form action="/addnewcitypage" method="post" id="addNewCityForm">
+					<form action="${pageContext.request.contextPath}/addnewcitypage" method="post" id="addNewCityForm">
 						<div class="form-group">
 					      		<label for="city_name">Name:</label>
       							<input type="text" class="form-control" id="city_name" placeholder="Enter city name" name="name" style="width:350px" required="required">
@@ -59,7 +59,7 @@
 							<button type="submit" class="btn btn-primary" form="rollbackChanges">Rollback changes</button>
 						</div>
 					</form>
-					<form action="/index" method="get" id="rollbackChanges"></form>
+					<form action="${pageContext.request.contextPath}/index" method="get" id="rollbackChanges"></form>
 					<br>
 					<br>
 				</div>

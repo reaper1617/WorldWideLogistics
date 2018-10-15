@@ -42,7 +42,7 @@
 		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
 				<%--</div>--%>
 				<div>
-					<form action="/changecitypage" method="post">
+					<form action="${pageContext.request.contextPath}/changecitypage" method="post">
 						<div>
 							<c:if test="${changedCityId != null}">
 								<input type="text" hidden name="id" value="${changedCityId}">
@@ -65,7 +65,7 @@
 							<button type="submit" class="btn btn-primary" form="rollback">Rollback changes</button>
 						</div>
 					</form>
-					<form action="/index" method="get" id="rollback"></form>
+					<form action="${pageContext.request.contextPath}/index" method="get" id="rollback"></form>
 					<br>
 					<br>
 				</div>

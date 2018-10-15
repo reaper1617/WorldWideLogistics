@@ -80,7 +80,7 @@ public class UserController {
             return "failure";
         }
 
-        return "failure";
+        return "/login";
     }
 
     @RequestMapping(value = "/logged", method = RequestMethod.GET)

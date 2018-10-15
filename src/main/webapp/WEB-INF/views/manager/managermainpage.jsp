@@ -34,7 +34,7 @@
 	<div class = "container-fluid">
 		<h2>Fixed-top container</h2>
  		<nav class="nav nav-tabs bg-primary bg-light navbar-light fixed-top">
-			<a class="navbar-brand" href="/adminmainpage/0">Manager account</a>
+			<a class="navbar-brand" href="${pageContext.request.contextPath}/adminmainpage/0">Manager account</a>
 			<!-- Nav tabs -->
 			<ul class="nav nav-tabs bg-primary bg-light navbar-light" role="tablist">
 			    <li class="nav-item">
@@ -49,7 +49,7 @@
 			    <li class="nav-item">
 				 <a class="nav-link" data-toggle="tab" href="#managecargos">Manage cargos</a>
 			    </li>
-                <form action="/logout" method="get">
+                <form action="${pageContext.request.contextPath}/logout" method="get">
     			    <li class="nav-item">
       		      	    	<button type="submit" class="btn btn-primary" >Log out</button>
     			    </li>
@@ -65,7 +65,7 @@
 		 <div class="tab-content">
   			<div id="home" class="tab-pane active ">
     				<div class = "sticky-top">
-						<form action="/addneworderpage", method="get">
+						<form action="${pageContext.request.contextPath}/addneworderpage", method="get">
 							<h3>Orders <button class = "btn btn-primary" type = "submit">Add new</button> </h3>
 						</form>
     				
@@ -160,7 +160,7 @@
   			</div>
   			<div id="managetrucks" class="tab-pane fade">
     				<div class = "sticky-top">
-						<form action="/addnewtruckpage" method="get">
+						<form action="${pageContext.request.contextPath}/addnewtruckpage" method="get">
 							<h3>Trucks <button class = "btn btn-primary" type = "submit">Add new</button></h3>
 						</form>
 				<div><input class="form-control" id="myInput2" type="text" placeholder="Search.."></div>
@@ -184,7 +184,7 @@
 							<c:forEach items="${trucksList}" var="cell">
 								<tr>
 								<td>
-									<form action="/managermainpage/2" method="post" >
+									<form action="${pageContext.request.contextPath}/managermainpage/2" method="post" >
 										<button type="submit" class="btn btn-primary">Edit</button>
 										<input type="text" hidden name="id" value="${cell.id}">
 									</form>
@@ -226,7 +226,7 @@
   			</div>
   			<div id="managedrivers" class="tab-pane fade">
     				<div class = "sticky-top">
-						<form action="/addnewdriverpage" method="get">
+						<form action="${pageContext.request.contextPath}/addnewdriverpage" method="get">
 							<h3>Drivers <button class = "btn btn-primary" type = "submit">Add new</button></h3>
 						</form>
 				<div><input class="form-control" id="myInput3" type="text" placeholder="Search.."></div>
@@ -251,7 +251,7 @@
                             <c:forEach items="${driversList}" var="cell">
                                 <tr>
                                     <td>
-                                        <form action="/managermainpage/1" method="post" >
+                                        <form action="${pageContext.request.contextPath}/managermainpage/1" method="post" >
                                             <button type="submit" class="btn btn-primary">Edit</button>
                                             <input type="text" hidden name="id" value="${cell.id}">
                                         </form>
@@ -278,7 +278,7 @@
   			</div>
 			<div id="managecargos" class="tab-pane fade">
 				<div class = "sticky-top">
-					<form action="/addnewcargopage" method="get">
+					<form action="${pageContext.request.contextPath}/addnewcargopage" method="get">
 						<h3>Cargos <button class = "btn btn-primary" type="submit">Add new</button></h3>
 					</form>
 				<div><input class="form-control" id="myInput4" type="text" placeholder="Search.."></div>
@@ -301,7 +301,7 @@
 							<c:forEach items="${cargoList}" var="cell">
 								<tr>
 									<td>
-										<form action="/managermainpage/0" method="post" >
+										<form action="${pageContext.request.contextPath}/managermainpage/0" method="post" >
 											<button type="submit" class="btn btn-primary">Edit</button>
 											<input type="text" hidden name="id" value="${cell.id}">
 										</form>

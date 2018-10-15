@@ -42,7 +42,7 @@
 		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
 				<%--</div>--%>
 				<div>
-					<form action="/addnewdriverpage" method="post">
+					<form action="${pageContext.request.contextPath}/addnewdriverpage" method="post">
 						<div class="form-group">
 					      		<label for="driver_name">Name:</label>
       							<input type="text" class="form-control" id="driver_name" placeholder="Enter driver name" name="firstName" style="width:350px" required="required">
@@ -94,7 +94,7 @@
 							<button type="submit" class="btn btn-primary" form="rollback">Rollback changes</button>
 						</div>
 					</form>
-					<form action="/index" method="get" id="rollback"></form>
+					<form action="${pageContext.request.contextPath}/index" method="get" id="rollback"></form>
 				</div>
 			
 					

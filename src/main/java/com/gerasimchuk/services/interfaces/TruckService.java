@@ -2,6 +2,7 @@ package com.gerasimchuk.services.interfaces;
 
 import com.gerasimchuk.dto.TruckDTO;
 import com.gerasimchuk.entities.Truck;
+import com.gerasimchuk.enums.UpdateMessageType;
 
 import java.util.Collection;
 
@@ -12,9 +13,9 @@ import java.util.Collection;
 
 public interface TruckService {
 
-    boolean createTruck(TruckDTO truckDTO);
-    boolean updateTruck(TruckDTO truckDTO);
-    boolean deleteTruck(int id);
+    UpdateMessageType createTruck(TruckDTO truckDTO);
+    UpdateMessageType updateTruck(TruckDTO truckDTO);
+    UpdateMessageType deleteTruck(int id);
 
     Collection<Truck> getFreeTrucks();
 }

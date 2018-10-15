@@ -19,6 +19,10 @@ public interface OrderRepository {
                  OrderStatus status,
                  Truck assignedTruck);
     Order getById(int id);
+    Order getByPersonalNumber(String personalNumber);
     Collection<Order> getAll();
+
+    Collection<Order> getOrdersForOnePage(int size, int pageNumber);
+    Collection<Order> getTopNonExecutedOrders(int size);
     void remove(int id);
 }

@@ -42,7 +42,7 @@
 		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
 				<%--</div>--%>
 				<div>
-					<form action="/addneworderpage" method="post">
+					<form action="${pageContext.request.contextPath}/addneworderpage" method="post">
 						<div class="form-group">
 					      		<label for="item_descr">New order description:</label>
       							<input type="text" class="form-control" id="item_descr" placeholder="Enter order description" name="description" style="width:350px" required="required">
@@ -67,7 +67,7 @@
 							<button type="submit" class="btn btn-primary" form="rollback">Rollback changes</button>
 						</div>
 					</form>
-					<form action="/index" method="get" id="rollback"></form>
+					<form action="${pageContext.request.contextPath}/index" method="get" id="rollback"></form>
 				</div>
 			
 					

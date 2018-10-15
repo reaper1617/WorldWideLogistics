@@ -7,6 +7,7 @@ import com.gerasimchuk.entities.Order;
 import com.gerasimchuk.entities.Truck;
 import com.gerasimchuk.enums.OrderStatus;
 import com.gerasimchuk.enums.TruckState;
+import com.gerasimchuk.enums.UpdateMessageType;
 import com.gerasimchuk.repositories.*;
 import com.gerasimchuk.services.interfaces.TruckService;
 import com.gerasimchuk.services.interfaces.UserService;
@@ -51,11 +52,11 @@ public class TruckServiceImpl implements TruckService {
 
 
     @Transactional
-    public boolean createTruck(TruckDTO truckDTO) {
+    public UpdateMessageType createTruck(TruckDTO truckDTO) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: createTruck");
         if (!dtoValidator.validate(truckDTO)) {
             LOGGER.error("Error: truckDTO is not valid.");
-            return false;
+            return UpdateMessageType.ERROR_ID_IS_NOT_VALID;
         }
         int numOfDrivers =0;
         double capacity = 0;
@@ -68,7 +69,7 @@ public class TruckServiceImpl implements TruckService {
         catch (Exception e){
             e.printStackTrace();
             LOGGER.error("Error: cannot parse number of drivers and capacity values.");
-            return false;
+            return UpdateMessageType.ERROR_CAN_NOT_PARSE_NUM_OF_DRIVERS_AND_CAPACITY;
         }
         Truck created = truckRepository.create(truckDTO.getRegistrationNumber(),numOfDrivers,capacity,state,city);
         LOGGER.info("Assigning drivers...");
@@ -78,7 +79,7 @@ public class TruckServiceImpl implements TruckService {
                 LOGGER.error("Error: number of drivers to assign ("
                         + truckDTO.getAssignedDrivers().length
                         + ") is more than truck maximal number of drivers (" + numOfDrivers + ")");
-                return false;
+                return UpdateMessageType.ERROR_NUM_OF_DRIVERS_TO_ASSIGN_MORE_THAN_MAXIMAL_FOR_THIS_TRUCK;
             }
             // assign drivers
             //assignedDrivers = new HashSet<Driver>();
@@ -112,14 +113,14 @@ public class TruckServiceImpl implements TruckService {
             LOGGER.info("There are no drivers to assign.");
         }
         LOGGER.info("Truck " + created.getRegistrationNumber() + " created successfully");
-        return true;
+        return UpdateMessageType.TRUCK_CREATED;
     }
 
-    public boolean updateTruck(TruckDTO truckDTO) {
+    public UpdateMessageType updateTruck(TruckDTO truckDTO) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: updateTruck");
         if (!dtoValidator.validate(truckDTO)) {
             LOGGER.error("Error: truckDTO is not valid");
-            return false;
+            return UpdateMessageType.ERROR_TRUCK_DTO_IS_NOT_VALID;
         }
         int id = 0;
         try{
@@ -128,40 +129,41 @@ public class TruckServiceImpl implements TruckService {
         catch (Exception e){
             e.printStackTrace();
             LOGGER.info("Error: can not parse truck id.");
-            return false;
+            return UpdateMessageType.ERROR_CAN_NOT_PARSE_TRUCK_ID;
         }
         Truck updated = truckRepository.getById(id);
         if (updated.getAssignedOrder() != null) {
             LOGGER.error("Error: can not update truck which has an assigned order.");
-            return false;
+            return UpdateMessageType.ERROR_CAN_NOT_EDIT_TRUCK_WITH_ASSIGNED_ORDER;
         }
-        boolean result = updateTruckWithFieldsFromDTO(updated,truckDTO);
-        if (result){
+        UpdateMessageType result = updateTruckWithFieldsFromDTO(updated,truckDTO);
+        if (result.equals(UpdateMessageType.TRUCK_FIELDS_UPDATED)){
             LOGGER.info("Truck " + updated.getRegistrationNumber() + " updated successfully.");
+            return UpdateMessageType.TRUCK_EDITED;
         }
         else {
             LOGGER.error("Error: failed to update truck.");
+            return UpdateMessageType.ERROR_CAN_NOT_UPDATE_TRUCK;
         }
-        return result;
     }
 
-    public boolean deleteTruck(int id) {
+    public UpdateMessageType deleteTruck(int id) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: deleteTruck");
         if (id <= 0) {
             LOGGER.error("Error: truck id value is not valid (id = " + id + ").");
-            return false;
+            return UpdateMessageType.ERROR_ID_IS_NOT_VALID;
         }
         Truck deleted = truckRepository.getById(id);
         if (deleted == null) {
             LOGGER.error("Error: there is no truck with id = " + id + " in database.");
-            return false;
+            return UpdateMessageType.ERROR_NO_TRUCK_WITH_THIS_ID;
         }
         Order order = deleted.getAssignedOrder();
         if (order != null) {
             if (order.getStatus().equals(OrderStatus.EXECUTING)
                     || order.getStatus().equals(OrderStatus.EXECUTED)) {
                 LOGGER.error("Error: can not delete truck which has an assigned order with state = " + order.getStatus());
-                return false;
+                return UpdateMessageType.ERROR_CAN_NOT_DELETE_TRUCK_WITH_EXEC_ORDER;
             }
             orderRepository.update(order.getId(),
                     order.getPersonalNumber(),
@@ -182,7 +184,7 @@ public class TruckServiceImpl implements TruckService {
         LOGGER.info("All drivers unassigned.");
         truckRepository.remove(id);
         LOGGER.info("Truck " + deleted.getRegistrationNumber() + " successfully deleted.");
-        return true;
+        return UpdateMessageType.TRUCK_DELETED;
     }
 
 
@@ -213,7 +215,7 @@ public class TruckServiceImpl implements TruckService {
 
     // utils
 
-    TruckState getTruckStateFromTruckDTO(TruckDTO truckDTO){
+    private TruckState getTruckStateFromTruckDTO(TruckDTO truckDTO){
         LOGGER.info("Class: " + this.getClass().getName() + " method: getTruckStateFromTruckDTO");
         TruckState result = null;
         if (truckDTO == null) {
@@ -232,7 +234,7 @@ public class TruckServiceImpl implements TruckService {
     }
 
     // todo: mfk refactor!!!!
-    private boolean updateTruckWithFieldsFromDTO(Truck updated, TruckDTO truckDTO){
+    private UpdateMessageType updateTruckWithFieldsFromDTO(Truck updated, TruckDTO truckDTO){
         LOGGER.info("Class: " + this.getClass().getName() + " method: updateTruckWithFieldsFromDTO");
         String newRegistrationNumber = null;
         int newNumberOfDrivers = 0;
@@ -249,7 +251,7 @@ public class TruckServiceImpl implements TruckService {
             catch (Exception e){
                 e.printStackTrace();
                 LOGGER.error("Error: can not parse number of drivers.");
-                return false;
+                return UpdateMessageType.ERROR_CAN_NOT_PARSE_NUM_OF_DRIVERS;
             }
         }
         else newNumberOfDrivers = updated.getNumOfDrivers();
@@ -261,7 +263,7 @@ public class TruckServiceImpl implements TruckService {
             catch (Exception e){
                 e.printStackTrace();
                 LOGGER.error("Error: can not parse capacity.");
-                return false;
+                return UpdateMessageType.ERROR_CAN_NOT_PARSE_CAPACITY;
             }
         }
         else newCapacity = updated.getCapacity();
@@ -277,7 +279,7 @@ public class TruckServiceImpl implements TruckService {
                 && !truckDTO.getAssignedDrivers()[0].equals("No drivers available")){
             if (newNumberOfDrivers < truckDTO.getAssignedDrivers().length) {
                 LOGGER.error("Error: new number of drivers is less than number of assigned drivers");
-                return false;
+                return UpdateMessageType.ERROR_NEW_NUM_OF_DRIVERS_LESS_THAN_NUM_OF_CURRENT_ASSIGNED_DRIVERS;
             }
 
             String[] drivers = truckDTO.getAssignedDrivers();
@@ -300,7 +302,7 @@ public class TruckServiceImpl implements TruckService {
                         } catch (Exception e) {
                             e.printStackTrace();
                             LOGGER.error("Error: can not parse driver id.");
-                            return false;
+                            return UpdateMessageType.ERROR_CAN_NOT_PARSE_DRIVER_ID;
                         }
                         Driver driver = userRepository.getById(id).getDriver();
                         if (driver.getCurrentCity().getName().equals(newCurrentCity.getName())) {
@@ -318,11 +320,11 @@ public class TruckServiceImpl implements TruckService {
         else {
             if (newNumberOfDrivers < updated.getDriversInTruck().size()) {
                 LOGGER.error("Error: new number of drivers less than current number of drivers in truck.");
-                return false;
+                return UpdateMessageType.ERROR_NEW_NUM_OF_DRIVERS_LESS_THAN_NUM_OF_CURRENT_ASSIGNED_DRIVERS;
             }
         }
         truckRepository.update(updated.getId(), newRegistrationNumber,newNumberOfDrivers, newCapacity, newState, newCurrentCity);
         LOGGER.info("Truck " + updated.getRegistrationNumber() + " updated successfully.");
-        return true;
+        return UpdateMessageType.TRUCK_FIELDS_UPDATED;
     }
 }

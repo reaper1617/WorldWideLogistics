@@ -29,7 +29,7 @@
 	<div class = "container-fluid">
 		<h2>Fixed-top container</h2>
  		<nav class="nav nav-tabs bg-primary bg-light navbar-light fixed-top">
-			<a class="navbar-brand" href="/adminmainpage/0">Admin account</a>
+			<a class="navbar-brand" href="${pageContext.request.contextPath}/adminmainpage/0">Admin account</a>
 			<!-- Nav tabs -->
 			<ul class="nav nav-tabs bg-primary bg-light navbar-light" role="tablist">
 				<li class="nav-item">
@@ -50,7 +50,7 @@
 				<li class="nav-item">
 					<a class="nav-link" data-toggle="tab" href="#manageroutes">Manage routes</a>
 				</li>
-				<form action="/logout" method="get">
+				<form action="${pageContext.request.contextPath}/logout" method="get">
 					<li class="nav-item">
 							<button type="submit" class="btn btn-primary">Log out</button>
 					</li>
@@ -66,7 +66,7 @@
 		 <div class="tab-content">
   			<div id="manageorders" class="tab-pane active ">
     				<div class = "sticky-top">
-						<form action="/addneworderpage", method="get">
+						<form action="${pageContext.request.contextPath}/addneworderpage", method="get">
 							<h3>Orders <button class = "btn btn-primary" type = "submit">Add new</button> </h3>
 						</form>
     				
@@ -92,13 +92,13 @@
 								<c:forEach items="${ordersList}" var="order">
 									<tr>
 										<td>
-											<form action="/adminmainpage/1" method="post" >
+											<form action="${pageContext.request.contextPath}/adminmainpage/1" method="post" >
 												<button type="submit" class="btn btn-primary">Edit</button>
 													<input type="text" hidden name="id" value="${order.id}">
 											</form>
 										</td>
 										<td>
-											<form action="/adminmainpage/2" method="post" >
+											<form action="${pageContext.request.contextPath}/adminmainpage/2" method="post" >
 												<button type="submit" class="btn btn-danger">Delete</button>
 												<input type="text" hidden name="id" value="${order.id}">
 											</form>
@@ -162,7 +162,7 @@
   			</div>
   			<div id="managetrucks" class="tab-pane fade">
     				<div class = "sticky-top">
-						<form action="/addnewtruckpage" method="get">
+						<form action="${pageContext.request.contextPath}/addnewtruckpage" method="get">
 							<h3>Trucks <button class = "btn btn-primary" type = "submit">Add new</button></h3>
 						</form>
 				<div><input class="form-control" id="myInput2" type="text" placeholder="Search.."></div>
@@ -187,13 +187,13 @@
 							<c:forEach items="${trucksList}" var="cell">
 								<tr>
 									<td>
-										<form action="/adminmainpage/3" method="post" >
+										<form action="${pageContext.request.contextPath}/adminmainpage/3" method="post" >
 											<button type="submit" class="btn btn-primary">Edit</button>
 												<input type="text" hidden name="id" value="${cell.id}">
 										</form>
 									</td>
 									<td>
-										<form action="/adminmainpage/4" method="post" >
+										<form action="${pageContext.request.contextPath}/adminmainpage/4" method="post" >
 											<button type="submit" class="btn btn-danger">Delete</button>
 												<input type="text" hidden name="id" value="${cell.id}">
 										</form>
@@ -235,7 +235,7 @@
   			</div>
   			<div id="manageusers" class="tab-pane fade">
     				<div class = "sticky-top">
-						<form action="/addnewuserpage" method="get">
+						<form action="${pageContext.request.contextPath}/addnewuserpage" method="get">
 							<h3>Users <button class = "btn btn-primary" type = "submit">Add new</button></h3>
 						</form>
 				<div><input class="form-control" id="myInput3" type="text" placeholder="Search.."></div>
@@ -258,13 +258,13 @@
                             <c:forEach items="${usersList}" var="user">
                                 <tr>
                                     <td>
-                                        <form action="/adminmainpage/5" method="post" >
+                                        <form action="${pageContext.request.contextPath}/adminmainpage/5" method="post" >
                                             <button type="submit" class="btn btn-primary">Edit</button>
                                             <input type="text" hidden name="id" value="${user.id}">
                                         </form>
                                     </td>
 									<td>
-										<form action="/adminmainpage/6" method="post" >
+										<form action="${pageContext.request.contextPath}/adminmainpage/6" method="post" >
 											<button type="submit" class="btn btn-danger">Delete</button>
                                             <input type="text" hidden name="id" value="${user.id}">
 										</form>
@@ -292,7 +292,7 @@
   			</div>
 			<div id="managecargos" class="tab-pane fade">
 				<div class = "sticky-top">
-					<form action="/addnewcargopage" method="get">
+					<form action="${pageContext.request.contextPath}/addnewcargopage" method="get">
 						<h3>Cargos <button class = "btn btn-primary" type="submit">Add new</button></h3>
 					</form>
 				<div><input class="form-control" id="myInput4" type="text" placeholder="Search.."></div>
@@ -316,13 +316,13 @@
 							<c:forEach items="${cargoList}" var="cell">
 								<tr>
 									<td>
-										<form action="/adminmainpage/7" method="post" >
+										<form action="${pageContext.request.contextPath}/adminmainpage/7" method="post" >
 											<button type="submit" class="btn btn-primary">Edit</button>
 												<input type="text" hidden name="id" value="${cell.id}">
 										</form>
 									</td>
 									<td>
-										<form action="/adminmainpage/8" method="post" >
+										<form action="${pageContext.request.contextPath}/adminmainpage/8" method="post" >
 											<button type="submit" class="btn btn-danger">Delete</button>
                                             <input type="text" hidden name="id" value="${cell.id}">
 										</form>
@@ -342,7 +342,7 @@
   			</div>
 			 <div id="managecities" class="tab-pane fade">
 				 <div class = "sticky-top">
-					 <form action="/addnewcitypage" method="get">
+					 <form action="${pageContext.request.contextPath}/addnewcitypage" method="get">
 						 <h3>Cities <button class = "btn btn-primary" type = "submit">Add new</button></h3>
 					 </form>
 					 <div><input class="form-control" id="myInput5" type="text" placeholder="Search.."></div>
@@ -363,13 +363,13 @@
 						 <c:forEach items="${citiesList}" var="city">
 						 <tr>
 							 <td>
-								 <form action="/adminmainpage/9" method="post" >
+								 <form action="${pageContext.request.contextPath}/adminmainpage/9" method="post" >
 									 <button type="submit" class="btn btn-primary">Edit</button>
 									 <input type="text" hidden name="id" value="${city.id}">
 								 </form>
 							 </td>
 							 <td>
-								 <form action="/adminmainpage/10" method="post" >
+								 <form action="${pageContext.request.contextPath}/adminmainpage/10" method="post" >
 									 <button type="submit" class="btn btn-danger">Delete</button>
 									 <input type="text" hidden name="id" value="${city.id}">
 								 </form>
@@ -460,7 +460,7 @@
 			 </div>
 			 <div id="manageroutes" class="tab-pane fade">
 				 <div class = "sticky-top">
-					 <form action="/addnewroutepage" method="get">
+					 <form action="${pageContext.request.contextPath}/addnewroutepage" method="get">
 						 <h3>Routes <button class = "btn btn-primary" type = "submit">Add new</button></h3>
 					 </form>
 					 <div><input class="form-control" id="myInput6" type="text" placeholder="Search.."></div>
@@ -481,13 +481,13 @@
 							 <c:forEach items="${routesList}" var="route">
 								<tr>
 									<td>
-										<form action="/adminmainpage/11" method="post" >
+										<form action="${pageContext.request.contextPath}/adminmainpage/11" method="post" >
 											<button type="submit" class="btn btn-primary">Edit</button>
 											<input type="text" hidden name="id" value="${route.id}">
 										</form>
 									</td>
 									<td>
-										<form action="/adminmainpage/12" method="post" >
+										<form action="${pageContext.request.contextPath}/adminmainpage/12" method="post" >
 											<button type="submit" class="btn btn-danger">Delete</button>
 											<input type="text" hidden name="id" value="${route.id}">
 										</form>

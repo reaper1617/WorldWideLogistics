@@ -29,10 +29,10 @@
 	<div class = "container-fluid">
 		<h2>Fixed-top container</h2>
  		<nav class="nav nav-tabs bg-primary bg-light navbar-light fixed-top">
-			<a class="navbar-brand" href="/drivermainpage/0">Driver account</a>
+			<a class="navbar-brand" href="${pageContext.request.contextPath}/drivermainpage/0">Driver account</a>
 			<!-- Nav tabs -->
 			<ul class="nav nav-tabs bg-primary bg-light navbar-light" role="tablist">
-                <form action="/logout" method="get">
+                <form action="${pageContext.request.contextPath}/logout" method="get">
     			    <li class="nav-item">
       		      	    	<button type="submit" class="btn btn-primary">Log out</button>
     			    </li>
@@ -120,7 +120,7 @@
 
 		</div>
 		<div>
-			<form action="/drivermainpage/0" method="post" id="updateStatus">
+			<form action="${pageContext.request.contextPath}/drivermainpage/0" method="post" id="updateStatus">
 				<input hidden type="text" value="${loggedDriver.id}" name="driverId">
 				<b>Your status info:</b>
 				<table id="driverStatusInfo" class="table table-active table-hover" style="width: 900px">
@@ -152,7 +152,7 @@
 			</form>
 		</div>
 		<div>
-			<form action="/drivermainpage/1" method="post" id="order_details">
+			<form action="${pageContext.request.contextPath}/drivermainpage/1" method="post" id="order_details">
 				<c:if test="${loggedDriver.driver.currentTruck != null}">
 					<c:if test="${loggedDriver.driver.currentTruck.assignedOrder != null}">
 						<input hidden type="text" value="${loggedDriver.driver.currentTruck.assignedOrder.id}" name="orderId">
@@ -218,7 +218,7 @@
 									<c:if test="${loggedDriver.driver.currentTruck.assignedOrder.cargosInOrder != null}">
 										<c:forEach items="${loggedDriver.driver.currentTruck.assignedOrder.cargosInOrder}" var="cargo">
 											<tr>
-												<form action="/drivermainpage/2" method="post" >
+												<form action="${pageContext.request.contextPath}/drivermainpage/2" method="post" >
 													<input hidden type="text" value="${cargo.id}" name="cargoId">
 													<td>${cargo.personalNumber}</td>
 													<td>${cargo.name}</td>

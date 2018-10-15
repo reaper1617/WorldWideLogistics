@@ -42,7 +42,7 @@
 		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
 				<%--</div>--%>
 				<div>
-					<form action="/reassigntrucktoorderpage", method="post">
+					<form action="${pageContext.request.contextPath}/reassigntrucktoorderpage", method="post">
 						<div class="form-group">
 							<input type="text" hidden class="form-control" id="item_id"  name="id" style="width:350px" value="${updatedOrderDTO.id}">
 						</div>
@@ -99,7 +99,7 @@
 							<button type="submit" class="btn btn-primary" form="rollback">Rollback changes</button>
 						</div>
 					</form>
-					<form action="/index" method="get" id="rollback"></form>
+					<form action="${pageContext.request.contextPath}/index" method="get" id="rollback"></form>
 				</div>
 			
 					

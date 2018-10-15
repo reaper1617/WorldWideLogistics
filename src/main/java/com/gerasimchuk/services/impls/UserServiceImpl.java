@@ -6,6 +6,7 @@ import com.gerasimchuk.dto.ManagerDTO;
 import com.gerasimchuk.dto.UserDTO;
 import com.gerasimchuk.entities.*;
 import com.gerasimchuk.enums.DriverStatus;
+import com.gerasimchuk.enums.UpdateMessageType;
 import com.gerasimchuk.enums.UserRole;
 import com.gerasimchuk.repositories.*;
 import com.gerasimchuk.services.interfaces.UserService;
@@ -50,11 +51,11 @@ public class UserServiceImpl implements UserService {
         this.dtoValidator = dtoValidator;
     }
 
-    public boolean createDriver(DriverDTO driverDTO) {
+    public UpdateMessageType createDriver(DriverDTO driverDTO) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: createDriver");
         if (!dtoValidator.validate(driverDTO)){
             LOGGER.error("Error: driverDTO is not valid.");
-            return false;
+            return UpdateMessageType.ERROR_DRIVER_DTO_IS_NOT_VALID;
         }
         double hoursWorkedVal = getHoursWorkedValFromDriverDTO(driverDTO);
        // DriverStatus driverStatusVal = getDriverStatusValFromDriverDTO(driverDTO);
@@ -73,14 +74,14 @@ public class UserServiceImpl implements UserService {
                 null,
                 null);
         LOGGER.info("Driver " + user.getPersonalNumber() + " created successfully.");
-        return  true;
+        return  UpdateMessageType.DRIVER_CREATED;
     }
 
-    public boolean createManager(ManagerDTO managerDTO) {
+    public UpdateMessageType createManager(ManagerDTO managerDTO) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: createManager");
         if (!dtoValidator.validate(managerDTO)) {
             LOGGER.error("Error: managerDTO is not valid.");
-            return false;
+            return UpdateMessageType.ERROR_MANAGER_DTO_IS_NOT_VALID;
         }
         Manager manager = managerRepository.create();
         User user = userRepository
@@ -93,14 +94,14 @@ public class UserServiceImpl implements UserService {
                         manager,
                         null);
         LOGGER.info("Manager " + user.getPersonalNumber() + " created successfully.");
-        return true;
+        return UpdateMessageType.MANAGER_CREATED;
     }
 
-    public boolean createAdmin(AdminDTO adminDTO) {
+    public UpdateMessageType createAdmin(AdminDTO adminDTO) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: createAdmin");
         if (!dtoValidator.validate(adminDTO)){
             LOGGER.error("Error: adminDTO is not valid.");
-            return false;
+            return UpdateMessageType.ERROR_ADMIN_DTO_IS_NOT_VALID;
         }
         Admin admin = adminRepository.create();
         User user = userRepository
@@ -113,14 +114,14 @@ public class UserServiceImpl implements UserService {
                         null,
                         admin);
         LOGGER.info("Admin " + user.getPersonalNumber() + " created successfully.");
-        return true;
+        return UpdateMessageType.ADMIN_CREATED;
     }
 
-    public boolean updateDriver(DriverDTO driverDTO) {
+    public UpdateMessageType updateDriver(DriverDTO driverDTO) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: updateDriver");
         if (!dtoValidator.validate(driverDTO)) {
             LOGGER.error("Error: driverDTO is not valid.");
-            return false;
+            return UpdateMessageType.ERROR_DRIVER_DTO_IS_NOT_VALID;
         }
         User updated = null;
         if (driverDTO.getId()!=null) {
@@ -134,17 +135,17 @@ public class UserServiceImpl implements UserService {
         if (updated!=null){
             updateDriverWithFieldsFromDTO(updated, driverDTO);
             LOGGER.info("Driver " + updated.getPersonalNumber() + " updated successfully.");
-            return true;
+            return UpdateMessageType.DRIVER_EDITED;
         }
         LOGGER.error("Error: driver update  failed.");
-        return false;
+        return UpdateMessageType.ERROR_CAN_NOT_UPDATE_DRIVER;
     }
 
-    public boolean updateManager(ManagerDTO managerDTO) {
+    public UpdateMessageType updateManager(ManagerDTO managerDTO) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: updateManager");
         if (!dtoValidator.validate(managerDTO)) {
             LOGGER.error("Error: managerDTO is not valid.");
-            return false;
+            return UpdateMessageType.ERROR_MANAGER_DTO_IS_NOT_VALID;
         }
         User updated = null;
         if (managerDTO.getId()!=null){
@@ -158,17 +159,17 @@ public class UserServiceImpl implements UserService {
         if (updated!=null){
             updateManagerWithFieldsFromDTO(updated, managerDTO);
             LOGGER.info("Manager " + updated.getPersonalNumber() + " updated successfully.");
-            return true;
+            return UpdateMessageType.MANAGER_EDITED;
         }
         LOGGER.error("Error: manager update  failed.");
-        return false;
+        return UpdateMessageType.ERROR_CAN_NOT_UPDATE_MANAGER;
     }
 
-    public boolean updateAdmin(AdminDTO adminDTO) {
+    public UpdateMessageType updateAdmin(AdminDTO adminDTO) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: updateAdmin");
         if (!dtoValidator.validate(adminDTO)) {
             LOGGER.error("Error: adminDTO is not valid.");
-            return false;
+            return UpdateMessageType.ERROR_ADMIN_DTO_IS_NOT_VALID;
         }
         User updated = null;
         if (adminDTO.getId()!=null){
@@ -182,26 +183,26 @@ public class UserServiceImpl implements UserService {
         if (updated!=null){
             updateAdminWithFieldsFromDTO(updated, adminDTO);
             LOGGER.info("Admin " + updated.getPersonalNumber() + " updated successfully.");
-            return true;
+            return UpdateMessageType.ADMIN_EDITED;
         }
         LOGGER.error("Error: admin update failed.");
-        return false;
+        return UpdateMessageType.ERROR_CAN_NOT_UPDATE_ADMIN;
     }
 
-    public boolean deleteDriver(int userId) {
+    public UpdateMessageType deleteDriver(int userId) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: deleteDriver");
         if (userId <= 0) {
             LOGGER.error("Error: user id value is not valid (id = " + userId + ").");
-            return false;
+            return UpdateMessageType.ERROR_ID_IS_NOT_VALID;
         }
         User deleted = userRepository.getById(userId);
         if (deleted == null) {
             LOGGER.error("Error: there is no user with id = " + userId + " in database.");
-            return false;
+            return UpdateMessageType.ERROR_NO_USER_WITH_THIS_ID;
         }
         if (deleted.getDriver() == null) {
             LOGGER.error("Error: user " + deleted.getPersonalNumber() + " is not a driver.");
-            return false;
+            return UpdateMessageType.ERROR_USER_IS_NOT_A_DRIVER;
         }
         Driver driver = deleted.getDriver();
 //        if (driver.getCurrentTruck() != null){
@@ -214,51 +215,51 @@ public class UserServiceImpl implements UserService {
         userRepository.remove(userId);
         driverRepository.remove(driver.getId());
         LOGGER.info("Driver " + deleted.getPersonalNumber() + " deleted successfully");
-        return true;
+        return UpdateMessageType.DRIVER_DELETED;
     }
 
-    public boolean deleteManager(int userId) {
+    public UpdateMessageType deleteManager(int userId) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: deleteManager");
         if (userId <= 0){
             LOGGER.error("Error: user id value is not valid (id = " + userId + ").");
-            return false;
+            return UpdateMessageType.ERROR_ID_IS_NOT_VALID;
         }
         User deleted = userRepository.getById(userId);
         if (deleted == null) {
             LOGGER.error("Error: there is no user with id = " + userId + " in database.");
-            return false;
+            return UpdateMessageType.ERROR_NO_USER_WITH_THIS_ID;
         }
         if (deleted.getManager() == null){
             LOGGER.error("Error: user " + deleted.getPersonalNumber() + " is not a manager.");
-            return false;
+            return UpdateMessageType.ERROR_USER_IS_NOT_A_MANAGER;
         }
         Manager manager = deleted.getManager();
         userRepository.remove(userId);
         managerRepository.remove(manager.getId());
         LOGGER.info("Manager " + deleted.getPersonalNumber() + " deleted successfully.");
-        return true;
+        return UpdateMessageType.MANAGER_DELETED;
     }
 
-    public boolean deleteAdmin(int userId) {
+    public UpdateMessageType deleteAdmin(int userId) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: deleteAdmin");
         if (userId <= 0) {
             LOGGER.error("Error: user id value is not valid (id = " + userId + ").");
-            return false;
+            return UpdateMessageType.ERROR_ID_IS_NOT_VALID;
         }
         User deleted = userRepository.getById(userId);
         if (deleted == null) {
             LOGGER.error("Error: there is no user with id = " + userId + " in database.");
-            return false;
+            return UpdateMessageType.ERROR_NO_USER_WITH_THIS_ID;
         }
         if (deleted.getAdmin() == null) {
             LOGGER.error("Error: user " + deleted.getPersonalNumber() + " is not an admin.");
-            return false;
+            return UpdateMessageType.ERROR_USER_IS_NOT_AN_ADMIN;
         }
         Admin admin = deleted.getAdmin();
         userRepository.remove(userId);
         adminRepository.remove(admin.getId());
         LOGGER.info("Admin " + deleted.getPersonalNumber() + " deleted successfully.");
-        return true;
+        return UpdateMessageType.ADMIN_DELETED;
     }
 
     public Collection<User> getAllDrivers() {
@@ -306,13 +307,13 @@ public class UserServiceImpl implements UserService {
         return userRoles;
     }
 
-    public boolean createUser(UserDTO userDTO) {
+    public UpdateMessageType createUser(UserDTO userDTO) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: createUser");
         if (!dtoValidator.validate(userDTO)) {
             LOGGER.error("Error: userDTO is not valid.");
-            return false;
+            return UpdateMessageType.ERROR_USER_DTO_IS_NOT_VALID;
         }
-        boolean result = false;
+        UpdateMessageType result = null;
         String role = userDTO.getRole();
         if (role.equals(UserRole.DRIVER.toString())){
             LOGGER.info("Creating driver...");
@@ -350,22 +351,26 @@ public class UserServiceImpl implements UserService {
                     userDTO.getPersonalNumber());
             result = createAdmin(adminDTO);
         }
-        if (result){
+        if (result == null) return UpdateMessageType.ERROR_CAN_NOT_CREATE_USER;
+        if (result.equals(UpdateMessageType.DRIVER_CREATED)
+                || result.equals(UpdateMessageType.MANAGER_CREATED)
+                || result.equals(UpdateMessageType.ADMIN_CREATED)){
             LOGGER.info("User created successfully.");
+            return UpdateMessageType.USER_CREATED;
         }
         else{
             LOGGER.error("Error: failed to create user.");
+            return UpdateMessageType.ERROR_CAN_NOT_CREATE_USER;
         }
-        return result;
     }
 
-    public boolean updateUser(UserDTO userDTO) {
+    public UpdateMessageType updateUser(UserDTO userDTO) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: updateUser");
         if (!dtoValidator.validate(userDTO)) {
             LOGGER.error("Error: userDTO is not valid.");
-            return false;
+            return UpdateMessageType.ERROR_USER_DTO_IS_NOT_VALID;
         }
-        boolean result = false;
+        UpdateMessageType result = null;
         int id = 0;
         if (userDTO.getId() != null){
             try{
@@ -374,12 +379,12 @@ public class UserServiceImpl implements UserService {
             catch (Exception e){
                 e.printStackTrace();
                 LOGGER.error("Error: can not parse user id.");
-                return false;
+                return UpdateMessageType.ERROR_CAN_NOT_PARSE_USER_ID;
             }
         }
         if (id == 0) {
             LOGGER.error("Error: user id value is not valid (id = 0).");
-            return false;
+            return UpdateMessageType.ERROR_ID_IS_NOT_VALID;
         }
         User updated = userRepository.getById(id);
         if (updated.getDriver() != null){
@@ -418,26 +423,30 @@ public class UserServiceImpl implements UserService {
                     userDTO.getPassword());
             result = updateManager(managerDTO);
         }
-        if (result){
+        if (result == null) return UpdateMessageType.ERROR_CAN_NOT_EDIT_USER;
+        if (result.equals(UpdateMessageType.DRIVER_EDITED)
+            || result.equals(UpdateMessageType.MANAGER_EDITED)
+            || result.equals(UpdateMessageType.ADMIN_EDITED)){
             LOGGER.info("User updated successfully.");
+            return UpdateMessageType.USER_EDITED;
         }
         else {
             LOGGER.error("Error: failed to update user.");
+            return UpdateMessageType.ERROR_CAN_NOT_EDIT_USER;
         }
-        return result;
     }
 
-    public boolean deleteUser(int id) {
+    public UpdateMessageType deleteUser(int id) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: deleteUser");
         if (id <= 0) {
             LOGGER.error("Error: user id value is not valid.");
-            return false;
+            return UpdateMessageType.ERROR_ID_IS_NOT_VALID;
         }
-        boolean result = false;
+        UpdateMessageType result = null;
         User deleted = userRepository.getById(id);
         if (deleted == null) {
             LOGGER.error("Error: there is no user with id = " + id + " in database.");
-            return false;
+            return UpdateMessageType.ERROR_NO_USER_WITH_THIS_ID;
         }
         if (deleted.getManager() != null){
             LOGGER.info("Deleting manager...");
@@ -451,13 +460,16 @@ public class UserServiceImpl implements UserService {
             LOGGER.info("Deleting driver...");
             result = deleteDriver(id);
         }
-        if (result){
+        if (result.equals(UpdateMessageType.DRIVER_DELETED)
+                || result.equals(UpdateMessageType.MANAGER_DELETED)
+                || result.equals(UpdateMessageType.ADMIN_DELETED)){
             LOGGER.info("User deleted successfully.");
+            return UpdateMessageType.USER_DELETED;
         }
         else {
             LOGGER.error("Error: failed to delete user.");
+            return UpdateMessageType.ERROR_CAN_NOT_DELETE_USER;
         }
-        return result;
     }
 
 

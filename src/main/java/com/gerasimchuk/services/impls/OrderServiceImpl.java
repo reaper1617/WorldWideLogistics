@@ -1,13 +1,10 @@
 package com.gerasimchuk.services.impls;
 
 import com.gerasimchuk.constants.WWLConstants;
-import com.gerasimchuk.converters.OrderToDTOConverter;
+import com.gerasimchuk.converters.OrderToDTOConverterImpl;
 import com.gerasimchuk.dto.OrderDTO;
 import com.gerasimchuk.entities.*;
-import com.gerasimchuk.enums.CargoActionType;
-import com.gerasimchuk.enums.CargoStatus;
-import com.gerasimchuk.enums.OrderStatus;
-import com.gerasimchuk.enums.TruckState;
+import com.gerasimchuk.enums.*;
 import com.gerasimchuk.exceptions.driverexceptions.TooManyHoursWorkedForOrderException;
 import com.gerasimchuk.exceptions.routeexceptions.NullRouteException;
 import com.gerasimchuk.exceptions.routeexceptions.RouteException;
@@ -15,7 +12,7 @@ import com.gerasimchuk.repositories.*;
 import com.gerasimchuk.services.interfaces.OrderService;
 import com.gerasimchuk.utils.DateParser;
 import com.gerasimchuk.utils.PersonalNumberGenerator;
-import com.gerasimchuk.utils.RoutePoint;
+import com.gerasimchuk.utils.ReturnValuesContainer;
 import com.gerasimchuk.validators.DTOValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -228,11 +225,11 @@ public class OrderServiceImpl implements OrderService {
 //        return normalizedRoute;
 //    }
 
-    public boolean createOrder(OrderDTO orderDTO) throws RouteException {
+    public UpdateMessageType createOrder(OrderDTO orderDTO) throws RouteException {
         LOGGER.info("Class: " + this.getClass().getName() + " method: createOrder");
         if (!dtoValidator.validate(orderDTO)) {
             LOGGER.error("Error: orderDTO is not valid.");
-            return false;
+            return UpdateMessageType.ERROR_ORDER_DTO_IS_NOT_VALID;
         }
         String personalNumber = PersonalNumberGenerator.generate(10);
         Date date = new Date();
@@ -244,12 +241,12 @@ public class OrderServiceImpl implements OrderService {
         catch (Exception e){
             e.printStackTrace();
             LOGGER.error("Error: cannot parse id value.");
-            return false;
+            return UpdateMessageType.ERROR_CAN_NOT_PARSE_ORDER_ID;
         }
         Truck assignedTruck = truckRepository.getById(truckId);
         if (assignedTruck == null){
             LOGGER.error("Error: there is no truck with id = " + truckId + " in database");
-            return false;
+            return UpdateMessageType.ERROR_NO_TRUCK_WITH_THIS_ID;
         }
         LOGGER.info("Checking if there are drivers with too much hours worked.");
         double orderExecutingTime = getExecutingTime(orderDTO);
@@ -266,7 +263,7 @@ public class OrderServiceImpl implements OrderService {
             if (hoursWorked + orderExecutingTime > WWLConstants.MAX_DRIVER_HOURS_WORKED_IN_MONTH
                     && !nextMonthDuringOrderExecuting) {
                 LOGGER.error("Driver " + d.getUser().getPersonalNumber() + " cannot execute this order.");
-                return false; // todo: HoursWorkedOverLimitException
+                return UpdateMessageType.ERROR_DRIVER_HOURS_WORKED_OVER_LIMIT; // todo: HoursWorkedOverLimitException
             }
         }
         LOGGER.info("All drivers are able to execute this order");
@@ -283,23 +280,85 @@ public class OrderServiceImpl implements OrderService {
             }
             LOGGER.info("All cargos are assigned to order.");
             LOGGER.info("Order " + newOrder.getDescription() + " successfully created");
-            return true;
+            return UpdateMessageType.ORDER_CREATED;
         }
         LOGGER.error("Error: failed to create order.");
-        return false;
+        return UpdateMessageType.ERROR_CAN_NOT_CREATE_ORDER;
+    }
+
+    @Override
+    public ReturnValuesContainer<Order> createOrder(OrderDTO orderDTO, int val) throws RouteException {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: createOrder");
+        if (!dtoValidator.validate(orderDTO)) {
+            LOGGER.error("Error: orderDTO is not valid.");
+            return new ReturnValuesContainer<Order>(UpdateMessageType.ERROR_ORDER_DTO_IS_NOT_VALID,null);
+        }
+        String personalNumber = PersonalNumberGenerator.generate(10);
+        Date date = new Date();
+        String currentDate = date.toString();
+        int truckId = 0;
+        try{
+            truckId = Integer.parseInt(orderDTO.getAssignedTruckId());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            LOGGER.error("Error: cannot parse id value.");
+            return new ReturnValuesContainer<Order>(UpdateMessageType.ERROR_CAN_NOT_PARSE_ORDER_ID,null);
+        }
+        Truck assignedTruck = truckRepository.getById(truckId);
+        if (assignedTruck == null){
+            LOGGER.error("Error: there is no truck with id = " + truckId + " in database");
+            return new ReturnValuesContainer<Order>(UpdateMessageType.ERROR_NO_TRUCK_WITH_THIS_ID,null);
+        }
+        LOGGER.info("Checking if there are drivers with too much hours worked.");
+        double orderExecutingTime = getExecutingTime(orderDTO);
+        LOGGER.info("Order executing time = " + orderExecutingTime + " hours");
+        Collection<Driver> driversInTruck = assignedTruck.getDriversInTruck();
+        for(Driver d : driversInTruck){
+            LOGGER.info("Driver: " + d.getUser().getPersonalNumber());
+            double hoursWorked = d.getHoursWorked();
+            LOGGER.info("Hours worked = " + hoursWorked);
+            long createOrderTimeMs = date.getTime();
+            Date orderExecDate = new Date(createOrderTimeMs + (long)orderExecutingTime*WWLConstants.MILLISECONDS_IN_HOUR);
+            boolean nextMonthDuringOrderExecuting = false;
+            if (date.getMonth() != orderExecDate.getMonth()) nextMonthDuringOrderExecuting = true;
+            if (hoursWorked + orderExecutingTime > WWLConstants.MAX_DRIVER_HOURS_WORKED_IN_MONTH
+                    && !nextMonthDuringOrderExecuting) {
+                LOGGER.error("Driver " + d.getUser().getPersonalNumber() + " cannot execute this order.");
+                return new ReturnValuesContainer<Order>(UpdateMessageType.ERROR_DRIVER_HOURS_WORKED_OVER_LIMIT,null);
+            }
+        }
+        LOGGER.info("All drivers are able to execute this order");
+        ///
+        Order newOrder = orderRepository.create(personalNumber, orderDTO.getDescription(), currentDate, OrderStatus.NOT_PREPARED, assignedTruck);
+
+        if (newOrder!=null) {
+            Collection<Cargo> cargosInOrder = getChosenCargos(orderDTO);
+            LOGGER.info("Assigning cargos to order...");
+            for (Cargo c : cargosInOrder) {
+                LOGGER.info("Cargo " + c.getName());
+                cargoRepository.update(c.getId(), c.getPersonalNumber(), c.getName(), c.getWeight(), c.getStatus(), c.getRoute(),newOrder);
+                LOGGER.info("Cargo successfully associated");
+            }
+            LOGGER.info("All cargos are assigned to order.");
+            LOGGER.info("Order " + newOrder.getDescription() + " successfully created");
+            return new ReturnValuesContainer<Order>(UpdateMessageType.ORDER_CREATED,newOrder);
+        }
+        LOGGER.error("Error: failed to create order.");
+        return new ReturnValuesContainer<Order>(UpdateMessageType.ERROR_CAN_NOT_CREATE_ORDER,null);
     }
 
 
-    public boolean updateOrder(OrderDTO orderDTO) throws RouteException, TooManyHoursWorkedForOrderException {
+    public UpdateMessageType updateOrder(OrderDTO orderDTO) throws RouteException, TooManyHoursWorkedForOrderException {
         LOGGER.info("Class: " + this.getClass().getName() + " method: updateOrder");
         if (!dtoValidator.validate(orderDTO)){
             LOGGER.error("Error: orderDTO is not valid.");
-            return false;
+            return UpdateMessageType.ERROR_ORDER_DTO_IS_NOT_VALID;
         }
 
         if (orderDTO.getId() == null) {
             LOGGER.error("Error: id field in orderDTO is null");
-            return false;
+            return UpdateMessageType.ERROR_ORDER_DTO_IS_NOT_VALID;
         }
         int id = 0;
         try {
@@ -308,7 +367,7 @@ public class OrderServiceImpl implements OrderService {
         catch (Exception e){
             e.printStackTrace();
             LOGGER.info("Error: cannot parse id value.");
-            return false;
+            return UpdateMessageType.ERROR_CAN_NOT_PARSE_ORDER_ID;
         }
         Order updated = null;
         if (id != 0){
@@ -316,15 +375,15 @@ public class OrderServiceImpl implements OrderService {
         }
         else {
             LOGGER.error("Error: id value is not valid (id = 0)");
-            return false;
+            return UpdateMessageType.ERROR_ID_IS_NOT_VALID;
         }
         if (updated != null){
             updateOrderWithFieldsFromDTO(updated,orderDTO);
             LOGGER.info("Order " + updated.getDescription() + " successfully updated");
-            return true;
+            return UpdateMessageType.ORDER_EDITED;
         }
         LOGGER.error("Error: failed to update order.");
-        return false;
+        return UpdateMessageType.ERROR_CAN_NOT_UPDATE_ORDER;
     }
 
     //todo: refactor!!
@@ -455,15 +514,15 @@ public class OrderServiceImpl implements OrderService {
         return true;
     }
 
-    public boolean deleteOrder(OrderDTO orderDTO) {
+    public UpdateMessageType deleteOrder(OrderDTO orderDTO) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: deleteOrder");
         if (!dtoValidator.validate(orderDTO)) {
             LOGGER.error("Error: orderDTO is not valid.");
-            return false;
+            return UpdateMessageType.ERROR_ORDER_DTO_IS_NOT_VALID;
         }
         if (orderDTO.getId() == null || orderDTO.getId().length()==0){
             LOGGER.error("Error: orderDTO is null or empty.");
-            return false;
+            return UpdateMessageType.ERROR_ORDER_DTO_IS_NOT_VALID;
         }
         int id = 0;
         try{
@@ -472,20 +531,20 @@ public class OrderServiceImpl implements OrderService {
         catch (Exception e){
             e.printStackTrace();
             LOGGER.error("Error: cannot parse order id.");
-            return false;
+            return UpdateMessageType.ERROR_CAN_NOT_PARSE_ORDER_ID;
         }
         if (id == 0) {
             LOGGER.error("Error: order id value is not valid (id = 0)");
-            return false;
+            return UpdateMessageType.ERROR_ID_IS_NOT_VALID;
         }
         Order deleted = orderRepository.getById(id);
         if (deleted == null){
             LOGGER.error("Error: there is no order with id = " + id + " in database");
-            return false;
+            return UpdateMessageType.ERROR_NO_ORDER_WITH_THIS_ID;
         }
         if (deleted.getStatus().equals(OrderStatus.EXECUTED) || deleted.getStatus().equals(OrderStatus.EXECUTING)){
             LOGGER.error("Error: can not delete order with status =" + deleted.getStatus());
-            return false;
+            return UpdateMessageType.ERROR_CAN_NOT_DELETE_ORDER_WITH_SUCH_STATUS;
         }
         Collection<Cargo> cargosInOrder = deleted.getCargosInOrder();
         LOGGER.info("Unassigning cargos from order before deleting...");
@@ -496,7 +555,7 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.info("All cargos are unassigned successfully.");
         orderRepository.remove(deleted.getId());
         LOGGER.info("Order " + deleted.getDescription() + " deleted successfully");
-        return true;
+        return UpdateMessageType.ORDER_DELETED;
     }
 
     @Override
@@ -544,7 +603,7 @@ public class OrderServiceImpl implements OrderService {
         Map<Order, Collection<City>> routes = new HashMap<Order, Collection<City>>();
         for(Order o: orders){
             LOGGER.info("Order " + o.getDescription());
-            OrderDTO orderDTO = OrderToDTOConverter.convert(o);
+            OrderDTO orderDTO = OrderToDTOConverterImpl.convert(o);
             Collection<City> route = getOrderRoute(orderDTO,o.getAssignedTruck());
             LOGGER.info("Order route: " + route + ", siz = " + route.size());
             routes.put(o,route);

@@ -8,6 +8,7 @@ import com.gerasimchuk.entities.Admin;
 import com.gerasimchuk.entities.Driver;
 import com.gerasimchuk.entities.Manager;
 import com.gerasimchuk.entities.User;
+import com.gerasimchuk.enums.UpdateMessageType;
 import com.gerasimchuk.enums.UserRole;
 
 import java.util.Collection;
@@ -19,18 +20,18 @@ import java.util.Collection;
 
 public interface UserService {
 
-    boolean createDriver(DriverDTO driverDTO);
-    boolean createManager(ManagerDTO managerDTO);
-    boolean createAdmin(AdminDTO adminDTO);
+    UpdateMessageType createDriver(DriverDTO driverDTO);
+    UpdateMessageType createManager(ManagerDTO managerDTO);
+    UpdateMessageType createAdmin(AdminDTO adminDTO);
 
 
-    boolean updateDriver(DriverDTO driverDTO);
-    boolean updateManager(ManagerDTO managerDTO);
-    boolean updateAdmin(AdminDTO adminDTO);
+    UpdateMessageType updateDriver(DriverDTO driverDTO);
+    UpdateMessageType updateManager(ManagerDTO managerDTO);
+    UpdateMessageType updateAdmin(AdminDTO adminDTO);
 
-    boolean deleteDriver(int userId);
-    boolean deleteManager(int userId);
-    boolean deleteAdmin(int userId);
+    UpdateMessageType deleteDriver(int userId);
+    UpdateMessageType deleteManager(int userId);
+    UpdateMessageType deleteAdmin(int userId);
 
 
     Collection<User> getAllDrivers();
@@ -39,9 +40,12 @@ public interface UserService {
 
     Collection<UserRole> getRoles();
 
-    boolean createUser(UserDTO userDTO);
-    boolean updateUser(UserDTO userDTO);
-    boolean deleteUser(int id);
+    UpdateMessageType createUser(UserDTO userDTO);
+    UpdateMessageType updateUser(UserDTO userDTO);
+    UpdateMessageType deleteUser(int id);
+
+
+
 //    Collection<Manager> getAllManagers();
 //    Collection<Admin> getAllAdmins();
 
