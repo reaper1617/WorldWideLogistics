@@ -89,13 +89,13 @@ public class OrderToDTOConverterImpl implements OrderToDTOConverter{
     public OrderWithRouteDTO convertToDTOWithRoute(Order order) throws RouteException {
         OrderDTO dto = convert(order);
         String[] route = null;
-        List<City> cities = (List<City>) orderService.getOrderRoute(OrderToDTOConverterImpl.convert(order), null);
-        if (order.getAssignedTruck() != null) cities.add(0,order.getAssignedTruck().getCurrentCity());
+        List<City> cities = orderService.getOrderRoute(OrderToDTOConverterImpl.convert(order), order.getAssignedTruck());
         int size = cities.size();
         route = new String[size];
         for(int i = 0; i < size; i++){
             route[i] = cities.get(i).getName();
         }
+        assert dto != null;
         return new OrderWithRouteDTO(
                 dto.getId(),
                 dto.getPersonalNumber(),

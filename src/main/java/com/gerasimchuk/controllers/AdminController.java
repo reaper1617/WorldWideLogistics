@@ -113,8 +113,7 @@ public class AdminController {
         List<OrderWithRoute> ordersWithRoutes = new ArrayList<OrderWithRoute>();
         for (Order o : orders) {
             try {
-                List<City> cities = (List<City>) orderService.getOrderRoute(OrderToDTOConverterImpl.convert(o), null);
-                if (o.getAssignedTruck() != null) cities.add(0,o.getAssignedTruck().getCurrentCity());
+                List<City> cities = orderService.getOrderRoute(OrderToDTOConverterImpl.convert(o), o.getAssignedTruck());
                 ordersWithRoutes.add(new OrderWithRoute(o, cities));
             }
             catch (Exception e){

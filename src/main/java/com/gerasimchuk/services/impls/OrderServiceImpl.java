@@ -87,12 +87,12 @@ public class OrderServiceImpl implements OrderService {
 
     public Collection<Truck> getAvailableTrucks(OrderDTO orderDTO) throws RouteException {
         LOGGER.info("Class: " + this.getClass().getName() + " method: getAvailableTrucks");
-        Collection<Cargo> cargosInOrder = getChosenCargos(orderDTO);
-        Collection<City> orderRoute = getOrderRoute(orderDTO, null);
+       // Collection<Cargo> cargosInOrder = getChosenCargos(orderDTO);
+       // Collection<City> orderRoute = getOrderRoute(orderDTO, null);
         Collection<Truck> result = new ArrayList<Truck>();
         Collection<Truck> allTrucks = truckRepository.getAll();
-        double maxCargoWeightOnRoute = getMaxCargoWeightOnRoute(orderDTO);
         for(Truck t: allTrucks){
+            double maxCargoWeightOnRoute = getMaxCargoWeightOnRoute(orderDTO);
             if (t.getState().equals(TruckState.READY) && t.getAssignedOrder()==null){
                 if (t.getCapacity()*WWLConstants.TON >= maxCargoWeightOnRoute){
                     result.add(t);
@@ -118,6 +118,35 @@ public class OrderServiceImpl implements OrderService {
         Collection<City> orderRoute = getOrderRoute(orderDTO, null);
         Object[] orderRouteArray = orderRoute.toArray();
         double[] weightsOnRoute = new double[orderRoute.size()];
+        countWeightsOnRoute(cargosInOrder, orderRouteArray, weightsOnRoute);
+        for( int i = 1; i < weightsOnRoute.length; i++){
+            weightsOnRoute[i] += weightsOnRoute[i-1];
+        }
+        Arrays.sort(weightsOnRoute);
+        double max = weightsOnRoute[weightsOnRoute.length-1];
+        LOGGER.info("Max weight on route = " + max);
+        return max;
+    }
+
+    private double getMaxCargoWeightOnRoute(OrderDTO orderDTO, Truck truck) throws RouteException {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getMaxCargoWeightOnRoute");
+        Collection<Cargo> cargosInOrder = getChosenCargos(orderDTO);
+        Collection<City> orderRoute = getOrderRoute(orderDTO, truck);
+        Object[] orderRouteArray = orderRoute.toArray();
+        double[] weightsOnRoute = new double[orderRoute.size()];
+        countWeightsOnRoute(cargosInOrder, orderRouteArray, weightsOnRoute);
+        for( int i = 1; i < weightsOnRoute.length; i++){
+            weightsOnRoute[i] += weightsOnRoute[i-1];
+        }
+        Arrays.sort(weightsOnRoute);
+        double max = weightsOnRoute[weightsOnRoute.length-1];
+        LOGGER.info("Max weight on route = " + max);
+        LOGGER.info("Class: " + this.getClass().getName() + " out from getMaxCargoWeightOnRoute method");
+        return max;
+    }
+
+    private void countWeightsOnRoute(Collection<Cargo> cargosInOrder, Object[] orderRouteArray, double[] weightsOnRoute) {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getMaxCargoWeightOnRoute");
         for(Cargo cargo: cargosInOrder){
             LOGGER.info("Cargo: " + cargo.getName());
             LOGGER.info("Cargo load city:" + cargo.getRoute().getCityFrom().getName());
@@ -138,13 +167,7 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
         }
-        for( int i = 1; i < weightsOnRoute.length; i++){
-            weightsOnRoute[i] += weightsOnRoute[i-1];
-        }
-        Arrays.sort(weightsOnRoute);
-        double max = weightsOnRoute[weightsOnRoute.length-1];
-        LOGGER.info("Max weight on route = " + max);
-        return max;
+        LOGGER.info("Class: " + this.getClass().getName() + " out from getMaxCargoWeightOnRoute method");
     }
 
 //    v 2 (bad)
@@ -163,7 +186,7 @@ public class OrderServiceImpl implements OrderService {
 //        return route;
 //    }
 
-    public Collection<City> getOrderRoute(OrderDTO orderDTO, Truck truck) throws RouteException {
+    public List<City> getOrderRoute(OrderDTO orderDTO, Truck truck) throws RouteException {
         LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute");
         if (!dtoValidator.validate(orderDTO)){
             LOGGER.info("Class: " + this.getClass().getName() + " out from getOrderRoute: orderDTO is not valid.");
