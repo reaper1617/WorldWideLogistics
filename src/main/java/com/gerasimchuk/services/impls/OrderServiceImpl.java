@@ -638,7 +638,13 @@ public class OrderServiceImpl implements OrderService {
             LOGGER.error("Error: cannot parse order id.");
             return UpdateMessageType.ERROR_CAN_NOT_PARSE_ORDER_ID;
         }
-        if (id == 0) {
+        return deleteOrder(id);
+    }
+
+    @Override
+    public UpdateMessageType deleteOrder(int id) {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: deleteOrder");
+        if (id <= 0) {
             LOGGER.error("Error: order id value is not valid (id = 0)");
             return UpdateMessageType.ERROR_ID_IS_NOT_VALID;
         }
@@ -660,6 +666,7 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.info("All cargos are unassigned successfully.");
         orderRepository.remove(deleted.getId());
         LOGGER.info("Order " + deleted.getDescription() + " deleted successfully");
+        LOGGER.info("Class: " + this.getClass().getName() + " out from deleteOrder method: order deleted successfully");
         return UpdateMessageType.ORDER_DELETED;
     }
 

@@ -106,8 +106,9 @@ function showMoreOrders() {
                     "\t\t\t\t\t\t\t\t\t\t\t\t<button type=\"submit\" class=\"btn btn-primary\">Edit</button>\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" hidden name=\"id\" value=\"" + item.id + "\">\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t</form>";
-                tdDeleteBtn.innerHTML = "<form action=\"${pageContext.request.contextPath}/adminmainpage/2\" method=\"post\" >\n" +
-                    "\t\t\t\t\t\t\t\t\t\t\t\t<button type=\"submit\" class=\"btn btn-danger\">Delete</button>\n" +
+                // tdDeleteBtn.innerHTML = "<form action=\"${pageContext.request.contextPath}/adminmainpage/2\" method=\"post\" >\n" +
+                tdDeleteBtn.innerHTML = "<form action='#'>\n" +
+                    "<button type=\"submit\" id=\"del+${order.id}\" class=\"btn btn-danger\" onclick=\"deleteOrder("+item.id+")\">Delete</button>" +
                     "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" hidden name=\"id\" value=\"" +item.id+"\">\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t</form>";
                 tdId.innerHTML = item.personalNumber;

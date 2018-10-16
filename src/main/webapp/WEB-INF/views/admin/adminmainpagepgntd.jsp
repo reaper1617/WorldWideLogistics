@@ -102,8 +102,9 @@
 											</form>
 										</td>
 										<td>
-											<form action="${pageContext.request.contextPath}/adminmainpage/2" method="post" >
-												<button type="submit" class="btn btn-danger">Delete</button>
+											<%--<form action="${pageContext.request.contextPath}/adminmainpage/2" method="post" >--%>
+											<form action="#" >
+												<button type="submit" id="del+${order.id}" class="btn btn-danger" onclick="deleteOrder(${order.id})">Delete</button>
 												<input type="text" hidden name="id" value="${order.id}">
 											</form>
 										</td>
@@ -534,7 +535,33 @@
 	
 </div>
 
-
+<script>
+	function deleteOrder(orderId) {
+        // alert("in deleteOrder!");
+        // alert("orderId:" + orderId);
+        var sureDelete = confirm("Do you really want to delete this order?");
+        if (sureDelete) {
+            var req = new XMLHttpRequest();
+            req.onreadystatechange = function () {
+                if (this.status === 200 && this.readyState === 4) {
+                    alert("resp:" + this.responseText);
+                    var res = JSON.parse(this.responseText);
+                    // alert("resp:" + res);
+                    if (res === "ERROR_CAN_NOT_DELETE_ORDER_WITH_SUCH_STATUS"){
+                        alert("Can not delete order! Error message: " + res);
+					}
+					else {
+                        alert("Order deleted successfully!");
+					}
+                }
+            }
+            var url = "/deleteorder?orderId=" + orderId;
+            req.open('GET', url, true);
+            req.send();
+        }
+    }
+	
+</script>
 
 
 

@@ -34,6 +34,7 @@ public interface OrderService {
     OrderStatus getOrderStatusFromString(String status);
     boolean areAllCargosDelivered(Order order);
     UpdateMessageType deleteOrder(OrderDTO orderDTO);
+    UpdateMessageType deleteOrder(int orderId);
 
 
     double getExecutingTime(OrderDTO orderDTO) throws RouteException;
