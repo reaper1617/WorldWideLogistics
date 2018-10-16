@@ -1,0 +1,12 @@
+.gradientbackgr{
+    background: #6c757d;
+    background: radial-gradient(#0c5460,#6c757d);
+}
+
+.thead-style{
+    color: #0ed61f;
+}
+
+.tbody-style{
+    color: #0ed61f;
+}

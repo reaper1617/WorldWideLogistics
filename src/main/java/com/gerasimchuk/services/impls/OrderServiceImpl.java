@@ -146,19 +146,101 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.info("Max weight on route = " + max);
         return max;
     }
+
+//    v 2 (bad)
+//    public Collection<City> getOrderRoute(OrderDTO orderDTO, Truck truck) throws RouteException {
+//        if ( (!dtoValidator.validate(orderDTO))) return null;
+//        Collection<Cargo> cargosInOrder = getChosenCargos(orderDTO);
+//        List<City> route = new ArrayList<City>();
+//        if (truck != null) route.add(truck.getCurrentCity());
+//        for(Cargo c: cargosInOrder){
+//            route.add(c.getRoute().getCityFrom());
+//            route.add(c.getRoute().getCityTo());
+//        }
+//        for(int i = 0; i < route.size()-1; i++){
+//            if (route.get(i).getName().equals(route.get(i+1).getName())) route.remove(i);
+//        }
+//        return route;
+//    }
+
     public Collection<City> getOrderRoute(OrderDTO orderDTO, Truck truck) throws RouteException {
-        if ( (!dtoValidator.validate(orderDTO))) return null;
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute");
+        if (!dtoValidator.validate(orderDTO)){
+            LOGGER.info("Class: " + this.getClass().getName() + " out from getOrderRoute: orderDTO is not valid.");
+            return null;
+        }
         Collection<Cargo> cargosInOrder = getChosenCargos(orderDTO);
-        List<City> route = new ArrayList<City>();
-        if (truck != null) route.add(truck.getCurrentCity());
+        List<City> citiesWithCargoLoad = new ArrayList<City>();
+        List<City> citiesWithCargoUnload = new ArrayList<City>();
         for(Cargo c: cargosInOrder){
-            route.add(c.getRoute().getCityFrom());
-            route.add(c.getRoute().getCityTo());
+            City cityFrom = c.getRoute().getCityFrom();
+            if (!citiesWithCargoLoad.contains(cityFrom)){ // todo: check if it works correctly!!!
+                citiesWithCargoLoad.add(cityFrom);
+            }
+            City cityTo = c.getRoute().getCityTo();
+            if (!citiesWithCargoUnload.contains(cityTo)){
+                citiesWithCargoUnload.add(cityTo);
+            }
         }
-        for(int i = 0; i < route.size()-1; i++){
-            if (route.get(i).getName().equals(route.get(i+1).getName())) route.remove(i);
+        if (truck != null){
+            City truckCurrentCity = truck.getCurrentCity();
+            citiesWithCargoLoad.remove(truckCurrentCity);
+            citiesWithCargoLoad.add(0,truckCurrentCity);
         }
+        List<City> route = new ArrayList<City>(citiesWithCargoLoad);
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, citiesWithCargoLoadList: " + citiesWithCargoLoad);
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, citiesWithCargoUnloadList: " + citiesWithCargoUnload);
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, start to count second part of the route...");
+        for(City city: citiesWithCargoUnload){
+            // get all cargos which need to be unload in this city
+            LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, city: " + city);
+            if (citiesWithCargoLoad.contains(city)){
+                LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, city: " + cargosInOrder + " is in citiesWithCargoLoad list!");
+                List<Cargo> cargosToUnloadInThisCity = getCargosToUnloadInCity(cargosInOrder,city);
+                LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, cargosToUnloadInThisCity list: " + cargosToUnloadInThisCity);
+                List<City> citiesForLoadCargos = getLoadCityListForCargos(cargosToUnloadInThisCity);
+                LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, citiesForLoadCargos list: " + citiesForLoadCargos);
+                List<City> citiesBeforeCurrent = citiesWithCargoLoad.subList(0, citiesWithCargoLoad.indexOf(city));
+                LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, citiesBeforeCurrent list: " + citiesBeforeCurrent);
+                boolean allCargosLoadedBefore = false;
+                if (citiesBeforeCurrent.size() != 0){
+                    if (citiesBeforeCurrent.containsAll(citiesForLoadCargos)) allCargosLoadedBefore = true;
+                    LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, allCargosLoadedBefore: " + allCargosLoadedBefore);
+                }
+                if (!allCargosLoadedBefore){
+                    route.add(city);
+                    LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, city: " + city + " added into route");
+                }
+            }
+            else{
+                route.add(city);
+                LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, city: " + city + " added into route");
+            }
+        }
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, route: " + route);
+        LOGGER.info("Class: " + this.getClass().getName() + " out from getOrderRoute method");
         return route;
+    }
+
+    private List<Cargo> getCargosToUnloadInCity(Collection<Cargo> cargosInOrder, City city){
+        if (cargosInOrder == null || city == null) return null;
+        List<Cargo> cargosToUnloadInCity = new ArrayList<Cargo>();
+        for(Cargo cargo: cargosInOrder){
+            if (cargo.getRoute().getCityTo().getName().equals(city.getName())) cargosToUnloadInCity.add(cargo);
+        }
+        return cargosToUnloadInCity;
+    }
+
+    private List<City> getLoadCityListForCargos(List<Cargo> cargos){
+        if (cargos == null) return null;
+        List<City> cities = new ArrayList<City>();
+        for(Cargo cargo: cargos){
+            City city = cargo.getRoute().getCityFrom();
+            if (!cities.contains(city)){
+                cities.add(city);
+            }
+        }
+        return cities;
     }
 
     // todo: refactor!!!
