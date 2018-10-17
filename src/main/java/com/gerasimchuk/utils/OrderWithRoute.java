@@ -6,6 +6,7 @@ import com.gerasimchuk.entities.Order;
 import com.gerasimchuk.entities.Truck;
 import com.gerasimchuk.enums.OrderStatus;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -19,7 +20,7 @@ public class OrderWithRoute {
     private Set<Cargo> cargosInOrder;
     private List<City> route;
 
-    public OrderWithRoute(int id, String personalNumber, String description, String date, OrderStatus status, Truck assignedTruck, Set<Cargo> cargosInOrder, List<City> route) {
+    public OrderWithRoute(int id, String personalNumber, String description, String date, OrderStatus status, Truck assignedTruck, LinkedHashSet<Cargo> cargosInOrder, List<City> route) {
         this.id = id;
         this.personalNumber = personalNumber;
         this.description = description;

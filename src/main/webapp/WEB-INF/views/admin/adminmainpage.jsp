@@ -11,12 +11,10 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/web/css/adminmainpage.css">
 	<style>
-		
-		.gradientbackgr{
-  			background: #fffff0;
-	 		background: radial-gradient(#0ed61f, #bfc2ff);
-		}
+		/*@import url("web/css/adminmainpage.css");*/
 	</style>
 </head>
 <body class="gradientbackgr">
@@ -74,7 +72,7 @@
 				</div>
 				<div>
 					<table id="myTable" class="table table-bordered table-active table-hover">
-    						<thead>
+    						<thead class="thead-style">
       							<tr>
 									<th></th>
 									<th></th>
@@ -87,7 +85,7 @@
         							<th>Route</th>
       							</tr>
 						</thead>
-							<tbody>
+							<tbody class="tbody-style">
 							<c:if test="${ordersList != null}">
 								<c:forEach items="${ordersList}" var="order">
 									<tr>

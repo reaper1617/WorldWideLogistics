@@ -12,6 +12,7 @@ import com.gerasimchuk.exceptions.routeexceptions.RouteException;
 import com.gerasimchuk.utils.ReturnValuesContainer;
 
 import java.util.Collection;
+import java.util.List;
 
 /** Order Service
  * @author Reaper
@@ -22,7 +23,7 @@ public interface OrderService {
 
     Collection<Cargo> getChosenCargos(OrderDTO orderDTO);
     Collection<Truck> getAvailableTrucks(OrderDTO orderDTO) throws RouteException;
-    Collection<City> getOrderRoute(OrderDTO orderDTO, Truck truck) throws RouteException;
+    List<City> getOrderRoute(OrderDTO orderDTO, Truck truck) throws RouteException;
 //    Map<Order, Collection<City>> getRoutes(Collection<Order> orders);
 //    Collection<Truck> getAvailableTrucks(List<Cargo> cargosInOrder);
 
@@ -33,6 +34,7 @@ public interface OrderService {
     OrderStatus getOrderStatusFromString(String status);
     boolean areAllCargosDelivered(Order order);
     UpdateMessageType deleteOrder(OrderDTO orderDTO);
+    UpdateMessageType deleteOrder(int orderId);
 
 
     double getExecutingTime(OrderDTO orderDTO) throws RouteException;

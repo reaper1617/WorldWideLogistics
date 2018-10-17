@@ -11,6 +11,7 @@ import com.gerasimchuk.enums.UserRole;
 import com.gerasimchuk.repositories.*;
 import com.gerasimchuk.services.interfaces.UserService;
 import com.gerasimchuk.utils.PersonalNumberGenerator;
+import com.gerasimchuk.utils.ReturnValuesContainer;
 import com.gerasimchuk.validators.DTOValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -77,6 +78,33 @@ public class UserServiceImpl implements UserService {
         return  UpdateMessageType.DRIVER_CREATED;
     }
 
+    @Override
+    public ReturnValuesContainer<User> createDriver(DriverDTO driverDTO, int val) {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: createDriver");
+        if (!dtoValidator.validate(driverDTO)){
+            LOGGER.error("Error: driverDTO is not valid.");
+            return new ReturnValuesContainer<User>(UpdateMessageType.ERROR_DRIVER_DTO_IS_NOT_VALID,null);
+        }
+        double hoursWorkedVal = getHoursWorkedValFromDriverDTO(driverDTO);
+        // DriverStatus driverStatusVal = getDriverStatusValFromDriverDTO(driverDTO);
+        City city = getCurrentCityFromDriverDTO(driverDTO);
+        Truck truck = getCurrentTruckFromDriverDTO(driverDTO);
+        Driver driver = driverRepository.create(hoursWorkedVal,DriverStatus.FREE,city,truck);
+        String personalNumber = PersonalNumberGenerator.generate(10);
+        String password = bCryptPasswordEncoder.encode(driverDTO.getPassword());
+        User user = userRepository
+                .create(driverDTO.getFirstName(),
+                        driverDTO.getMiddleName(),
+                        driverDTO.getLastName(),
+                        personalNumber,
+                        password,
+                        driver,
+                        null,
+                        null);
+        LOGGER.info("Driver " + user.getPersonalNumber() + " created successfully.");
+        return  new ReturnValuesContainer<User>(UpdateMessageType.DRIVER_CREATED,user);
+    }
+
     public UpdateMessageType createManager(ManagerDTO managerDTO) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: createManager");
         if (!dtoValidator.validate(managerDTO)) {
@@ -97,6 +125,27 @@ public class UserServiceImpl implements UserService {
         return UpdateMessageType.MANAGER_CREATED;
     }
 
+    @Override
+    public ReturnValuesContainer<User> createManager(ManagerDTO managerDTO, int val) {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: createManager");
+        if (!dtoValidator.validate(managerDTO)) {
+            LOGGER.error("Error: managerDTO is not valid.");
+            return new ReturnValuesContainer<User>(UpdateMessageType.ERROR_MANAGER_DTO_IS_NOT_VALID, null);
+        }
+        Manager manager = managerRepository.create();
+        User user = userRepository
+                .create(managerDTO.getFirstName(),
+                        managerDTO.getMiddleName(),
+                        managerDTO.getLastName(),
+                        PersonalNumberGenerator.generate(10),
+                        bCryptPasswordEncoder.encode(managerDTO.getPassword()),
+                        null,
+                        manager,
+                        null);
+        LOGGER.info("Manager " + user.getPersonalNumber() + " created successfully.");
+        return new ReturnValuesContainer<User>(UpdateMessageType.MANAGER_CREATED,user);
+    }
+
     public UpdateMessageType createAdmin(AdminDTO adminDTO) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: createAdmin");
         if (!dtoValidator.validate(adminDTO)){
@@ -115,6 +164,27 @@ public class UserServiceImpl implements UserService {
                         admin);
         LOGGER.info("Admin " + user.getPersonalNumber() + " created successfully.");
         return UpdateMessageType.ADMIN_CREATED;
+    }
+
+    @Override
+    public ReturnValuesContainer<User> createAdmin(AdminDTO adminDTO, int val) {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: createAdmin");
+        if (!dtoValidator.validate(adminDTO)){
+            LOGGER.error("Error: adminDTO is not valid.");
+            return new ReturnValuesContainer<User>(UpdateMessageType.ERROR_ADMIN_DTO_IS_NOT_VALID, null);
+        }
+        Admin admin = adminRepository.create();
+        User user = userRepository
+                .create(adminDTO.getFirstName(),
+                        adminDTO.getMiddleName(),
+                        adminDTO.getLastName(),
+                        PersonalNumberGenerator.generate(10),
+                        bCryptPasswordEncoder.encode(adminDTO.getPassword()),
+                        null,
+                        null,
+                        admin);
+        LOGGER.info("Admin " + user.getPersonalNumber() + " created successfully.");
+        return new ReturnValuesContainer<User>(UpdateMessageType.ADMIN_CREATED,user);
     }
 
     public UpdateMessageType updateDriver(DriverDTO driverDTO) {
@@ -175,7 +245,7 @@ public class UserServiceImpl implements UserService {
         if (adminDTO.getId()!=null){
             if (adminDTO.getId().length()!=0){
                 if (Integer.parseInt(adminDTO.getId())!=0){
-                    updated = userRepository.getByAdminId(Integer.parseInt(adminDTO.getId()));
+                    updated = userRepository.getById(Integer.parseInt(adminDTO.getId()));
                     LOGGER.info("Updated admin: " + updated.getPersonalNumber());
                 }
             }

@@ -10,6 +10,7 @@ import com.gerasimchuk.entities.Manager;
 import com.gerasimchuk.entities.User;
 import com.gerasimchuk.enums.UpdateMessageType;
 import com.gerasimchuk.enums.UserRole;
+import com.gerasimchuk.utils.ReturnValuesContainer;
 
 import java.util.Collection;
 
@@ -21,8 +22,11 @@ import java.util.Collection;
 public interface UserService {
 
     UpdateMessageType createDriver(DriverDTO driverDTO);
+    ReturnValuesContainer<User> createDriver(DriverDTO driverDTO, int val);
     UpdateMessageType createManager(ManagerDTO managerDTO);
+    ReturnValuesContainer<User> createManager(ManagerDTO managerDTO, int val);
     UpdateMessageType createAdmin(AdminDTO adminDTO);
+    ReturnValuesContainer<User> createAdmin(AdminDTO adminDTO, int val);
 
 
     UpdateMessageType updateDriver(DriverDTO driverDTO);

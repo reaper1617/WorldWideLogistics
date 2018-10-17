@@ -87,12 +87,12 @@ public class OrderServiceImpl implements OrderService {
 
     public Collection<Truck> getAvailableTrucks(OrderDTO orderDTO) throws RouteException {
         LOGGER.info("Class: " + this.getClass().getName() + " method: getAvailableTrucks");
-        Collection<Cargo> cargosInOrder = getChosenCargos(orderDTO);
-        Collection<City> orderRoute = getOrderRoute(orderDTO, null);
+       // Collection<Cargo> cargosInOrder = getChosenCargos(orderDTO);
+       // Collection<City> orderRoute = getOrderRoute(orderDTO, null);
         Collection<Truck> result = new ArrayList<Truck>();
         Collection<Truck> allTrucks = truckRepository.getAll();
-        double maxCargoWeightOnRoute = getMaxCargoWeightOnRoute(orderDTO);
         for(Truck t: allTrucks){
+            double maxCargoWeightOnRoute = getMaxCargoWeightOnRoute(orderDTO);
             if (t.getState().equals(TruckState.READY) && t.getAssignedOrder()==null){
                 if (t.getCapacity()*WWLConstants.TON >= maxCargoWeightOnRoute){
                     result.add(t);
@@ -118,6 +118,35 @@ public class OrderServiceImpl implements OrderService {
         Collection<City> orderRoute = getOrderRoute(orderDTO, null);
         Object[] orderRouteArray = orderRoute.toArray();
         double[] weightsOnRoute = new double[orderRoute.size()];
+        countWeightsOnRoute(cargosInOrder, orderRouteArray, weightsOnRoute);
+        for( int i = 1; i < weightsOnRoute.length; i++){
+            weightsOnRoute[i] += weightsOnRoute[i-1];
+        }
+        Arrays.sort(weightsOnRoute);
+        double max = weightsOnRoute[weightsOnRoute.length-1];
+        LOGGER.info("Max weight on route = " + max);
+        return max;
+    }
+
+    private double getMaxCargoWeightOnRoute(OrderDTO orderDTO, Truck truck) throws RouteException {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getMaxCargoWeightOnRoute");
+        Collection<Cargo> cargosInOrder = getChosenCargos(orderDTO);
+        Collection<City> orderRoute = getOrderRoute(orderDTO, truck);
+        Object[] orderRouteArray = orderRoute.toArray();
+        double[] weightsOnRoute = new double[orderRoute.size()];
+        countWeightsOnRoute(cargosInOrder, orderRouteArray, weightsOnRoute);
+        for( int i = 1; i < weightsOnRoute.length; i++){
+            weightsOnRoute[i] += weightsOnRoute[i-1];
+        }
+        Arrays.sort(weightsOnRoute);
+        double max = weightsOnRoute[weightsOnRoute.length-1];
+        LOGGER.info("Max weight on route = " + max);
+        LOGGER.info("Class: " + this.getClass().getName() + " out from getMaxCargoWeightOnRoute method");
+        return max;
+    }
+
+    private void countWeightsOnRoute(Collection<Cargo> cargosInOrder, Object[] orderRouteArray, double[] weightsOnRoute) {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getMaxCargoWeightOnRoute");
         for(Cargo cargo: cargosInOrder){
             LOGGER.info("Cargo: " + cargo.getName());
             LOGGER.info("Cargo load city:" + cargo.getRoute().getCityFrom().getName());
@@ -138,27 +167,103 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
         }
-        for( int i = 1; i < weightsOnRoute.length; i++){
-            weightsOnRoute[i] += weightsOnRoute[i-1];
-        }
-        Arrays.sort(weightsOnRoute);
-        double max = weightsOnRoute[weightsOnRoute.length-1];
-        LOGGER.info("Max weight on route = " + max);
-        return max;
+        LOGGER.info("Class: " + this.getClass().getName() + " out from getMaxCargoWeightOnRoute method");
     }
-    public Collection<City> getOrderRoute(OrderDTO orderDTO, Truck truck) throws RouteException {
-        if ( (!dtoValidator.validate(orderDTO))) return null;
+
+//    v 2 (bad)
+//    public Collection<City> getOrderRoute(OrderDTO orderDTO, Truck truck) throws RouteException {
+//        if ( (!dtoValidator.validate(orderDTO))) return null;
+//        Collection<Cargo> cargosInOrder = getChosenCargos(orderDTO);
+//        List<City> route = new ArrayList<City>();
+//        if (truck != null) route.add(truck.getCurrentCity());
+//        for(Cargo c: cargosInOrder){
+//            route.add(c.getRoute().getCityFrom());
+//            route.add(c.getRoute().getCityTo());
+//        }
+//        for(int i = 0; i < route.size()-1; i++){
+//            if (route.get(i).getName().equals(route.get(i+1).getName())) route.remove(i);
+//        }
+//        return route;
+//    }
+
+    public List<City> getOrderRoute(OrderDTO orderDTO, Truck truck) throws RouteException {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute");
+        if (!dtoValidator.validate(orderDTO)){
+            LOGGER.info("Class: " + this.getClass().getName() + " out from getOrderRoute: orderDTO is not valid.");
+            return null;
+        }
         Collection<Cargo> cargosInOrder = getChosenCargos(orderDTO);
-        List<City> route = new ArrayList<City>();
-        if (truck != null) route.add(truck.getCurrentCity());
+        List<City> citiesWithCargoLoad = new ArrayList<City>();
+        List<City> citiesWithCargoUnload = new ArrayList<City>();
         for(Cargo c: cargosInOrder){
-            route.add(c.getRoute().getCityFrom());
-            route.add(c.getRoute().getCityTo());
+            City cityFrom = c.getRoute().getCityFrom();
+            if (!citiesWithCargoLoad.contains(cityFrom)){ // todo: check if it works correctly!!!
+                citiesWithCargoLoad.add(cityFrom);
+            }
+            City cityTo = c.getRoute().getCityTo();
+            if (!citiesWithCargoUnload.contains(cityTo)){
+                citiesWithCargoUnload.add(cityTo);
+            }
         }
-        for(int i = 0; i < route.size()-1; i++){
-            if (route.get(i).getName().equals(route.get(i+1).getName())) route.remove(i);
+        if (truck != null){
+            City truckCurrentCity = truck.getCurrentCity();
+            citiesWithCargoLoad.remove(truckCurrentCity);
+            citiesWithCargoLoad.add(0,truckCurrentCity);
         }
+        List<City> route = new ArrayList<City>(citiesWithCargoLoad);
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, citiesWithCargoLoadList: " + citiesWithCargoLoad);
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, citiesWithCargoUnloadList: " + citiesWithCargoUnload);
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, start to count second part of the route...");
+        for(City city: citiesWithCargoUnload){
+            // get all cargos which need to be unload in this city
+            LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, city: " + city);
+            if (citiesWithCargoLoad.contains(city)){
+                LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, city: " + cargosInOrder + " is in citiesWithCargoLoad list!");
+                List<Cargo> cargosToUnloadInThisCity = getCargosToUnloadInCity(cargosInOrder,city);
+                LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, cargosToUnloadInThisCity list: " + cargosToUnloadInThisCity);
+                List<City> citiesForLoadCargos = getLoadCityListForCargos(cargosToUnloadInThisCity);
+                LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, citiesForLoadCargos list: " + citiesForLoadCargos);
+                List<City> citiesBeforeCurrent = citiesWithCargoLoad.subList(0, citiesWithCargoLoad.indexOf(city));
+                LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, citiesBeforeCurrent list: " + citiesBeforeCurrent);
+                boolean allCargosLoadedBefore = false;
+                if (citiesBeforeCurrent.size() != 0){
+                    if (citiesBeforeCurrent.containsAll(citiesForLoadCargos)) allCargosLoadedBefore = true;
+                    LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, allCargosLoadedBefore: " + allCargosLoadedBefore);
+                }
+                if (!allCargosLoadedBefore){
+                    route.add(city);
+                    LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, city: " + city + " added into route");
+                }
+            }
+            else{
+                route.add(city);
+                LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, city: " + city + " added into route");
+            }
+        }
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getOrderRoute, route: " + route);
+        LOGGER.info("Class: " + this.getClass().getName() + " out from getOrderRoute method");
         return route;
+    }
+
+    private List<Cargo> getCargosToUnloadInCity(Collection<Cargo> cargosInOrder, City city){
+        if (cargosInOrder == null || city == null) return null;
+        List<Cargo> cargosToUnloadInCity = new ArrayList<Cargo>();
+        for(Cargo cargo: cargosInOrder){
+            if (cargo.getRoute().getCityTo().getName().equals(city.getName())) cargosToUnloadInCity.add(cargo);
+        }
+        return cargosToUnloadInCity;
+    }
+
+    private List<City> getLoadCityListForCargos(List<Cargo> cargos){
+        if (cargos == null) return null;
+        List<City> cities = new ArrayList<City>();
+        for(Cargo cargo: cargos){
+            City city = cargo.getRoute().getCityFrom();
+            if (!cities.contains(city)){
+                cities.add(city);
+            }
+        }
+        return cities;
     }
 
     // todo: refactor!!!
@@ -533,7 +638,13 @@ public class OrderServiceImpl implements OrderService {
             LOGGER.error("Error: cannot parse order id.");
             return UpdateMessageType.ERROR_CAN_NOT_PARSE_ORDER_ID;
         }
-        if (id == 0) {
+        return deleteOrder(id);
+    }
+
+    @Override
+    public UpdateMessageType deleteOrder(int id) {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: deleteOrder");
+        if (id <= 0) {
             LOGGER.error("Error: order id value is not valid (id = 0)");
             return UpdateMessageType.ERROR_ID_IS_NOT_VALID;
         }
@@ -555,6 +666,7 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.info("All cargos are unassigned successfully.");
         orderRepository.remove(deleted.getId());
         LOGGER.info("Order " + deleted.getDescription() + " deleted successfully");
+        LOGGER.info("Class: " + this.getClass().getName() + " out from deleteOrder method: order deleted successfully");
         return UpdateMessageType.ORDER_DELETED;
     }
 

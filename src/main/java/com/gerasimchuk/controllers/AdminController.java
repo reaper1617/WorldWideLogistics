@@ -113,8 +113,7 @@ public class AdminController {
         List<OrderWithRoute> ordersWithRoutes = new ArrayList<OrderWithRoute>();
         for (Order o : orders) {
             try {
-                List<City> cities = (List<City>) orderService.getOrderRoute(OrderToDTOConverterImpl.convert(o), null);
-                if (o.getAssignedTruck() != null) cities.add(0,o.getAssignedTruck().getCurrentCity());
+                List<City> cities = orderService.getOrderRoute(OrderToDTOConverterImpl.convert(o), o.getAssignedTruck());
                 ordersWithRoutes.add(new OrderWithRoute(o, cities));
             }
             catch (Exception e){
@@ -211,6 +210,19 @@ public class AdminController {
         return res;
     }
 
+    @RequestMapping(value = "/deleteorder", method = RequestMethod.GET)
+    @ResponseBody
+    public String deleteOrderById(@RequestParam(name = "orderId") int orderId){
+        LOGGER.info("Controller: AdminController, metod = deleteOrderById,  action = \"/deleteorder\", request = GET");
+        if (orderId <= 0){
+            LOGGER.info("Controller: AdminController, out from deleteOrderById: orderId is invalid");
+            return null;
+        }
+        UpdateMessageType result =  orderService.deleteOrder(orderId);
+        return new Gson().toJson(result);
+    }
+
+
     @RequestMapping(value = "/adminmainpagegoogle", method = RequestMethod.GET)
     public String getGoogleMap(){
         return "/admin/adminmainpagegoogle";
@@ -226,6 +238,9 @@ public class AdminController {
         }
         return id;
     }
+
+
+
 
     // todo: replace OrderDTO with IdDTO !
     @RequestMapping(value = "/adminmainpage/{id}", method = RequestMethod.POST)

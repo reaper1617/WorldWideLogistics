@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 
@@ -21,7 +22,7 @@ public class Order implements JSONconvertable {
     private String date;
     private OrderStatus status;
     private Truck assignedTruck;
-    private Set<Cargo> cargosInOrder;
+    private Set<Cargo> cargosInOrder = new LinkedHashSet<Cargo>();
 
     public Order() {
     }
