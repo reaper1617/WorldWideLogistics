@@ -2,7 +2,7 @@ package com.gerasimchuk.constants;
 
 public class WWLConstants {
     public static final int TON = 1000; // 1 ton == 1000 kg
-    public static final int MAX_NAME_LENGTH = 20;
+    public static final int MAX_NAME_LENGTH = 30;
     public static final int MIN_NAME_LENGTH = 3;
     public static final int MIN_PASSWORD_LENGTH = 5;
     public static final int MAX_PASSWORD_LENGTH = 10;
