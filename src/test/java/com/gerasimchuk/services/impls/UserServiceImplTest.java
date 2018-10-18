@@ -3,12 +3,14 @@ package com.gerasimchuk.services.impls;
 import com.gerasimchuk.dto.AdminDTO;
 import com.gerasimchuk.dto.DriverDTO;
 import com.gerasimchuk.dto.ManagerDTO;
+import com.gerasimchuk.dto.UserDTO;
 import com.gerasimchuk.entities.Admin;
 import com.gerasimchuk.entities.Driver;
 import com.gerasimchuk.entities.Manager;
 import com.gerasimchuk.entities.User;
 import com.gerasimchuk.enums.DriverStatus;
 import com.gerasimchuk.enums.UpdateMessageType;
+import com.gerasimchuk.enums.UserRole;
 import com.gerasimchuk.repositories.AdminRepository;
 import com.gerasimchuk.repositories.DriverRepository;
 import com.gerasimchuk.repositories.ManagerRepository;
@@ -185,22 +187,85 @@ public class UserServiceImplTest {
 
     @Test
     public void getFreeDrivers() {
+        int size = driverRepository.getNumOfDriversFree();
+        Collection<User> driversByUserService = userService.getFreeDrivers();
+        boolean isAllDrivers = true;
+        for(User u: driversByUserService){
+            if (u.getDriver() == null) {
+                isAllDrivers = false;
+                break;
+            }
+        }
+        assertTrue( (size==driversByUserService.size())&& isAllDrivers );
     }
 
     @Test
     public void getRoles() {
+        Collection<UserRole> roles = userService.getRoles();
+        boolean containsManager = roles.contains(UserRole.MANAGER);
+        boolean containsAdmin = roles.contains(UserRole.ADMIN);
+        boolean containsDriver = roles.contains(UserRole.DRIVER);
+        boolean sizeEquals = roles.size()== UserRole.values().length;
+        assertTrue(containsAdmin&&containsDriver&&containsManager&&sizeEquals);
     }
 
     @Test
     public void createUser() {
+        UserDTO userDTO = new UserDTO("","NewUserName","NewUserMiddleName","NewUserLastName",null,"password","MANAGER",null,null,null,null,null);
+        ReturnValuesContainer<User> res = userService.createUser(userDTO,0);
+        User created = res.getReturnedValue();
+        userRepository.remove(created.getId());
+        if (created.getDriver() != null) driverRepository.remove(created.getDriver().getId());
+        if (created.getManager() != null) managerRepository.remove(created.getManager().getId());
+        if (created.getAdmin() != null) adminRepository.remove(created.getAdmin().getId());
+        UpdateMessageType resMessage = res.getUpdateMessageType();
+        boolean resultMessageTrue = (resMessage.equals(UpdateMessageType.ADMIN_CREATED)
+                || resMessage.equals(UpdateMessageType.DRIVER_CREATED)
+                || resMessage.equals(UpdateMessageType.MANAGER_CREATED));
+        assertTrue(resultMessageTrue);
     }
 
     @Test
     public void updateUser() {
+        UserDTO userDTO = new UserDTO("","UpdateUserName","UpdateUserMiddleName","UpdateUserLastName",null,"password","MANAGER",null,null,null,null,null);
+        ReturnValuesContainer<User> res = userService.createUser(userDTO,0);
+        User created = res.getReturnedValue();
+        UserDTO updateUserDTO = new UserDTO(Integer.toString(created.getId()),"UpdatedUserName","UpdatedUserMiddleName","UpdateUserLastName",null,"password","MANAGER",null,null,null,null,null);
+        UpdateMessageType result = userService.updateUser(updateUserDTO);
+        userRepository.remove(created.getId());
+        managerRepository.remove(created.getManager().getId());
+        assertEquals(UpdateMessageType.USER_EDITED,result);
     }
 
     @Test
     public void deleteUser() {
+        UserDTO userDTO = new UserDTO("","UpdateUserName","UpdateUserMiddleName","UpdateUserLastName",null,"password","MANAGER",null,null,null,null,null);
+        ReturnValuesContainer<User> res = userService.createUser(userDTO,0);
+        User created = res.getReturnedValue();
+        UpdateMessageType result = userService.deleteUser(created.getId());
+        assertEquals(UpdateMessageType.USER_DELETED, result);
     }
+
+//    @Test
+//    public void createDriver1() {
+//        DriverDTO driverDTO = new DriverDTO("","NewDriverFirstName", "DriverMiddleName", "DriverLastName",null,"password","1","FREE","Moscow","ff55555",null);
+//        ReturnValuesContainer<User> result = userService.createDriver(driverDTO,0);
+////        createdUsers.add(result.getReturnedValue());
+//        userRepository.remove(result.getReturnedValue().getId());
+//        driverRepository.remove(result.getReturnedValue().getDriver().getId());
+//        assertEquals(UpdateMessageType.DRIVER_CREATED,result.getUpdateMessageType());
+//    }
+//
+//    @Test
+//    public void createManager1() {
+//    }
+//
+//    @Test
+//    public void createAdmin1() {
+//    }
+//
+//    @Test
+//    public void createUser1() {
+//    }
 }
 

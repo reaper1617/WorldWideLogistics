@@ -4,9 +4,6 @@ import com.gerasimchuk.dto.AdminDTO;
 import com.gerasimchuk.dto.DriverDTO;
 import com.gerasimchuk.dto.ManagerDTO;
 import com.gerasimchuk.dto.UserDTO;
-import com.gerasimchuk.entities.Admin;
-import com.gerasimchuk.entities.Driver;
-import com.gerasimchuk.entities.Manager;
 import com.gerasimchuk.entities.User;
 import com.gerasimchuk.enums.UpdateMessageType;
 import com.gerasimchuk.enums.UserRole;
@@ -45,6 +42,7 @@ public interface UserService {
     Collection<UserRole> getRoles();
 
     UpdateMessageType createUser(UserDTO userDTO);
+    ReturnValuesContainer<User> createUser(UserDTO userDTO, int val);
     UpdateMessageType updateUser(UserDTO userDTO);
     UpdateMessageType deleteUser(int id);
 
