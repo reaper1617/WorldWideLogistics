@@ -111,7 +111,7 @@ public class TruckRepositoryImpl implements TruckRepository {
         Collection<Truck> allTrucks = getAll();
         int res = 0;
         for(Truck t: allTrucks){
-            if (t.getAssignedOrder() == null) res ++;
+            if (t.getAssignedOrder() == null && t.getState().equals(TruckState.READY)) res ++;
         }
         return res;
     }

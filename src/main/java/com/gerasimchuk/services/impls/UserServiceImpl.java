@@ -434,6 +434,65 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public ReturnValuesContainer<User> createUser(UserDTO userDTO, int val) {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: createUser");
+        if (!dtoValidator.validate(userDTO)) {
+            LOGGER.error("Error: userDTO is not valid.");
+            return new ReturnValuesContainer<User>(UpdateMessageType.ERROR_USER_DTO_IS_NOT_VALID, null);
+        }
+        ReturnValuesContainer<User> result = null;
+        String role = userDTO.getRole();
+        if (role.equals(UserRole.DRIVER.toString())){
+            LOGGER.info("Creating driver...");
+            DriverDTO driverDTO =
+                    new DriverDTO(userDTO.getId(),
+                            userDTO.getFirstName(),
+                            userDTO.getMiddleName(),
+                            userDTO.getLastName(),
+                            PersonalNumberGenerator.generate(10),
+                            userDTO.getPassword(),
+                            userDTO.getHoursWorked(),
+                            "Free",
+                            userDTO.getCurrentCityName(),
+                            userDTO.getCurrentTruckRegistrationNumber(),
+                            userDTO.getOrderId());
+            result = createDriver(driverDTO,0);
+        }
+        if (role.equals(UserRole.MANAGER.toString())){
+            LOGGER.info("Creating manager...");
+            ManagerDTO managerDTO = new ManagerDTO(userDTO.getId(),
+                    userDTO.getFirstName(),
+                    userDTO.getMiddleName(),
+                    userDTO.getLastName(),
+                    userDTO.getPersonalNumber(),
+                    userDTO.getPassword());
+            result = createManager(managerDTO,0);
+        }
+        if (role.equals(UserRole.ADMIN.toString())){
+            LOGGER.info("Creating admin...");
+            AdminDTO adminDTO = new AdminDTO(userDTO.getId(),
+                    userDTO.getFirstName(),
+                    userDTO.getMiddleName(),
+                    userDTO.getLastName(),
+                    userDTO.getPassword(),
+                    userDTO.getPersonalNumber());
+            result = createAdmin(adminDTO,0);
+        }
+        if (result == null) return new ReturnValuesContainer<User>(UpdateMessageType.ERROR_CAN_NOT_CREATE_USER,null);
+        UpdateMessageType resultMessage = result.getUpdateMessageType();
+        if (resultMessage.equals(UpdateMessageType.DRIVER_CREATED)
+                || resultMessage.equals(UpdateMessageType.MANAGER_CREATED)
+                || resultMessage.equals(UpdateMessageType.ADMIN_CREATED)){
+            LOGGER.info("User created successfully.");
+        }
+        else{
+            LOGGER.error("Error: failed to create user.");
+
+        }
+        return result;
+    }
+
     public UpdateMessageType updateUser(UserDTO userDTO) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: updateUser");
         if (!dtoValidator.validate(userDTO)) {
