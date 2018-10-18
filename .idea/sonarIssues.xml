@@ -443,6 +443,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/services/impls/SecurityServiceImpl.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/services/impls/StatisticServiceImpl.java">
           <value>
             <set />
@@ -479,6 +484,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/services/interfaces/RouteService.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/services/interfaces/SecurityService.java">
           <value>
             <set />
           </value>
@@ -789,6 +799,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/webapp/success.jsp">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/test/java/com/gerasimchuk/services/impls/SecurityServiceImplTest.java">
           <value>
             <set />
           </value>

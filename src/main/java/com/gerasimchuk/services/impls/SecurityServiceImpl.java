@@ -32,7 +32,15 @@ public class SecurityServiceImpl implements SecurityService {
 
     public String findLoggedInUsername() {
         LOGGER.info("Class: " + this.getClass().getName() + " method: findLoggedInUsername");
-        Object userDetails = SecurityContextHolder.getContext().getAuthentication().getDetails();
+        Object userDetails = null;
+        try {
+            userDetails = SecurityContextHolder.getContext().getAuthentication().getDetails();
+        }
+        catch (Exception e){
+            LOGGER.error("Error: userDetails object is null.");
+            e.printStackTrace();
+            return null;
+        }
         LOGGER.info("userDetails object is " + userDetails);
         if (userDetails instanceof UserDetails){
             String username = ((UserDetails) userDetails).getUsername();
