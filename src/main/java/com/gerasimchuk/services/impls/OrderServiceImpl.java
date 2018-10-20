@@ -87,14 +87,29 @@ public class OrderServiceImpl implements OrderService {
 
     public Collection<Truck> getAvailableTrucks(OrderDTO orderDTO) throws RouteException {
         LOGGER.info("Class: " + this.getClass().getName() + " method: getAvailableTrucks");
-       // Collection<Cargo> cargosInOrder = getChosenCargos(orderDTO);
-       // Collection<City> orderRoute = getOrderRoute(orderDTO, null);
+        if (!dtoValidator.validate(orderDTO)){
+            LOGGER.error("Error: orderDTO is not valid!");
+            return null;
+        }
         Collection<Truck> result = new ArrayList<Truck>();
         Collection<Truck> allTrucks = truckRepository.getAll();
         for(Truck t: allTrucks){
-            double maxCargoWeightOnRoute = getMaxCargoWeightOnRoute(orderDTO);
+            double maxCargoWeightOnRoute = getMaxCargoWeightOnRoute(orderDTO,t);
             if (t.getState().equals(TruckState.READY) && t.getAssignedOrder()==null){
                 if (t.getCapacity()*WWLConstants.TON >= maxCargoWeightOnRoute){
+//                    {
+//                        double orderExecutingTime = getExecutingTime(orderDTO);
+//                        Date date = new Date();
+//                        Collection<Driver> driversInTruck = t.getDriversInTruck();
+//                        ReturnValuesContainer<List<Driver>> driversHoursWorkedOverLimit = checkIfDriversHoursWorkedOverLimit(orderExecutingTime, date, driversInTruck);
+//                        if (driversHoursWorkedOverLimit.getUpdateMessageType().equals(UpdateMessageType.ALL_DRIVERS_HOURS_WORKED_VALID)) {
+//                            result.add(t);
+//                            LOGGER.info("Truck " + t.getRegistrationNumber() + " added to availableTrucksList");
+//                        }
+//                        else {
+//                            LOGGER.error("Truck " + t.getRegistrationNumber() + " has drivers with hours worked over limit: " + driversHoursWorkedOverLimit.getReturnedValue());
+//                        }
+//                    }
                     result.add(t);
                     LOGGER.info("Truck " + t.getRegistrationNumber() + " added to availableTrucksList");
                 }
@@ -109,6 +124,26 @@ public class OrderServiceImpl implements OrderService {
         }
         LOGGER.info("AvailableTrucks collection: " + result + ", size = " + result.size());
         return result;
+    }
+
+    public ReturnValuesContainer<List<Driver>> checkIfDriversHoursWorkedOverLimit(double orderExecutingTime, Date date, Collection<Driver> driversInTruck) {
+        List<Driver> driversWithHoursOverLimit = new ArrayList<Driver>();
+        for(Driver d : driversInTruck){
+            LOGGER.info("Driver: " + d.getUser().getPersonalNumber());
+            double hoursWorked = d.getHoursWorked();
+            LOGGER.info("Hours worked = " + hoursWorked);
+            long createOrderTimeMs = date.getTime();
+            Date orderExecDate = new Date(createOrderTimeMs + (long)orderExecutingTime*WWLConstants.MILLISECONDS_IN_HOUR);
+            boolean nextMonthDuringOrderExecuting = false;
+            if (date.getMonth() != orderExecDate.getMonth()) nextMonthDuringOrderExecuting = true;
+            if (hoursWorked + orderExecutingTime > WWLConstants.MAX_DRIVER_HOURS_WORKED_IN_MONTH
+                    && !nextMonthDuringOrderExecuting) {
+                LOGGER.error("Driver " + d.getUser().getPersonalNumber() + " cannot execute this order.");
+                driversWithHoursOverLimit.add(d);
+            }
+        }
+        if (!driversWithHoursOverLimit.isEmpty()) return new ReturnValuesContainer<List<Driver>>(UpdateMessageType.ERROR_DRIVER_HOURS_WORKED_OVER_LIMIT,driversWithHoursOverLimit);
+        else return new ReturnValuesContainer<List<Driver>>(UpdateMessageType.ALL_DRIVERS_HOURS_WORKED_VALID,null);
     }
 
 
@@ -357,19 +392,10 @@ public class OrderServiceImpl implements OrderService {
         double orderExecutingTime = getExecutingTime(orderDTO);
         LOGGER.info("Order executing time = " + orderExecutingTime + " hours");
         Collection<Driver> driversInTruck = assignedTruck.getDriversInTruck();
-        for(Driver d : driversInTruck){
-            LOGGER.info("Driver: " + d.getUser().getPersonalNumber());
-            double hoursWorked = d.getHoursWorked();
-            LOGGER.info("Hours worked = " + hoursWorked);
-            long createOrderTimeMs = date.getTime();
-            Date orderExecDate = new Date(createOrderTimeMs + (long)orderExecutingTime*WWLConstants.MILLISECONDS_IN_HOUR);
-            boolean nextMonthDuringOrderExecuting = false;
-            if (date.getMonth() != orderExecDate.getMonth()) nextMonthDuringOrderExecuting = true;
-            if (hoursWorked + orderExecutingTime > WWLConstants.MAX_DRIVER_HOURS_WORKED_IN_MONTH
-                    && !nextMonthDuringOrderExecuting) {
-                LOGGER.error("Driver " + d.getUser().getPersonalNumber() + " cannot execute this order.");
-                return UpdateMessageType.ERROR_DRIVER_HOURS_WORKED_OVER_LIMIT; // todo: HoursWorkedOverLimitException
-            }
+        ReturnValuesContainer<List<Driver>> driversWithHoursOverLimit = checkIfDriversHoursWorkedOverLimit(orderExecutingTime, date, driversInTruck);
+        if (!driversWithHoursOverLimit.getUpdateMessageType().equals(UpdateMessageType.ALL_DRIVERS_HOURS_WORKED_VALID)){
+            LOGGER.error("Truck " + assignedTruck.getRegistrationNumber() + " has drivers with hours worked over limit: " + driversWithHoursOverLimit.getReturnedValue());
+            return driversWithHoursOverLimit.getUpdateMessageType();
         }
         LOGGER.info("All drivers are able to execute this order");
         ///
@@ -390,6 +416,42 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.error("Error: failed to create order.");
         return UpdateMessageType.ERROR_CAN_NOT_CREATE_ORDER;
     }
+
+//    private boolean checkIfDriverHoursWorkedOverLimit(OrderDTO orderDTO) throws RouteException {
+//        int truckId = 0;
+//        try{
+//            truckId = Integer.parseInt(orderDTO.getAssignedTruckId());
+//        }
+//        catch (Exception e){
+//            e.printStackTrace();
+//            LOGGER.error("Error: cannot parse id value.");
+//            return false; //UpdateMessageType.ERROR_CAN_NOT_PARSE_ORDER_ID;
+//        }
+//        Truck assignedTruck = truckRepository.getById(truckId);
+//        if (assignedTruck == null){
+//            LOGGER.error("Error: there is no truck with id = " + truckId + " in database");
+//            return false; //UpdateMessageType.ERROR_NO_TRUCK_WITH_THIS_ID;
+//        }
+//        LOGGER.info("Checking if there are drivers with too much hours worked.");
+//        double orderExecutingTime = getExecutingTime(orderDTO);
+//        LOGGER.info("Order executing time = " + orderExecutingTime + " hours");
+//        Collection<Driver> driversInTruck = assignedTruck.getDriversInTruck();
+//        for(Driver d : driversInTruck){
+//            LOGGER.info("Driver: " + d.getUser().getPersonalNumber());
+//            double hoursWorked = d.getHoursWorked();
+//            LOGGER.info("Hours worked = " + hoursWorked);
+//            long createOrderTimeMs = date.getTime();
+//            Date orderExecDate = new Date(createOrderTimeMs + (long)orderExecutingTime*WWLConstants.MILLISECONDS_IN_HOUR);
+//            boolean nextMonthDuringOrderExecuting = false;
+//            if (date.getMonth() != orderExecDate.getMonth()) nextMonthDuringOrderExecuting = true;
+//            if (hoursWorked + orderExecutingTime > WWLConstants.MAX_DRIVER_HOURS_WORKED_IN_MONTH
+//                    && !nextMonthDuringOrderExecuting) {
+//                LOGGER.error("Driver " + d.getUser().getPersonalNumber() + " cannot execute this order.");
+//                return UpdateMessageType.ERROR_DRIVER_HOURS_WORKED_OVER_LIMIT; // todo: HoursWorkedOverLimitException
+//            }
+//        }
+//        return true;
+//    }
 
     @Override
     public ReturnValuesContainer<Order> createOrder(OrderDTO orderDTO, int val) throws RouteException {
@@ -673,7 +735,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public double getExecutingTime(OrderDTO orderDTO) throws RouteException {
         LOGGER.info("Class: " + this.getClass().getName() + " method: getExecutingTime");
-        Collection <City> route = getOrderRoute(orderDTO, null);
+        int truckId = 0;
+        try{
+            truckId = Integer.parseInt(orderDTO.getAssignedTruckId());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        Truck truck = null;
+        if (truckId != 0) truck = truckRepository.getById(truckId);
+        Collection <City> route = getOrderRoute(orderDTO, truck);
          if (route == null) {
              LOGGER.error("Error: route is null.");
              return 0;

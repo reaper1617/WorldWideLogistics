@@ -2,6 +2,7 @@ package com.gerasimchuk.controllers;
 
 import com.gerasimchuk.converters.OrderToDTOConverter;
 import com.gerasimchuk.converters.OrderToDTOConverterImpl;
+import com.gerasimchuk.converters.TruckToDTOConverter;
 import com.gerasimchuk.dto.*;
 import com.gerasimchuk.entities.*;
 import com.gerasimchuk.enums.UpdateMessageType;
@@ -12,6 +13,7 @@ import com.gerasimchuk.repositories.*;
 import com.gerasimchuk.services.interfaces.*;
 import com.gerasimchuk.utils.MessageConstructor;
 import com.gerasimchuk.utils.OrderWithRoute;
+import com.gerasimchuk.utils.ReturnValuesContainer;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 /** Admin Controller
@@ -53,12 +56,13 @@ public class AdminController {
     private MessageConstructor messageConstructor;
     private StatisticService statisticService;
     private OrderToDTOConverter orderToDTOConverter;
+    private TruckToDTOConverter truckToDTOConverter;
    // private AmqpTemplate amqpTemplate;
 //    private RabbitMQReceiver rabbitMQReceiver;
 
 
     @Autowired
-    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, DriverRepository driverRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService, CityService cityService, RouteService routeService, RabbitMQSender rabbitMQSender, MessageConstructor messageConstructor, StatisticService statisticService, OrderToDTOConverter orderToDTOConverter) {
+    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, DriverRepository driverRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService, CityService cityService, RouteService routeService, RabbitMQSender rabbitMQSender, MessageConstructor messageConstructor, StatisticService statisticService, OrderToDTOConverter orderToDTOConverter, TruckToDTOConverter truckToDTOConverter) {
         this.orderRepository = orderRepository;
         this.truckRepository = truckRepository;
         this.userRepository = userRepository;
@@ -76,6 +80,7 @@ public class AdminController {
         this.messageConstructor = messageConstructor;
         this.statisticService = statisticService;
         this.orderToDTOConverter = orderToDTOConverter;
+        this.truckToDTOConverter = truckToDTOConverter;
     }
 
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(AdminController.class);
@@ -138,8 +143,8 @@ public class AdminController {
     public String adminPgntd(Model ui){
         /**test section*/
         LOGGER.info("Controller: AdminController, metod = adminPgntd,  action = \"/adminmainpagepgntd\", request = GET");
+        // orders
         Collection<Order> ordersPgntd = orderRepository.getOrdersForOnePage(2,0);
-
         List<OrderWithRouteDTO> orderWithRouteDTOS = new ArrayList<OrderWithRouteDTO>();
         for(Order o: ordersPgntd){
             try {
@@ -150,6 +155,10 @@ public class AdminController {
             }
         }
         ui.addAttribute("ordersPgntd", orderWithRouteDTOS);
+        // trucks
+        List<Truck> trucksPgntd = (List<Truck>)truckRepository.getTrucksForOnePage(2,0);
+        List<TruckDTO> truckDTOS = truckToDTOConverter.convert(trucksPgntd);
+        ui.addAttribute("trucksPgntd", truckDTOS);
         LOGGER.info("Controller: AdminController, out from metod = adminPgntd");
         return "/admin/adminmainpagepgntd";
     }
@@ -166,6 +175,102 @@ public class AdminController {
         String s = gson.toJson(orderDTOS);
         LOGGER.info("Controller: AdminController, metod = getPaginatedOrdersList, GSON = " + s);
         return s;
+    }
+
+    @RequestMapping(value = "/getpaginatedtruckslist", method = RequestMethod.GET)
+    @ResponseBody
+    public String getPaginatedTrucksList(@RequestParam(name = "pageSize") int pageSize, @RequestParam(name = "pageNumber") int pageNum){
+        LOGGER.info("Controller: AdminController, metod = getPaginatedTrucksList,  action = \"/getpaginatedtruckslist\", request = GET");
+        LOGGER.info("Controller: AdminController, metod = getPaginatedTrucksList, pageSize = " + pageSize + " , pageNumber = " + pageNum);
+        List<Truck> trucks = (List<Truck>)truckRepository.getTrucksForOnePage(pageSize, pageNum);
+        List<TruckDTO> truckDTOS = new ArrayList<TruckDTO>();
+        for(Truck t: trucks){
+            truckDTOS.add(truckToDTOConverter.convert(t));
+        }
+        Gson gson = new Gson();
+        String s = gson.toJson(truckDTOS);
+        LOGGER.info("Controller: AdminController, metod = getPaginatedOrdersList, GSON = " + s);
+        return s;
+    }
+
+    @RequestMapping(value = "/getorderroute", method = RequestMethod.GET)
+    @ResponseBody
+    public String getOrderRouteForChosenCargos(@RequestParam("selectedVal") String[] vals, @RequestParam("truck") int truckId){
+        LOGGER.info("Controller: AdminController, metod = getOrderRouteForChosenCargos, action = \"getorderroute\", request = GET");
+        if (vals == null || vals.length == 0) {
+            LOGGER.error("Controller: AdminController, out from getOrderRouteForChosenCargos method: values array is null or empty.");
+            return null;
+        }
+        if (truckId < 0 ){
+            LOGGER.error("Controller: AdminController, out from getOrderRouteForChosenCargos method: truckId is not valid");
+            return null;
+        }
+        OrderDTO orderDTO = new OrderDTO(null,null,null,null,null,vals);
+        List<City> route = null;
+        Truck t = null;
+        if (truckId != 0) t = truckRepository.getById(truckId);
+        try {
+            route = orderService.getOrderRoute(orderDTO, t);
+        } catch (RouteException e) {
+            e.printStackTrace();
+            LOGGER.error("Controller: AdminController, out from getOrderRouteForChosenCargos method: catched exception: " + e.getMessage());
+            return null;
+        }
+        List<CityDTO> cityDTOS = new ArrayList<CityDTO>();
+        for(City city: route){
+            cityDTOS.add(new CityDTO(Integer.toString(city.getId()),city.getName(), Boolean.toString(city.isHasAgency())));
+        }
+        Gson gson = new Gson();
+        String out = gson.toJson(cityDTOS);
+        return out;
+    }
+
+    @RequestMapping(value = "/getdrivershoursoverlimit", method = RequestMethod.GET)
+    @ResponseBody
+    public String getDriversWithHoursWorkedOverLimit(@RequestParam("selectedVal") String[] vals, @RequestParam("truck") int truckId){
+        LOGGER.info("Controller: AdminController, metod = getDriversWithHoursWorkedOverLimit, action = \"getdrivershoursoverlimit\", request = GET");
+        if (vals == null || vals.length == 0) {
+            LOGGER.error("Controller: AdminController, out from getDriversWithHoursWorkedOverLimit method: values array is null or empty.");
+            return null;
+        }
+        if (truckId < 0 ){
+            LOGGER.error("Controller: AdminController, out from getDriversWithHoursWorkedOverLimit method: truckId is not valid");
+            return null;
+        }
+        Truck t = null;
+        if (truckId!=0) t = truckRepository.getById(truckId);
+        if (t == null){
+            LOGGER.error("Controller: AdminController, out from getDriversWithHoursWorkedOverLimit method: truck is null.");
+            return null;
+        }
+        OrderDTO orderDTO = new OrderDTO(null,null,null,null,Integer.toString(truckId),vals);
+        double orderExecutingTime = 0;
+        try {
+            orderExecutingTime = orderService.getExecutingTime(orderDTO);
+        } catch (RouteException e) {
+            e.printStackTrace();
+            LOGGER.error("Controller: AdminController, out from getDriversWithHoursWorkedOverLimit method: catched exception: " + e.getMessage());
+            return null;
+        }
+        if (orderExecutingTime == 0) {
+            LOGGER.error("Controller: AdminController, out from getDriversWithHoursWorkedOverLimit method: counted order executing time is 0");
+            return null;
+        }
+        ReturnValuesContainer<List<Driver>> driversHoursOverLimit = orderService.checkIfDriversHoursWorkedOverLimit(orderExecutingTime, new Date(),t.getDriversInTruck());
+        if (driversHoursOverLimit.getUpdateMessageType().equals(UpdateMessageType.ALL_DRIVERS_HOURS_WORKED_VALID)){
+            return "{\"result\":\"ok\"}";
+        }
+        else {
+            Gson gson = new Gson();
+            List<Driver> drivers = driversHoursOverLimit.getReturnedValue();
+            List<DriverDTO> driverDTOS = new ArrayList<DriverDTO>();
+            for(Driver d: drivers){
+                User u = d.getUser();
+                driverDTOS.add(new DriverDTO(null,u.getName(),u.getMiddleName(),u.getLastName(),u.getPersonalNumber(),null, Double.toString(d.getHoursWorked()),null,null,null,null));
+            }
+            String out = gson.toJson(driverDTOS);
+            return out;
+        }
     }
 
     private List<OrderWithRouteDTO> makeOrderDtoWithRouteFromOrdersList(List<Order> orders){
@@ -222,7 +327,18 @@ public class AdminController {
         return new Gson().toJson(result);
     }
 
-
+    @RequestMapping(value = "/deletetruck", method = RequestMethod.POST)
+    @ResponseBody
+    public String deleteTruckById(@RequestParam(name = "truckId") int truckId){
+        LOGGER.info("Controller: AdminController, metod = deleteTruckById,  action = \"/deletetruck\", request = POST");
+        if (truckId <= 0){
+            LOGGER.info("Controller: AdminController, out from deleteOrderById: orderId is invalid");
+            return null;
+        }
+        UpdateMessageType result =  truckService.deleteTruck(truckId);
+        String s = new Gson().toJson(result);
+        return s;
+    }
     @RequestMapping(value = "/adminmainpagegoogle", method = RequestMethod.GET)
     public String getGoogleMap(){
         return "/admin/adminmainpagegoogle";
