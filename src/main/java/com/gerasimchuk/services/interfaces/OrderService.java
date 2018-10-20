@@ -1,10 +1,7 @@
 package com.gerasimchuk.services.interfaces;
 
 import com.gerasimchuk.dto.OrderDTO;
-import com.gerasimchuk.entities.Cargo;
-import com.gerasimchuk.entities.City;
-import com.gerasimchuk.entities.Order;
-import com.gerasimchuk.entities.Truck;
+import com.gerasimchuk.entities.*;
 import com.gerasimchuk.enums.OrderStatus;
 import com.gerasimchuk.enums.UpdateMessageType;
 import com.gerasimchuk.exceptions.driverexceptions.TooManyHoursWorkedForOrderException;
@@ -12,6 +9,7 @@ import com.gerasimchuk.exceptions.routeexceptions.RouteException;
 import com.gerasimchuk.utils.ReturnValuesContainer;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 /** Order Service
@@ -27,7 +25,7 @@ public interface OrderService {
 //    Map<Order, Collection<City>> getRoutes(Collection<Order> orders);
 //    Collection<Truck> getAvailableTrucks(List<Cargo> cargosInOrder);
 
-
+    ReturnValuesContainer<List<Driver>> checkIfDriversHoursWorkedOverLimit(double orderExecutingTime, Date date, Collection<Driver> driversInTruck);
     UpdateMessageType createOrder(OrderDTO orderDTO) throws RouteException;
     ReturnValuesContainer<Order> createOrder(OrderDTO orderDTO, int val) throws RouteException;
     UpdateMessageType updateOrder(OrderDTO orderDTO) throws RouteException, TooManyHoursWorkedForOrderException;

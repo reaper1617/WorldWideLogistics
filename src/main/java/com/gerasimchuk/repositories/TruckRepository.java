@@ -37,4 +37,7 @@ public interface TruckRepository {
     int getNumberOfTrucksNotReady();
     int getNumberOfTrucksExecutingOrder();
 
+    // for pagination
+    Collection<Truck> getTrucksForOnePage(int size, int pageNumber);
+
 }

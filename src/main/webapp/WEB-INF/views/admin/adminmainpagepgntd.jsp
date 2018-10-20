@@ -169,79 +169,84 @@
                 </div>
 				<input id="currentOrderPage" value="0" hidden>
   			</div>
-  			<%--<div id="managetrucks" class="tab-pane fade">--%>
-    				<%--<div class = "sticky-top">--%>
-						<%--<form action="${pageContext.request.contextPath}/addnewtruckpage" method="get">--%>
-							<%--<h3>Trucks <button class = "btn btn-primary" type = "submit">Add new</button></h3>--%>
-						<%--</form>--%>
-				<%--<div><input class="form-control" id="myInput2" type="text" placeholder="Search.."></div>--%>
-				<%--</div>--%>
-				<%--<div>--%>
-					<%--<table id="myTable2" class="table table-bordered table-active table-hover">--%>
-    						<%--<thead>--%>
-      							<%--<tr>--%>
-									<%--<th></th>--%>
-									<%--<th></th>--%>
-        							<%--<th>Registration number</th>--%>
-									<%--<th>Number of drivers</th>--%>
-									<%--<th>Capacity</th>--%>
-									<%--<th>State</th>--%>
-									<%--<th>Current city</th>--%>
-									<%--<th>Assigned drivers</th>--%>
-									<%--<th>Assigned order</th>--%>
-      							<%--</tr>--%>
-						<%--</thead>--%>
-						<%--<tbody>--%>
-						<%--<c:if test="${trucksList != null}">--%>
-							<%--<c:forEach items="${trucksList}" var="cell">--%>
-								<%--<tr>--%>
-									<%--<td>--%>
-										<%--<form action="${pageContext.request.contextPath}/adminmainpage/3" method="post" >--%>
-											<%--<button type="submit" class="btn btn-primary">Edit</button>--%>
-												<%--<input type="text" hidden name="id" value="${cell.id}">--%>
-										<%--</form>--%>
-									<%--</td>--%>
-									<%--<td>--%>
-										<%--<form action="${pageContext.request.contextPath}/adminmainpage/4" method="post" >--%>
-											<%--<button type="submit" class="btn btn-danger">Delete</button>--%>
-												<%--<input type="text" hidden name="id" value="${cell.id}">--%>
-										<%--</form>--%>
-									<%--</td>--%>
-								<%--<td>${cell.registrationNumber}</td>--%>
-								<%--<td>${cell.numOfDrivers}</td>--%>
-								<%--<td>${cell.capacity}</td>--%>
-								<%--<td>${cell.state}</td>--%>
-								<%--<td>${cell.currentCity.name}</td>--%>
-								<%--<td>--%>
-									<%--<div class="dropdown">--%>
-										<%--<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show drivers--%>
-											<%--<span class="caret"></span></button>--%>
-										<%--<ul class="dropdown-menu">--%>
-											<%--<c:if test="${cell.driversInTruck != null}">--%>
-												<%--<c:forEach items="${cell.driversInTruck}" var="driver">--%>
-													<%--<li><a href="#">${driver.user.name} ${driver.user.middleName} ${driver.user.lastName}</a></li>--%>
-												<%--</c:forEach>--%>
-											<%--</c:if>--%>
-											<%--<c:if test="${empty cell.driversInTruck}">--%>
-												<%--<li><a href="#">No assigned driver</a></li>--%>
-											<%--</c:if>--%>
-										<%--</ul>--%>
-									<%--</div>--%>
-								<%--</td>--%>
+  			<div id="managetrucks" class="tab-pane fade">
+    				<div class = "sticky-top">
+						<form action="${pageContext.request.contextPath}/addnewtruckpage" method="get">
+							<h3>Trucks <button class = "btn btn-primary" type = "submit">Add new</button></h3>
+						</form>
+				<div><input class="form-control" id="myInput2" type="text" placeholder="Search.."></div>
+				</div>
+				<div>
+					<table id="myTable2" class="table table-bordered table-active table-hover">
+    						<thead>
+      							<tr>
+									<th></th>
+									<th></th>
+        							<th>Registration number</th>
+									<th>Number of drivers</th>
+									<th>Capacity</th>
+									<th>State</th>
+									<th>Current city</th>
+									<th>Assigned drivers</th>
+									<th>Assigned order</th>
+      							</tr>
+						</thead>
+						<tbody>
+						<c:if test="${trucksPgntd != null}">
+							<c:forEach items="${trucksPgntd}" var="cell">
+								<tr>
+									<td>
+										<form action="${pageContext.request.contextPath}/adminmainpage/3" method="post" >
+											<button type="submit" class="btn btn-primary">Edit</button>
+												<input type="text" hidden name="id" value="${cell.id}">
+										</form>
+									</td>
+									<td>
+										<form action="#" >
+											<button type="submit" class="btn btn-danger" onclick="deleteTruck(${cell.id})">Delete</button>
+                                            <input type="text" hidden name="id" value="${cell.id}">
+										</form>
+									</td>
+								<td>${cell.registrationNumber}</td>
+								<td>${cell.numberOfDrivers}</td>
+								<td>${cell.capacity}</td>
+								<td>${cell.state}</td>
+								<td>${cell.currentCity}</td>
+								<td>
+									<div class="dropdown">
+										<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show drivers
+											<span class="caret"></span></button>
+										<ul class="dropdown-menu">
+											<c:if test="${cell.assignedDriversNames != null}">
+												<c:forEach items="${cell.assignedDriversNames}" var="driver">
+													<li><a href="#">${driver}</a></li>
+												</c:forEach>
+											</c:if>
+											<c:if test="${empty cell.assignedDriversNames}">
+												<li><a href="#">No assigned driver</a></li>
+											</c:if>
+										</ul>
+									</div>
+								</td>
 
-								<%--<c:if test="${cell.assignedOrder != null}">--%>
-									<%--<td>${cell.assignedOrder}</td>--%>
-								<%--</c:if>--%>
-								<%--<c:if test="${cell.assignedOrder == null}">--%>
-									<%--<td>No assigned order</td>--%>
-								<%--</c:if>--%>
-								<%--</tr>--%>
-                            <%--</c:forEach>--%>
-						<%--</c:if>--%>
-						<%--</tbody>--%>
-    					<%--</table>--%>
-				<%--</div>--%>
-  			<%--</div>--%>
+								<c:if test="${cell.assignedOrderDescription != null}">
+									<td>${cell.assignedOrderDescription}</td>
+								</c:if>
+								<c:if test="${cell.assignedOrderDescription == null}">
+									<td>No assigned order</td>
+								</c:if>
+								</tr>
+                            </c:forEach>
+						</c:if>
+						</tbody>
+    					</table>
+				</div>
+                <br>
+                <div align="center">
+                    <button id="showMoreTrucksBtn" class="btn btn-primary" type="button" value="Show more trucks" onclick="showMoreTrucks()">Show more trucks</button>
+                </div>
+                <input id="currentTruckPage" value="0" hidden>
+  			</div>
   			<%--<div id="manageusers" class="tab-pane fade">--%>
     				<%--<div class = "sticky-top">--%>
 						<%--<form action="${pageContext.request.contextPath}/addnewuserpage" method="get">--%>
@@ -535,33 +540,7 @@
 	
 </div>
 
-<script>
-	function deleteOrder(orderId) {
-        // alert("in deleteOrder!");
-        // alert("orderId:" + orderId);
-        var sureDelete = confirm("Do you really want to delete this order?");
-        if (sureDelete) {
-            var req = new XMLHttpRequest();
-            req.onreadystatechange = function () {
-                if (this.status === 200 && this.readyState === 4) {
-                    alert("resp:" + this.responseText);
-                    var res = JSON.parse(this.responseText);
-                    // alert("resp:" + res);
-                    if (res === "ERROR_CAN_NOT_DELETE_ORDER_WITH_SUCH_STATUS"){
-                        alert("Can not delete order! Error message: " + res);
-					}
-					else {
-                        alert("Order deleted successfully!");
-					}
-                }
-            }
-            var url = "/deleteorder?orderId=" + orderId;
-            req.open('GET', url, true);
-            req.send();
-        }
-    }
-	
-</script>
+
 
 
 

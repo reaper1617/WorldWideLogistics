@@ -15,7 +15,9 @@ public class TruckDTO {
     private String state;
     private String currentCity;
     private String[] assignedDrivers;
+    private String[] assignedDriversNames;
     private String assignedOrderId;
+    private String assignedOrderDescription;
 
     public TruckDTO() {
     }
@@ -29,6 +31,35 @@ public class TruckDTO {
         this.currentCity = currentCity;
         this.assignedDrivers = assignedDrivers;
         this.assignedOrderId = assignedOrderId;
+    }
+
+    public TruckDTO(String id, String registrationNumber, String numberOfDrivers, String capacity, String state, String currentCity, String[] assignedDrivers, String[] assignedDriversNames, String assignedOrderId, String assignedOrderDescription) {
+        this.id = id;
+        this.registrationNumber = registrationNumber;
+        this.numberOfDrivers = numberOfDrivers;
+        this.capacity = capacity;
+        this.state = state;
+        this.currentCity = currentCity;
+        this.assignedDrivers = assignedDrivers;
+        this.assignedDriversNames = assignedDriversNames;
+        this.assignedOrderId = assignedOrderId;
+        this.assignedOrderDescription = assignedOrderDescription;
+    }
+
+    public String[] getAssignedDriversNames() {
+        return assignedDriversNames;
+    }
+
+    public void setAssignedDriversNames(String[] assignedDriversNames) {
+        this.assignedDriversNames = assignedDriversNames;
+    }
+
+    public String getAssignedOrderDescription() {
+        return assignedOrderDescription;
+    }
+
+    public void setAssignedOrderDescription(String assignedOrderDescription) {
+        this.assignedOrderDescription = assignedOrderDescription;
     }
 
     public String getId() {

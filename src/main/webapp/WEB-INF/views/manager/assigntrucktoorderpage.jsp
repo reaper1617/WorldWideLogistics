@@ -10,6 +10,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 
+
+	<script src="/resources/web/js/managermainpage.js"></script>
 	<style>
 		
 		.gradientbackgr{
@@ -37,17 +39,17 @@
 	<br>
 	<div class = "container-fluid" >
 		 
-			<div class="media" >
+			<div align="center" >
 				<%--<div class="media-left">--%>
 		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
 				<%--</div>--%>
 				<div>
 					<form action="${pageContext.request.contextPath}/assigntrucktoorderpage", method="post">
 						<div class="form-group">
-							<input type="text" hidden class="form-control" id="item_descr"  name="description" style="width:350px" value="${orderDTO.description}">
+							<input type="text" hidden class="form-control" id="item_descr"  name="description" style="width:450px" value="${orderDTO.description}">
 						</div>
 						<div class="form-group">
-							<select hidden multiple class="form-control" id="add_cargos"  name="cargosInOrder">
+							<select  hidden multiple class="form-control" id="add_cargos"  name="cargosInOrder">
 								<c:if test="${chosenCargos != null}">
 									<c:if test="${not empty chosenCargos}">
 										<c:forEach items="${chosenCargos}" var="cargo">
@@ -62,11 +64,11 @@
 						</div>
 						<div class="form-group">
 							<label for="add_truck">Assign truck:</label>
-							 <select  class="form-control" id="add_truck" size="10" required="required" name="assignedTruckId">
+							 <select style="width: 450px" class="form-control" id="add_truck" size="10" required="required" name="assignedTruckId" onclick="showRouteOnTruckAssignPage();showMessageIfTruckHasDriversHoursOverLimit()" >
         						<c:if test="${availableTrucks != null}">
 									<c:if test="${not empty availableTrucks}">
 										<c:forEach items="${availableTrucks}" var="truck">
-								 			<option value="${truck.id}">${truck.registrationNumber}</option>
+								 			<option value="${truck.id}">Reg.num: ${truck.registrationNumber}, current city: ${truck.currentCity.name}</option>
 										</c:forEach>
 									</c:if>
 									<c:if test="${empty availableTrucks}">
@@ -92,8 +94,20 @@
 					</form>
 					<form action="${pageContext.request.contextPath}/index" method="get" id="rollback"></form>
 				</div>
-			
-					
+					<br>
+					<div class="form-group">
+						<label>Current route:</label>
+						<div id="currentRoute"></div>
+					</div>
+				<%--<div class="form-group">--%>
+					<%--<label for="set_city">Manual route set:</label>--%>
+					<%--<div id="manualRouteChange">--%>
+						<%--<select class="form-control" id="set_city" style="width: 450px">--%>
+							<%--<option>Moscow</option>--%>
+							<%--<option>SPb</option>--%>
+						<%--</select>--%>
+					<%--</div>--%>
+				<%--</div>--%>
     			</div>
   			
 	</div>
