@@ -12,4 +12,7 @@ public interface RouteRepository {
     Route getByCities(City cityFrom, City cityTo);
     Collection<Route> getAll();
     void remove(int id);
+
+    //
+    Collection<Route> getRoutesForOnePage(int size, int pageNumber);
 }

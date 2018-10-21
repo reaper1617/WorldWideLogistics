@@ -346,3 +346,464 @@ function deleteTruck(truckId) {
         req.send();
     }
 }
+
+function showMoreUsers() {
+    alert("Gonna show more users!");
+    console.log("Gonna show more orders!");
+    var req = new XMLHttpRequest();
+    // alert("Making onreadystatechangefunction!");
+    console.log("Making onreadystatechangefunction!");
+    req.onreadystatechange = function () {
+        alert("readyState=" + this.readyState + "status = " + this.status);
+        //     console.log("readyState=" + this.readyState + "status = " + this.status);
+        if (this.readyState === 4 && this.status === 200){
+            alert("resp text:" + this.responseText);
+            var trucksArr = JSON.parse(this.responseText);
+            alert("parsed:" + trucksArr);
+            //         console.log("parsed: " + ordersArr);
+            //         alert("ordersArr length = " + ordersArr.length);
+            for(var i = 0; i < trucksArr.length; i++){
+                alert("usersArr["+i+"] = " + trucksArr[i]);
+                //             console.log("ordersArr[i] = " + ordersArr[i]);
+                var item = trucksArr[i];
+                var tbody = document.getElementById('myTable3').getElementsByTagName('TBODY')[0];
+                var row = document.createElement("TR");
+                tbody.appendChild(row);
+                var tdEditBtn = document.createElement("TD");
+                var tdDeleteBtn = document.createElement("TD");
+                var tdFirstName = document.createElement("TD");
+                var tdMiddleName = document.createElement("TD");
+                var tdLastName = document.createElement("TD");
+                var tdPersonalNumber = document.createElement("TD");
+                var tdRole = document.createElement("TD");
+                var tdHoursWorked = document.createElement("TD");
+                var tdDriverStatus = document.createElement("TD");
+                var tdCity = document.createElement("TD");
+                var tdTruck = document.createElement("TD");
+                var tdOrder = document.createElement("TD");
+                row.appendChild(tdEditBtn);
+                row.appendChild(tdDeleteBtn);
+                row.appendChild(tdFirstName);
+                row.appendChild(tdMiddleName);
+                row.appendChild(tdLastName);
+                row.appendChild(tdPersonalNumber);
+                row.appendChild(tdRole);
+                row.appendChild(tdHoursWorked);
+                row.appendChild(tdDriverStatus);
+                row.appendChild(tdCity);
+                row.appendChild(tdTruck);
+                row.appendChild(tdOrder);
+                tdEditBtn.innerHTML = "<form action=\"/adminmainpage/5\" method=\"post\" >\n" +
+                    "                                            <button type=\"submit\" class=\"btn btn-primary\">Edit</button>\n" +
+                    "                                            <input type=\"text\" hidden name=\"id\" value=\""+item.id+"\">\n" +
+                    "                                        </form>";
+
+
+                tdDeleteBtn.innerHTML = "<form action=\"#\"  >\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<button type=\"submit\" class=\"btn btn-danger\" onclick=\"deleteUser("+item.id+")\">Delete</button>\n" +
+                    "                                            <input type=\"text\" hidden name=\"id\" value=\""+item.id+"\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</form>";
+
+                tdFirstName.innerHTML = item.firstName;
+                tdMiddleName.innerHTML = item.middleName;
+                tdLastName.innerHTML = item.lastName;
+                tdPersonalNumber.innerHTML = item.personalNumber;
+                tdRole.innerHTML = item.role;
+                tdHoursWorked.innerHTML = item.hoursWorked;
+                tdDriverStatus.innerHTML = item.driverStatus;
+                tdCity.innerHTML = item.currentCityName;
+                tdTruck.innerHTML = item.currentTruckRegistrationNumber;
+                tdOrder.innerHTML = item.orderDescription;
+            }
+            var currentUserPageNum = (Number)(document.getElementById('currentUserPage').getAttribute('value'));
+            var newNum = (Number)(currentUserPageNum + 1);
+            document.getElementById('currentUserPage').setAttribute('value',newNum);
+            alert("current user page=" + newNum);
+        }
+    };
+    var pageSize = 2; //document.getElementById('currentOrderPage').value();
+    var pageNumber = (Number)(document.getElementById('currentUserPage').getAttribute('value'));
+    var necessaryPageNumber = (Number)(pageNumber + 1);
+    // alert("pageNumberT = " + pageNumberT);
+    // var pageNumber=1;
+    //var reqURL = 'http://localhost:8080/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
+
+    //var reqURL = 'http://localhost:8085/worldwidelogistics/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
+    var reqURL = '/getpaginateduserslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
+    // alert("req opening... :" + reqURL);
+    req.open("GET", reqURL, true);
+    // alert("req sending...");
+    req.send();
+}
+
+function deleteUser(userId) {
+    alert("in deleteUser!");
+    alert("userId:" + userId);
+    var sureDelete = confirm("Do you really want to delete this user?");
+    if (sureDelete) {
+        var req = new XMLHttpRequest();
+        req.onreadystatechange = function () {
+            alert("readyState=" + this.readyState + "status = " + this.status);
+            if (this.status === 200 && this.readyState === 4) {
+                alert("resp:" + this.responseText);
+                var res = JSON.parse(this.responseText);
+                alert("resp:" + res);
+                if (res === "USER_DELETED"){
+                    alert("User succesfully deleted!");
+                }
+                else {
+                    alert("User not deleted:" + res);
+                }
+            }
+        }
+        var url = "/deleteuser?userId=" + userId;
+        req.open('POST', url, true);
+        req.send();
+    }
+}
+
+function showMoreCargos() {
+    alert("Gonna show more users!");
+    console.log("Gonna show more orders!");
+    var req = new XMLHttpRequest();
+    // alert("Making onreadystatechangefunction!");
+    console.log("Making onreadystatechangefunction!");
+    req.onreadystatechange = function () {
+        alert("readyState=" + this.readyState + "status = " + this.status);
+        //     console.log("readyState=" + this.readyState + "status = " + this.status);
+        if (this.readyState === 4 && this.status === 200){
+            alert("resp text:" + this.responseText);
+            var cargosArr = JSON.parse(this.responseText);
+            alert("parsed:" + cargosArr);
+            //         console.log("parsed: " + ordersArr);
+            //         alert("ordersArr length = " + ordersArr.length);
+            for(var i = 0; i < cargosArr.length; i++){
+                alert("cargosArr["+i+"] = " + cargosArr[i]);
+                //             console.log("ordersArr[i] = " + ordersArr[i]);
+                var item = cargosArr[i];
+                var tbody = document.getElementById('myTable4').getElementsByTagName('TBODY')[0];
+                var row = document.createElement("TR");
+                tbody.appendChild(row);
+                var tdEditBtn = document.createElement("TD");
+                var tdDeleteBtn = document.createElement("TD");
+                var tdPersonalNumber = document.createElement("TD");
+                var tdName = document.createElement("TD");
+                var tdWeight = document.createElement("TD");
+                var tdCityFrom = document.createElement("TD");
+                var tdCityTo = document.createElement("TD");
+                var tdStatus = document.createElement("TD");
+                row.appendChild(tdEditBtn);
+                row.appendChild(tdDeleteBtn);
+                row.appendChild(tdPersonalNumber);
+                row.appendChild(tdName);
+                row.appendChild(tdWeight);
+                row.appendChild(tdCityFrom);
+                row.appendChild(tdCityTo);
+                row.appendChild(tdStatus);
+
+                tdEditBtn.innerHTML = "<form action=\"/adminmainpage/7\" method=\"post\" >\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<button type=\"submit\" class=\"btn btn-primary\">Edit</button>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" hidden name=\"id\" value=\""+item.id+"\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</form>";
+
+
+                tdDeleteBtn.innerHTML = "<form action=\"#\" >\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<button type=\"submit\" class=\"btn btn-danger\" onclick=\"deleteCargo("+item.id+")\">Delete</button>\n" +
+                    "                                            <input type=\"text\" hidden name=\"id\" value=\""+item.id+"\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</form>";
+
+                tdPersonalNumber.innerHTML = item.personalNumber;
+                tdName.innerHTML = item.name;
+                tdWeight.innerHTML = item.weight;
+                tdCityFrom.innerHTML = item.cityFrom;
+                tdCityTo.innerHTML = item.cityTo;
+                tdStatus.innerHTML = item.status;
+
+            }
+            var currentCargoPageNum = (Number)(document.getElementById('currentCargoPage').getAttribute('value'));
+            var newNum = (Number)(currentCargoPageNum + 1);
+            document.getElementById('currentCargoPage').setAttribute('value',newNum);
+            alert("current cargo page=" + newNum);
+        }
+    };
+    var pageSize = 2; //document.getElementById('currentOrderPage').value();
+    var pageNumber = (Number)(document.getElementById('currentCargoPage').getAttribute('value'));
+    var necessaryPageNumber = (Number)(pageNumber + 1);
+    // alert("pageNumberT = " + pageNumberT);
+    // var pageNumber=1;
+    //var reqURL = 'http://localhost:8080/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
+
+    //var reqURL = 'http://localhost:8085/worldwidelogistics/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
+    var reqURL = '/getpaginatedcargoslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
+    // alert("req opening... :" + reqURL);
+    req.open("GET", reqURL, true);
+    // alert("req sending...");
+    req.send();
+}
+
+function deleteCargo(cargoId) {
+    // alert("in deleteUser!");
+    // alert("userId:" + userId);
+    var sureDelete = confirm("Do you really want to delete this cargo?");
+    if (sureDelete) {
+        var req = new XMLHttpRequest();
+        req.onreadystatechange = function () {
+            alert("readyState=" + this.readyState + "status = " + this.status);
+            if (this.status === 200 && this.readyState === 4) {
+                alert("resp:" + this.responseText);
+                var res = JSON.parse(this.responseText);
+                alert("resp:" + res);
+                if (res === "CARGO_DELETED"){
+                    alert("Cargo succesfully deleted!");
+                }
+                else {
+                    alert("Cargo not deleted:" + res);
+                }
+            }
+        }
+        var url = "/deletecargo?cargoId=" + cargoId;
+        req.open('POST', url, true);
+        req.send();
+    }
+}
+
+function showMoreCities() {
+    alert("Gonna show more cities!");
+    // console.log("Gonna show more orders!");
+    var req = new XMLHttpRequest();
+    // alert("Making onreadystatechangefunction!");
+    // console.log("Making onreadystatechangefunction!");
+    req.onreadystatechange = function () {
+        // alert("readyState=" + this.readyState + "status = " + this.status);
+        //     console.log("readyState=" + this.readyState + "status = " + this.status);
+        if (this.readyState === 4 && this.status === 200){
+            // alert("resp text:" + this.responseText);
+            var citiesArr = JSON.parse(this.responseText);
+            // alert("parsed:" + citiesArr);
+            //         console.log("parsed: " + ordersArr);
+            //         alert("ordersArr length = " + ordersArr.length);
+            for(var i = 0; i < citiesArr.length; i++){
+                // alert("cargosArr["+i+"] = " + citiesArr[i]);
+                //             console.log("ordersArr[i] = " + ordersArr[i]);
+                var item = citiesArr[i];
+                var tbody = document.getElementById('myTable5').getElementsByTagName('TBODY')[0];
+                var row = document.createElement("TR");
+                tbody.appendChild(row);
+                var tdEditBtn = document.createElement("TD");
+                var tdDeleteBtn = document.createElement("TD");
+                // var tdId = document.createElement("TD");
+                var tdName = document.createElement("TD");
+                var tdHasAgency = document.createElement("TD");
+                var tdDrivers = document.createElement("TD");
+                var tdTrucks = document.createElement("TD");
+
+                row.appendChild(tdEditBtn);
+                row.appendChild(tdDeleteBtn);
+                // row.appendChild(tdId);
+                row.appendChild(tdName);
+                row.appendChild(tdHasAgency);
+                row.appendChild(tdDrivers);
+                row.appendChild(tdTrucks);
+
+                tdEditBtn.innerHTML = " <form action=\"/adminmainpage/9\" method=\"post\" >\n" +
+                    "\t\t\t\t\t\t\t\t\t <button type=\"submit\" class=\"btn btn-primary\">Edit</button>\n" +
+                    "\t\t\t\t\t\t\t\t\t <input type=\"text\" hidden name=\"id\" value=\""+item.id+"\">\n" +
+                    "\t\t\t\t\t\t\t\t </form>";
+
+
+                tdDeleteBtn.innerHTML = "<form action=\"#\" >\n" +
+                    "\t\t\t\t\t\t\t\t\t <button type=\"submit\" class=\"btn btn-danger\" onclick=\"deleteCity("+item.id+")\">Delete</button>\n" +
+                    "\t\t\t\t\t\t\t\t\t <input type=\"text\" hidden name=\"id\" value=\""+item.id+"\">\n" +
+                    "\t\t\t\t\t\t\t\t </form>";
+
+                // tdId.innerHTML = item.id;
+                tdName.innerHTML = item.name;
+                tdHasAgency.innerHTML = item.hasAgency;
+                if (typeof item.driversInCity === 'undefined'){
+                    tdDrivers.innerHTML = " <div class=\"dropdown\">\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t <button class=\"btn btn-primary dropdown-toggle\" type=\"button\" data-toggle=\"dropdown\">Show drivers\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t\t <span class=\"caret\"></span></button>\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t <ul class=\"dropdown-menu\">\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t\t\t <li><a href=\"#\">No drivers in city</a></li>\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t </ul>\n" +
+                        "\t\t\t\t\t\t\t\t\t\t </div>";
+                }
+                else{
+                    var driversString = "<div class=\"dropdown\">\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-primary dropdown-toggle\" type=\"button\" data-toggle=\"dropdown\">Show drivers\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t\t<span class=\"caret\"></span></button>\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">";
+
+                    for(var j = 0; j < item.driversInCity.length; j++){
+                        driversString+="<li><a href=\"#\">"+item.driversInCity[j]+"</a></li>";
+                    }
+                    driversString+="</ul>\n" +
+                        "\t\t\t\t\t\t\t\t\t\t</div>";
+                    tdDrivers.innerHTML = driversString;
+                }
+                if (typeof item.trucksInCity === 'undefined'){
+                    tdTrucks.innerHTML = "<div class=\"dropdown\">\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t <button class=\"btn btn-primary dropdown-toggle\" type=\"button\" data-toggle=\"dropdown\">Show trucks\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t\t <span class=\"caret\"></span></button>\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t <ul class=\"dropdown-menu\">\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t\t <li><a href=\"#\">No trucks in city</a></li>\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t </ul>\n" +
+                        "\t\t\t\t\t\t\t\t\t\t </div>";
+                }
+                else {
+                    var trucksString = "<div class=\"dropdown\">\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t <button class=\"btn btn-primary dropdown-toggle\" type=\"button\" data-toggle=\"dropdown\">Show trucks\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t\t <span class=\"caret\"></span></button>\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t <ul class=\"dropdown-menu\">";
+                    for(var k=0; k < item.trucksInCity.length; k++){
+                        trucksString+="<li><a href=\"#\">"+item.trucksInCity[k]+"</a></li>";
+                    }
+                    trucksString+="</ul>\n" +
+                        "\t\t\t\t\t\t\t\t\t\t </div>";
+                    tdTrucks.innerHTML = trucksString;
+                }
+            }
+            var currentCityPageNum = (Number)(document.getElementById('currentCityPage').getAttribute('value'));
+            var newNum = (Number)(currentCityPageNum + 1);
+            document.getElementById('currentCityPage').setAttribute('value',newNum);
+            // alert("current cargo page=" + newNum);
+        }
+    };
+    var pageSize = 2; //document.getElementById('currentOrderPage').value();
+    var pageNumber = (Number)(document.getElementById('currentCityPage').getAttribute('value'));
+    var necessaryPageNumber = (Number)(pageNumber + 1);
+    // alert("pageNumberT = " + pageNumberT);
+    // var pageNumber=1;
+    //var reqURL = 'http://localhost:8080/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
+
+    //var reqURL = 'http://localhost:8085/worldwidelogistics/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
+    var reqURL = '/getpaginatedcitieslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
+    // alert("req opening... :" + reqURL);
+    req.open("GET", reqURL, true);
+    // alert("req sending...");
+    req.send();
+}
+
+function deleteCity(cityId) {
+    // alert("in deleteUser!");
+    // alert("userId:" + userId);
+    var sureDelete = confirm("Do you really want to delete this city?");
+    if (sureDelete) {
+        // alert("cityId:" + cityId);
+        var req = new XMLHttpRequest();
+        req.onreadystatechange = function () {
+            // alert("readyState=" + this.readyState + "status = " + this.status);
+            if (this.status === 200 && this.readyState === 4) {
+                // alert("resp:" + this.responseText);
+                var res = JSON.parse(this.responseText);
+                // alert("res:" + res);
+                if (res === "CITY_DELETED"){
+                    alert("City succesfully deleted!");
+                }
+                else {
+                    alert("City not deleted: " + res);
+                }
+            }
+        };
+        var url = "/deletecity?cityId=" + cityId;
+        req.open('POST', url, true);
+        req.send();
+    }
+}
+
+
+function showMoreRoutes() {
+    // alert("Gonna show more routes!");
+    // console.log("Gonna show more orders!");
+    var req = new XMLHttpRequest();
+    // alert("Making onreadystatechangefunction!");
+    // console.log("Making onreadystatechangefunction!");
+    req.onreadystatechange = function () {
+        // alert("readyState=" + this.readyState + "status = " + this.status);
+        //     console.log("readyState=" + this.readyState + "status = " + this.status);
+        if (this.readyState === 4 && this.status === 200){
+            // alert("resp text:" + this.responseText);
+            var routesArr = JSON.parse(this.responseText);
+            // alert("parsed:" + citiesArr);
+            //         console.log("parsed: " + ordersArr);
+            //         alert("ordersArr length = " + ordersArr.length);
+            for(var i = 0; i < routesArr.length; i++){
+                // alert("cargosArr["+i+"] = " + citiesArr[i]);
+                //             console.log("ordersArr[i] = " + ordersArr[i]);
+                var item = routesArr[i];
+                var tbody = document.getElementById('myTable6').getElementsByTagName('TBODY')[0];
+                var row = document.createElement("TR");
+                tbody.appendChild(row);
+                var tdEditBtn = document.createElement("TD");
+                var tdDeleteBtn = document.createElement("TD");
+                // var tdId = document.createElement("TD");
+                var tdCityFrom = document.createElement("TD");
+                var tdCityTo = document.createElement("TD");
+                var tdDistance = document.createElement("TD");
+
+                row.appendChild(tdEditBtn);
+                row.appendChild(tdDeleteBtn);
+                row.appendChild(tdCityFrom);
+                row.appendChild(tdCityTo);
+                row.appendChild(tdDistance);
+
+                tdEditBtn.innerHTML ="<form action=\"/adminmainpage/11\" method=\"post\" >\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<button type=\"submit\" class=\"btn btn-primary\">Edit</button>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" hidden name=\"id\" value=\""+item.id+"\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</form>";
+
+
+                tdDeleteBtn.innerHTML = "<form action=\"#\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<button type=\"submit\" class=\"btn btn-danger\" onclick=\"deleteRoute("+item.id+")\">Delete</button>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" hidden name=\"id\" value=\""+item.id+"\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</form>";
+                tdCityFrom.innerHTML = item.cityFrom;
+                tdCityTo.innerHTML = item.cityTo;
+                tdDistance.innerHTML = item.distance;
+            }
+            var currentRoutePageNum = (Number)(document.getElementById('currentRoutePage').getAttribute('value'));
+            var newNum = (Number)(currentRoutePageNum + 1);
+            document.getElementById('currentRoutePage').setAttribute('value',newNum);
+        }
+    };
+    var pageSize = 2; //document.getElementById('currentOrderPage').value();
+    var pageNumber = (Number)(document.getElementById('currentRoutePage').getAttribute('value'));
+    var necessaryPageNumber = (Number)(pageNumber + 1);
+    // alert("pageNumberT = " + pageNumberT);
+    // var pageNumber=1;
+    //var reqURL = 'http://localhost:8080/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
+
+    //var reqURL = 'http://localhost:8085/worldwidelogistics/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
+    var reqURL = '/getpaginatedrouteslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
+    // alert("req opening... :" + reqURL);
+    req.open("GET", reqURL, true);
+    // alert("req sending...");
+    req.send();
+}
+
+function deleteRoute(routeId) {
+    // alert("in deleteUser!");
+    // alert("userId:" + userId);
+    var sureDelete = confirm("Do you really want to delete this route?");
+    if (sureDelete) {
+        // alert("cityId:" + cityId);
+        var req = new XMLHttpRequest();
+        req.onreadystatechange = function () {
+            // alert("readyState=" + this.readyState + "status = " + this.status);
+            if (this.status === 200 && this.readyState === 4) {
+                // alert("resp:" + this.responseText);
+                var res = JSON.parse(this.responseText);
+                // alert("res:" + res);
+                if (res === "ROUTE_DELETED"){
+                    alert("Route succesfully deleted!");
+                }
+                else {
+                    alert("Route not deleted: " + res);
+                }
+            }
+        };
+        var url = "/deleteroute?routeId=" + routeId;
+        req.open('POST', url, true);
+        req.send();
+    }
+}

@@ -9,6 +9,8 @@ public class CityDTO {
     private String id;
     private String name;
     private String hasAgency;
+    private String[] driversInCity;
+    private String[] trucksInCity;
 
     public CityDTO() {
     }
@@ -17,6 +19,30 @@ public class CityDTO {
         this.id = id;
         this.name = name;
         this.hasAgency = hasAgency;
+    }
+
+    public CityDTO(String id, String name, String hasAgency, String[] driversInCity, String[] trucksInCity) {
+        this.id = id;
+        this.name = name;
+        this.hasAgency = hasAgency;
+        this.driversInCity = driversInCity;
+        this.trucksInCity = trucksInCity;
+    }
+
+    public String[] getDriversInCity() {
+        return driversInCity;
+    }
+
+    public void setDriversInCity(String[] driversInCity) {
+        this.driversInCity = driversInCity;
+    }
+
+    public String[] getTrucksInCity() {
+        return trucksInCity;
+    }
+
+    public void setTrucksInCity(String[] trucksInCity) {
+        this.trucksInCity = trucksInCity;
     }
 
     public String getId() {

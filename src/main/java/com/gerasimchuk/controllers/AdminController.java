@@ -1,8 +1,6 @@
 package com.gerasimchuk.controllers;
 
-import com.gerasimchuk.converters.OrderToDTOConverter;
-import com.gerasimchuk.converters.OrderToDTOConverterImpl;
-import com.gerasimchuk.converters.TruckToDTOConverter;
+import com.gerasimchuk.converters.*;
 import com.gerasimchuk.dto.*;
 import com.gerasimchuk.entities.*;
 import com.gerasimchuk.enums.UpdateMessageType;
@@ -57,12 +55,15 @@ public class AdminController {
     private StatisticService statisticService;
     private OrderToDTOConverter orderToDTOConverter;
     private TruckToDTOConverter truckToDTOConverter;
+    private UserToDTOConverter userToDTOConverter;
+    private CargoToDTOConverter cargoToDTOConverter;
+    private CityToDTOConverter cityToDTOConverter;
+    private RouteToDTOConverter routeToDTOConverter;
    // private AmqpTemplate amqpTemplate;
 //    private RabbitMQReceiver rabbitMQReceiver;
 
-
     @Autowired
-    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, DriverRepository driverRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService, CityService cityService, RouteService routeService, RabbitMQSender rabbitMQSender, MessageConstructor messageConstructor, StatisticService statisticService, OrderToDTOConverter orderToDTOConverter, TruckToDTOConverter truckToDTOConverter) {
+    public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, DriverRepository driverRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService, CityService cityService, RouteService routeService, RabbitMQSender rabbitMQSender, MessageConstructor messageConstructor, StatisticService statisticService, OrderToDTOConverter orderToDTOConverter, TruckToDTOConverter truckToDTOConverter, UserToDTOConverter userToDTOConverter, CargoToDTOConverter cargoToDTOConverter, CityToDTOConverter cityToDTOConverter, RouteToDTOConverter routeToDTOConverter) {
         this.orderRepository = orderRepository;
         this.truckRepository = truckRepository;
         this.userRepository = userRepository;
@@ -81,6 +82,10 @@ public class AdminController {
         this.statisticService = statisticService;
         this.orderToDTOConverter = orderToDTOConverter;
         this.truckToDTOConverter = truckToDTOConverter;
+        this.userToDTOConverter = userToDTOConverter;
+        this.cargoToDTOConverter = cargoToDTOConverter;
+        this.cityToDTOConverter = cityToDTOConverter;
+        this.routeToDTOConverter = routeToDTOConverter;
     }
 
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(AdminController.class);
@@ -159,6 +164,23 @@ public class AdminController {
         List<Truck> trucksPgntd = (List<Truck>)truckRepository.getTrucksForOnePage(2,0);
         List<TruckDTO> truckDTOS = truckToDTOConverter.convert(trucksPgntd);
         ui.addAttribute("trucksPgntd", truckDTOS);
+
+        List<User> users = (List<User>) userRepository.getUsersForOnePage(2,0);
+        List<UserDTO> userDTOS = userToDTOConverter.convert(users);
+        ui.addAttribute("usersPgntd", userDTOS);
+
+        List<Cargo> cargos = (List<Cargo>) cargoRepository.getCargosForOnePage(2,0);
+        List<CargoDTO> cargoDTOS = cargoToDTOConverter.convert(cargos);
+        ui.addAttribute("cargosPgntd", cargoDTOS);
+
+        List<City> cities = (List<City>) cityRepository.getCitiesForOnePage(2,0);
+        List<CityDTO> citiesDTOS = cityToDTOConverter.convert(cities);
+        ui.addAttribute("citiesPgntd", citiesDTOS);
+
+        List<Route> routes = (List<Route>) routeRepository.getRoutesForOnePage(2,0);
+        List<RouteDTO> routeDTOS = routeToDTOConverter.convert(routes);
+        ui.addAttribute("routesPgntd", routeDTOS);
+
         LOGGER.info("Controller: AdminController, out from metod = adminPgntd");
         return "/admin/adminmainpagepgntd";
     }
@@ -190,6 +212,58 @@ public class AdminController {
         Gson gson = new Gson();
         String s = gson.toJson(truckDTOS);
         LOGGER.info("Controller: AdminController, metod = getPaginatedOrdersList, GSON = " + s);
+        return s;
+    }
+
+    @RequestMapping(value = "/getpaginateduserslist", method = RequestMethod.GET)
+    @ResponseBody
+    public String getPaginatedUsersList(@RequestParam(name = "pageSize") int pageSize, @RequestParam(name = "pageNumber") int pageNum){
+        LOGGER.info("Controller: AdminController, metod = getPaginatedUsersList,  action = \"/getpaginateduserslist\", request = GET");
+        LOGGER.info("Controller: AdminController, metod = getPaginatedUsersList, pageSize = " + pageSize + " , pageNumber = " + pageNum);
+        List<User> users = (List<User>)userRepository.getUsersForOnePage(pageSize, pageNum);
+        List<UserDTO> userDTOS = userToDTOConverter.convert(users);
+        Gson gson = new Gson();
+        String s = gson.toJson(userDTOS);
+        LOGGER.info("Controller: AdminController, metod = getPaginatedUsersList, GSON = " + s);
+        return s;
+    }
+
+    @RequestMapping(value = "/getpaginatedcargoslist", method = RequestMethod.GET)
+    @ResponseBody
+    public String getPaginatedCargosList(@RequestParam(name = "pageSize") int pageSize, @RequestParam(name = "pageNumber") int pageNum){
+        LOGGER.info("Controller: AdminController, metod = getPaginatedCargosList,  action = \"/getpaginatedcargoslist\", request = GET");
+        LOGGER.info("Controller: AdminController, metod = getPaginatedCargosList, pageSize = " + pageSize + " , pageNumber = " + pageNum);
+        List<Cargo> cargos = (List<Cargo>)cargoRepository.getCargosForOnePage(pageSize, pageNum);
+        List<CargoDTO> cargoDTOS = cargoToDTOConverter.convert(cargos);
+        Gson gson = new Gson();
+        String s = gson.toJson(cargoDTOS);
+        LOGGER.info("Controller: AdminController, metod = getPaginatedCargosList, GSON = " + s);
+        return s;
+    }
+
+    @RequestMapping(value = "/getpaginatedcitieslist", method = RequestMethod.GET)
+    @ResponseBody
+    public String getPaginatedCitiesList(@RequestParam(name = "pageSize") int pageSize, @RequestParam(name = "pageNumber") int pageNum){
+        LOGGER.info("Controller: AdminController, metod = getPaginatedCitiesList,  action = \"/getpaginatedcitieslist\", request = GET");
+        LOGGER.info("Controller: AdminController, metod = getPaginatedCitiesList, pageSize = " + pageSize + " , pageNumber = " + pageNum);
+        List<City> cities = (List<City>)cityRepository.getCitiesForOnePage(pageSize, pageNum);
+        List<CityDTO> cityDTOS = cityToDTOConverter.convert(cities);
+        Gson gson = new Gson();
+        String s = gson.toJson(cityDTOS);
+        LOGGER.info("Controller: AdminController, metod = getPaginatedCitiesList, GSON = " + s);
+        return s;
+    }
+
+    @RequestMapping(value = "/getpaginatedrouteslist", method = RequestMethod.GET)
+    @ResponseBody
+    public String getPaginatedRoutesList(@RequestParam(name = "pageSize") int pageSize, @RequestParam(name = "pageNumber") int pageNum){
+        LOGGER.info("Controller: AdminController, metod = getPaginatedRoutesList,  action = \"/getpaginatedrouteslist\", request = GET");
+        LOGGER.info("Controller: AdminController, metod = getPaginatedRoutesList, pageSize = " + pageSize + " , pageNumber = " + pageNum);
+        List<Route> routes = (List<Route>)routeRepository.getRoutesForOnePage(pageSize, pageNum);
+        List<RouteDTO> routeDTOS = routeToDTOConverter.convert(routes);
+        Gson gson = new Gson();
+        String s = gson.toJson(routeDTOS);
+        LOGGER.info("Controller: AdminController, metod = getPaginatedRoutesList, GSON = " + s);
         return s;
     }
 
@@ -339,6 +413,63 @@ public class AdminController {
         String s = new Gson().toJson(result);
         return s;
     }
+
+    @RequestMapping(value = "/deleteuser", method = RequestMethod.POST)
+    @ResponseBody
+    public String deleteUserById(@RequestParam(name = "userId") int userId){
+        LOGGER.info("Controller: AdminController, metod = deleteUserById,  action = \"/deleteuser\", request = POST");
+        if (userId <= 0){
+            LOGGER.info("Controller: AdminController, out from deleteUserById: orderId is invalid");
+            return null;
+        }
+        UpdateMessageType result =  userService.deleteUser(userId);
+        String s = new Gson().toJson(result);
+        return s;
+    }
+
+    @RequestMapping(value = "/deletecargo", method = RequestMethod.POST)
+    @ResponseBody
+    public String deleteCargoById(@RequestParam(name = "cargoId") int cargoId){
+        LOGGER.info("Controller: AdminController, metod = deleteCargoById,  action = \"/deletecargo\", request = POST");
+        if (cargoId <= 0){
+            LOGGER.info("Controller: AdminController, out from deleteCargoById: cargoId is invalid");
+            return null;
+        }
+        UpdateMessageType result =  cargoService.deleteCargo(cargoId,0);
+        String s = new Gson().toJson(result);
+        LOGGER.info("Controller: AdminController, out from deleteCargoById method,  result: " + s);
+        return s;
+    }
+
+    @RequestMapping(value = "/deletecity", method = RequestMethod.POST)
+    @ResponseBody
+    public String deleteCityById(@RequestParam(name = "cityId") int cityId){
+        LOGGER.info("Controller: AdminController, metod = deleteCityById,  action = \"/deletecity\", request = POST");
+        if (cityId <= 0){
+            LOGGER.info("Controller: AdminController, out from deleteCityById: cargoId is invalid");
+            return null;
+        }
+        UpdateMessageType result =  cityService.deleteCity(cityId,0);
+        String s = new Gson().toJson(result);
+        LOGGER.info("Controller: AdminController, out from deleteCityById method,  result: " + s);
+        return s;
+    }
+
+    @RequestMapping(value = "/deleteroute", method = RequestMethod.POST)
+    @ResponseBody
+    public String deleteRouteById(@RequestParam(name = "routeId") int routeId){
+        LOGGER.info("Controller: AdminController, metod = deleteRouteById,  action = \"/deleteroute\", request = POST");
+        if (routeId <= 0){
+            LOGGER.info("Controller: AdminController, out from deleteRouteById: routeId is invalid");
+            return null;
+        }
+        UpdateMessageType result =  routeService.deleteRoute(routeId,0);
+        String s = new Gson().toJson(result);
+        LOGGER.info("Controller: AdminController, out from deleteCityById method,  result: " + s);
+        return s;
+    }
+
+
     @RequestMapping(value = "/adminmainpagegoogle", method = RequestMethod.GET)
     public String getGoogleMap(){
         return "/admin/adminmainpagegoogle";

@@ -18,6 +18,7 @@ public class UserDTO {
     private String currentCityName;
     private String currentTruckRegistrationNumber;
     private String orderId;
+    private String orderDescription;
 
 
 
@@ -37,6 +38,30 @@ public class UserDTO {
         this.currentCityName = currentCityName;
         this.currentTruckRegistrationNumber = currentTruckRegistrationNumber;
         this.orderId = orderId;
+    }
+
+    public UserDTO(String id, String firstName, String middleName, String lastName, String personalNumber, String password, String role, String hoursWorked, String driverStatus, String currentCityName, String currentTruckRegistrationNumber, String orderId, String orderDescription) {
+        this.id = id;
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        this.personalNumber = personalNumber;
+        this.password = password;
+        this.role = role;
+        this.hoursWorked = hoursWorked;
+        this.driverStatus = driverStatus;
+        this.currentCityName = currentCityName;
+        this.currentTruckRegistrationNumber = currentTruckRegistrationNumber;
+        this.orderId = orderId;
+        this.orderDescription = orderDescription;
+    }
+
+    public String getOrderDescription() {
+        return orderDescription;
+    }
+
+    public void setOrderDescription(String orderDescription) {
+        this.orderDescription = orderDescription;
     }
 
     public String getRole() {

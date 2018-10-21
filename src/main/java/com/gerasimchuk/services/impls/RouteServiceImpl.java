@@ -265,4 +265,21 @@ public class RouteServiceImpl implements RouteService {
         LOGGER.info("Route id = " + routeId + "deleted successfully.");
         return true;
     }
+
+    @Override
+    public UpdateMessageType deleteRoute(int routeId, int val) {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: deleteRoute");
+        if (routeId <= 0) {
+            LOGGER.error("Error: routeId value is not valid (id = " + routeId + ").");
+            return UpdateMessageType.ERROR_ROUTE_ID_IS_NOT_VALID;
+        }
+        Route deleted = routeRepository.getById(routeId);
+        if (deleted == null){
+            LOGGER.error("Error: there is no route with id = " + routeId + " in database.");
+            return UpdateMessageType.ERROR_NO_ROUTE_WITH_THIS_ID;
+        }
+        routeRepository.remove(routeId);
+        LOGGER.info("Route id = " + routeId + "deleted successfully.");
+        return UpdateMessageType.ROUTE_DELETED;
+    }
 }

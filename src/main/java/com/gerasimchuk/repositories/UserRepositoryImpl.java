@@ -5,11 +5,13 @@ import com.gerasimchuk.entities.Driver;
 import com.gerasimchuk.entities.Manager;
 import com.gerasimchuk.entities.User;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.List;
 
 /** Implementation of {@link UserRepository} interface
  * @author Reaper
@@ -134,5 +136,31 @@ public class UserRepositoryImpl implements UserRepository {
         User removed = sessionFactory.getCurrentSession().get(User.class,id);
         sessionFactory.getCurrentSession().remove(removed);
         LOGGER.info("Removed user: id = " + removed.getId() + ", personal number = " + removed.getPersonalNumber());
+    }
+
+    @Override
+    @Transactional
+    public Collection<User> getUsersForOnePage(int pageSize, int pageNumber) {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getUsersForOnePage()");
+        if (pageSize == 0) {
+            LOGGER.error("Class: " + this.getClass().getName() + " method: getUsersForOnePage() error: pageSize = 0");
+            return null;
+        }
+        int recordsNum = ((Long)sessionFactory.getCurrentSession().createQuery("select count(*) from Users").uniqueResult()).intValue();
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getUsersForOnePage(), recordsNum = " + recordsNum);
+        int pagesNum = recordsNum/pageSize;
+        if (recordsNum%pageSize !=0) pagesNum +=1;
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getUsersForOnePage(), pagesNum = " + pagesNum);
+        if (pageNumber > pagesNum-1){
+            LOGGER.error("Class: " + this.getClass().getName() + " method: getUsersForOnePage() error: page number > total number of pages.");
+            return null;
+        }
+        String query = "select * from Trucks desc " + pageSize ;
+        //String testQuery = "select * from Orders limit 0,2"; /// + pageNumber*pageSize + "," + pageSize ;
+        Query q = sessionFactory.getCurrentSession().createQuery("from Users");
+        q.setFirstResult(pageNumber*pageSize);
+        q.setMaxResults(pageSize);
+        List<User> res = (List<User>)q.list();
+        return res;
     }
 }
