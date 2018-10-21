@@ -247,276 +247,293 @@
                 </div>
                 <input id="currentTruckPage" value="0" hidden>
   			</div>
-  			<%--<div id="manageusers" class="tab-pane fade">--%>
-    				<%--<div class = "sticky-top">--%>
-						<%--<form action="${pageContext.request.contextPath}/addnewuserpage" method="get">--%>
-							<%--<h3>Users <button class = "btn btn-primary" type = "submit">Add new</button></h3>--%>
-						<%--</form>--%>
-				<%--<div><input class="form-control" id="myInput3" type="text" placeholder="Search.."></div>--%>
-				<%--</div>--%>
-				<%--<div>--%>
-					<%--<table id="myTable3" class="table table-bordered table-active table-hover">--%>
-    						<%--<thead>--%>
-      							<%--<tr>--%>
-									<%--<th></th>--%>
-									<%--<th></th>--%>
-        							<%--<th>First name</th>--%>
-        							<%--<th>Middle name</th>--%>
-									<%--<th>Last name</th>--%>
-									<%--<th>Personal number</th>--%>
-        							<%--<th>Role</th>--%>
-      							<%--</tr>--%>
-						<%--</thead>	--%>
-						<%--<tbody>--%>
-						<%--<c:if test="${usersList != null}">--%>
-                            <%--<c:forEach items="${usersList}" var="user">--%>
-                                <%--<tr>--%>
-                                    <%--<td>--%>
-                                        <%--<form action="${pageContext.request.contextPath}/adminmainpage/5" method="post" >--%>
-                                            <%--<button type="submit" class="btn btn-primary">Edit</button>--%>
-                                            <%--<input type="text" hidden name="id" value="${user.id}">--%>
-                                        <%--</form>--%>
-                                    <%--</td>--%>
-									<%--<td>--%>
-										<%--<form action="${pageContext.request.contextPath}/adminmainpage/6" method="post" >--%>
-											<%--<button type="submit" class="btn btn-danger">Delete</button>--%>
-                                            <%--<input type="text" hidden name="id" value="${user.id}">--%>
-										<%--</form>--%>
-									<%--</td>--%>
-                                    <%--<td>${user.name}</td>--%>
-                                    <%--<td>${user.middleName}</td>--%>
-                                    <%--<td>${user.lastName}</td>--%>
-                                    <%--<td>${user.personalNumber}</td>--%>
+  			<div id="manageusers" class="tab-pane fade">
+    				<div class = "sticky-top">
+						<form action="${pageContext.request.contextPath}/addnewuserpage" method="get">
+							<h3>Users <button class = "btn btn-primary" type = "submit">Add new</button></h3>
+						</form>
+				<div><input class="form-control" id="myInput3" type="text" placeholder="Search.."></div>
+				</div>
+				<div>
+					<table id="myTable3" class="table table-bordered table-active table-hover">
+    						<thead>
+      							<tr>
+									<th></th>
+									<th></th>
+        							<th>First name</th>
+        							<th>Middle name</th>
+									<th>Last name</th>
+									<th>Personal number</th>
+        							<th>Role</th>
+									<th>Hour worked</th>
+									<th>Driver status</th>
+									<th>Current city</th>
+									<th>Current truck</th>
+									<th>Current order</th>
+      							</tr>
+						</thead>
+						<tbody>
+						<c:if test="${usersPgntd != null}">
+                            <c:forEach items="${usersPgntd}" var="user">
+                                <tr>
+                                    <td>
+                                        <form action="${pageContext.request.contextPath}/adminmainpage/5" method="post" >
+                                            <button type="submit" class="btn btn-primary">Edit</button>
+                                            <input type="text" hidden name="id" value="${user.id}">
+                                        </form>
+                                    </td>
+									<td>
+										<form action="#"  >
+											<button type="submit" class="btn btn-danger" onclick="deleteUser(${user.id})">Delete</button>
+                                            <input type="text" hidden name="id" value="${user.id}">
+										</form>
+									</td>
+                                    <td>${user.firstName}</td>
+                                    <td>${user.middleName}</td>
+                                    <td>${user.lastName}</td>
+                                    <td>${user.personalNumber}</td>
+									<td>${user.role}</td>
+									<td>${user.hoursWorked}</td>
+									<td>${user.driverStatus}</td>
+									<td>${user.currentCityName}</td>
+									<td>${user.currentTruckRegistrationNumber}</td>
+									<td>${user.orderDescription}</td>
+                                </tr>
+                            </c:forEach>
+						</c:if>
+						</tbody>
+    					</table>
+				</div>
+				<div align="center">
+					<button id="showMoreUsersBtn" class="btn btn-primary" type="button" value="Show more trucks" onclick="showMoreUsers()">Show more users</button>
+				</div>
+				<input id="currentUserPage" value="0" hidden>
+  			</div>
+			<div id="managecargos" class="tab-pane fade">
+				<div class = "sticky-top">
+					<form action="${pageContext.request.contextPath}/addnewcargopage" method="get">
+						<h3>Cargos <button class = "btn btn-primary" type="submit">Add new</button></h3>
+					</form>
+				<div><input class="form-control" id="myInput4" type="text" placeholder="Search.."></div>
+				</div>
+				<div>
+					<table id="myTable4" class="table table-bordered table-active table-hover">
+    						<thead>
+      							<tr>
+									<th></th>
+									<th></th>
+									<th>Item Id</th>
+        							<th>Name</th>
+        							<th>Weight</th>
+									<th>City from</th>
+									<th>City to</th>
+									<th>Status</th>
+      							</tr>
+						</thead>
+						<tbody>
+						<c:if test="${cargosPgntd != null}">
+							<c:forEach items="${cargosPgntd}" var="cell">
+								<tr>
+									<td>
+										<form action="${pageContext.request.contextPath}/adminmainpage/7" method="post" >
+											<button type="submit" class="btn btn-primary">Edit</button>
+												<input type="text" hidden name="id" value="${cell.id}">
+										</form>
+									</td>
+									<td>
+										<form action="#" >
+											<button type="submit" class="btn btn-danger" onclick="deleteCargo(${cell.id})">Delete</button>
+                                            <input type="text" hidden name="id" value="${cell.id}">
+										</form>
+									</td>
+									<td>${cell.personalNumber}</td>
+									<td>${cell.name}</td>
+									<td>${cell.weight}</td>
+									<td>${cell.cityFrom}</td>
+									<td>${cell.cityTo}</td>
+									<td>${cell.status}</td>
+								</tr>
+							</c:forEach>
+						</c:if>
+						</tbody>
+    					</table>
+				</div>
+				<div align="center">
+					<button id="showMoreCargosBtn" class="btn btn-primary" type="button" value="Show more cargos" onclick="showMoreCargos()">Show more cargos</button>
+				</div>
+				<input id="currentCargoPage" value="0" hidden>
+  			</div>
+			 <div id="managecities" class="tab-pane fade">
+				 <div class = "sticky-top">
+					 <form action="${pageContext.request.contextPath}/addnewcitypage" method="get">
+						 <h3>Cities <button class = "btn btn-primary" type = "submit">Add new</button></h3>
+					 </form>
+					 <div><input class="form-control" id="myInput5" type="text" placeholder="Search.."></div>
+				 </div>
+				 <div>
+					 <table id="myTable5" class="table table-bordered table-active table-hover">
+						 <thead>
+						 <tr>
+							 <th></th>
+							 <th></th>
+							 <th>Name</th>
+							 <th>Has agency</th>
+							 <th>Drivers in city</th>
+							 <th>Trucks in city</th>
+						 </tr>
+						 </thead>
+						 <tbody>
+						 <c:forEach items="${citiesPgntd}" var="city">
+						 <tr>
+							 <td>
+								 <form action="${pageContext.request.contextPath}/adminmainpage/9" method="post" >
+									 <button type="submit" class="btn btn-primary">Edit</button>
+									 <input type="text" hidden name="id" value="${city.id}">
+								 </form>
+							 </td>
+							 <td>
+								 <form action="#" >
+									 <button type="submit" class="btn btn-danger" onclick="deleteCity(${city.id})">Delete</button>
+									 <input type="text" hidden name="id" value="${city.id}">
+								 </form>
+							 </td>
+							 <td>${city.name}</td>
+							 <td>${city.hasAgency}</td>
 
-									<%--<c:if test="${user.driver != null}">--%>
-                                    	<%--<td>DRIVER</td>--%>
-									<%--</c:if>--%>
-									<%--<c:if test="${user.manager != null}">--%>
-										<%--<td>MANAGER</td>--%>
-									<%--</c:if>--%>
-									<%--<c:if test="${user.admin != null}">--%>
-										<%--<td>ADMIN</td>--%>
-									<%--</c:if>--%>
-                                <%--</tr>--%>
-                            <%--</c:forEach>--%>
-						<%--</c:if>--%>
-						<%--</tbody>				--%>
-    					<%--</table>--%>
-				<%--</div>--%>
-  			<%--</div>--%>
-			<%--<div id="managecargos" class="tab-pane fade">--%>
-				<%--<div class = "sticky-top">--%>
-					<%--<form action="${pageContext.request.contextPath}/addnewcargopage" method="get">--%>
-						<%--<h3>Cargos <button class = "btn btn-primary" type="submit">Add new</button></h3>--%>
-					<%--</form>--%>
-				<%--<div><input class="form-control" id="myInput4" type="text" placeholder="Search.."></div>--%>
-				<%--</div>--%>
-				<%--<div>--%>
-					<%--<table id="myTable4" class="table table-bordered table-active table-hover">--%>
-    						<%--<thead>--%>
-      							<%--<tr>--%>
-									<%--<th></th>--%>
-									<%--<th></th>--%>
-									<%--<th>Item Id</th>--%>
-        							<%--<th>Name</th>--%>
-        							<%--<th>Weight</th>--%>
-									<%--<th>City from</th>--%>
-									<%--<th>City to</th>--%>
-									<%--<th>Status</th>--%>
-      							<%--</tr>--%>
-						<%--</thead>	--%>
-						<%--<tbody>--%>
-						<%--<c:if test="${cargoList != null}">--%>
-							<%--<c:forEach items="${cargoList}" var="cell">--%>
-								<%--<tr>--%>
-									<%--<td>--%>
-										<%--<form action="${pageContext.request.contextPath}/adminmainpage/7" method="post" >--%>
-											<%--<button type="submit" class="btn btn-primary">Edit</button>--%>
-												<%--<input type="text" hidden name="id" value="${cell.id}">--%>
-										<%--</form>--%>
-									<%--</td>--%>
-									<%--<td>--%>
-										<%--<form action="${pageContext.request.contextPath}/adminmainpage/8" method="post" >--%>
-											<%--<button type="submit" class="btn btn-danger">Delete</button>--%>
-                                            <%--<input type="text" hidden name="id" value="${cell.id}">--%>
-										<%--</form>--%>
-									<%--</td>--%>
-									<%--<td>${cell.personalNumber}</td>--%>
-									<%--<td>${cell.name}</td>--%>
-									<%--<td>${cell.weight}</td>--%>
-									<%--<td>${cell.route.cityFrom.name}</td>--%>
-									<%--<td>${cell.route.cityTo.name}</td>--%>
-									<%--<td>${cell.status}</td>--%>
-								<%--</tr>--%>
-							<%--</c:forEach>--%>
-						<%--</c:if>--%>
-						<%--</tbody>				--%>
-    					<%--</table>--%>
-				<%--</div>--%>
-  			<%--</div>--%>
-			 <%--<div id="managecities" class="tab-pane fade">--%>
-				 <%--<div class = "sticky-top">--%>
-					 <%--<form action="${pageContext.request.contextPath}/addnewcitypage" method="get">--%>
-						 <%--<h3>Cities <button class = "btn btn-primary" type = "submit">Add new</button></h3>--%>
-					 <%--</form>--%>
-					 <%--<div><input class="form-control" id="myInput5" type="text" placeholder="Search.."></div>--%>
-				 <%--</div>--%>
-				 <%--<div>--%>
-					 <%--<table id="myTable5" class="table table-bordered table-active table-hover">--%>
-						 <%--<thead>--%>
-						 <%--<tr>--%>
-							 <%--<th></th>--%>
-							 <%--<th></th>--%>
-							 <%--<th>Name</th>--%>
-							 <%--<th>Has agency</th>--%>
-							 <%--<th>Drivers in city</th>--%>
-							 <%--<th>Trucks in city</th>--%>
-						 <%--</tr>--%>
-						 <%--</thead>--%>
-						 <%--<tbody>--%>
-						 <%--<c:forEach items="${citiesList}" var="city">--%>
-						 <%--<tr>--%>
-							 <%--<td>--%>
-								 <%--<form action="${pageContext.request.contextPath}/adminmainpage/9" method="post" >--%>
-									 <%--<button type="submit" class="btn btn-primary">Edit</button>--%>
-									 <%--<input type="text" hidden name="id" value="${city.id}">--%>
-								 <%--</form>--%>
-							 <%--</td>--%>
-							 <%--<td>--%>
-								 <%--<form action="${pageContext.request.contextPath}/adminmainpage/10" method="post" >--%>
-									 <%--<button type="submit" class="btn btn-danger">Delete</button>--%>
-									 <%--<input type="text" hidden name="id" value="${city.id}">--%>
-								 <%--</form>--%>
-							 <%--</td>--%>
-							 <%--<td>${city.name}</td>--%>
-							 <%--<td>${city.hasAgency}</td>--%>
+							 <c:if test="${city.driversInCity != null}">
+								 <c:if test="${not empty city.driversInCity}">
+									 <td>
+										<div class="dropdown">
+											<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show drivers
+												<span class="caret"></span></button>
+											<ul class="dropdown-menu">
+												<c:forEach items="${city.driversInCity}" var="driver">
+													<li><a href="#">${driver}</a></li>
+												</c:forEach>
+											</ul>
+										</div>
+									</td>
+								 </c:if>
+								 <c:if test="${empty city.driversInCity}">
+									 <td>
+										 <div class="dropdown">
+											 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show drivers
+												 <span class="caret"></span></button>
+											 <ul class="dropdown-menu">
+													 <li><a href="#">No drivers in city</a></li>
+											 </ul>
+										 </div>
+									 </td>
+								 </c:if>
+							 </c:if>
+							 <c:if test="${city.driversInCity == null}">
+								 <td>
+									 <div class="dropdown">
+										 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show drivers
+											 <span class="caret"></span></button>
+										 <ul class="dropdown-menu">
+												 <li><a href="#">No drivers in city</a></li>
+										 </ul>
+									 </div>
+								 </td>
+							 </c:if>
 
-							 <%--<c:if test="${city.driversInCity != null}">--%>
-								 <%--<c:if test="${not empty city.driversInCity}">--%>
-									 <%--<td>--%>
-										<%--<div class="dropdown">--%>
-											<%--<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show drivers--%>
-												<%--<span class="caret"></span></button>--%>
-											<%--<ul class="dropdown-menu">--%>
-												<%--<c:forEach items="${city.driversInCity}" var="driver">--%>
-													<%--<li><a href="#">${driver.user.name} ${driver.user.middleName} ${driver.user.lastName}</a></li>--%>
-												<%--</c:forEach>--%>
-											<%--</ul>--%>
-										<%--</div>--%>
-									<%--</td>--%>
-								 <%--</c:if>--%>
-								 <%--<c:if test="${empty city.driversInCity}">--%>
-									 <%--<td>--%>
-										 <%--<div class="dropdown">--%>
-											 <%--<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show drivers--%>
-												 <%--<span class="caret"></span></button>--%>
-											 <%--<ul class="dropdown-menu">--%>
-													 <%--<li><a href="#">No drivers in city</a></li>--%>
-											 <%--</ul>--%>
-										 <%--</div>--%>
-									 <%--</td>--%>
-								 <%--</c:if>--%>
-							 <%--</c:if>--%>
-							 <%--<c:if test="${city.driversInCity == null}">--%>
-								 <%--<td>--%>
-									 <%--<div class="dropdown">--%>
-										 <%--<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show drivers--%>
-											 <%--<span class="caret"></span></button>--%>
-										 <%--<ul class="dropdown-menu">--%>
-												 <%--<li><a href="#">No drivers in city</a></li>--%>
-										 <%--</ul>--%>
-									 <%--</div>--%>
-								 <%--</td>--%>
-							 <%--</c:if>--%>
-
-							 <%--<c:if test="${city.trucksInCity != null}">--%>
-								 <%--<c:if test="${not empty city.trucksInCity}">--%>
-									 <%--<td>--%>
-										 <%--<div class="dropdown">--%>
-											 <%--<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show trucks--%>
-												 <%--<span class="caret"></span></button>--%>
-											 <%--<ul class="dropdown-menu">--%>
-												 <%--<c:forEach items="${city.trucksInCity}" var="truck">--%>
-													 <%--<li><a href="#">${truck.registrationNumber}</a></li>--%>
-												 <%--</c:forEach>--%>
-											 <%--</ul>--%>
-										 <%--</div>--%>
-									 <%--</td>--%>
-								 <%--</c:if>--%>
-								 <%--<c:if test="${empty city.trucksInCity}">--%>
-									 <%--<td>--%>
-										 <%--<div class="dropdown">--%>
-											 <%--<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show trucks--%>
-												 <%--<span class="caret"></span></button>--%>
-											 <%--<ul class="dropdown-menu">--%>
-												 <%--<li><a href="#">No trucks in city</a></li>--%>
-											 <%--</ul>--%>
-										 <%--</div>--%>
-									 <%--</td>--%>
-								 <%--</c:if>--%>
-							 <%--</c:if>--%>
-							 <%--<c:if test="${city.trucksInCity == null}">--%>
-								 <%--<td>--%>
-									 <%--<div class="dropdown">--%>
-										 <%--<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show trucks--%>
-											 <%--<span class="caret"></span></button>--%>
-										 <%--<ul class="dropdown-menu">--%>
-											 <%--<li><a href="#">No trucks in city</a></li>--%>
-										 <%--</ul>--%>
-									 <%--</div>--%>
-								 <%--</td>--%>
-							 <%--</c:if>--%>
-						 <%--</tr>--%>
-						 <%--</c:forEach>--%>
-						 <%--</tbody>--%>
-					 <%--</table>--%>
-				 <%--</div>--%>
-			 <%--</div>--%>
-			 <%--<div id="manageroutes" class="tab-pane fade">--%>
-				 <%--<div class = "sticky-top">--%>
-					 <%--<form action="${pageContext.request.contextPath}/addnewroutepage" method="get">--%>
-						 <%--<h3>Routes <button class = "btn btn-primary" type = "submit">Add new</button></h3>--%>
-					 <%--</form>--%>
-					 <%--<div><input class="form-control" id="myInput6" type="text" placeholder="Search.."></div>--%>
-				 <%--</div>--%>
-				 <%--<div>--%>
-					 <%--<table id="myTable6" class="table table-bordered table-active table-hover">--%>
-						 <%--<thead>--%>
-						 <%--<tr>--%>
-							 <%--<th></th>--%>
-							 <%--<th></th>--%>
-							 <%--<th>City from</th>--%>
-							 <%--<th>City to</th>--%>
-							 <%--<th>Distance</th>--%>
-						 <%--</tr>--%>
-						 <%--</thead>--%>
-						 <%--<tbody>--%>
-						 <%--<c:if test="${routesList != null}">--%>
-							 <%--<c:forEach items="${routesList}" var="route">--%>
-								<%--<tr>--%>
-									<%--<td>--%>
-										<%--<form action="${pageContext.request.contextPath}/adminmainpage/11" method="post" >--%>
-											<%--<button type="submit" class="btn btn-primary">Edit</button>--%>
-											<%--<input type="text" hidden name="id" value="${route.id}">--%>
-										<%--</form>--%>
-									<%--</td>--%>
-									<%--<td>--%>
-										<%--<form action="${pageContext.request.contextPath}/adminmainpage/12" method="post" >--%>
-											<%--<button type="submit" class="btn btn-danger">Delete</button>--%>
-											<%--<input type="text" hidden name="id" value="${route.id}">--%>
-										<%--</form>--%>
-									<%--</td>--%>
-									<%--<td>${route.cityFrom.name}</td>--%>
-									<%--<td>${route.cityTo.name}</td>--%>
-									<%--<td>${route.distance}</td>--%>
-								<%--</tr>--%>
-							 <%--</c:forEach>--%>
-						 <%--</c:if>--%>
-						 <%--</tbody>--%>
-					 <%--</table>--%>
-				 <%--</div>--%>
-                 <%--<br>--%>
-                 <%--<br>--%>
+							 <c:if test="${city.trucksInCity != null}">
+								 <c:if test="${not empty city.trucksInCity}">
+									 <td>
+										 <div class="dropdown">
+											 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show trucks
+												 <span class="caret"></span></button>
+											 <ul class="dropdown-menu">
+												 <c:forEach items="${city.trucksInCity}" var="truck">
+													 <li><a href="#">${truck}</a></li>
+												 </c:forEach>
+											 </ul>
+										 </div>
+									 </td>
+								 </c:if>
+								 <c:if test="${empty city.trucksInCity}">
+									 <td>
+										 <div class="dropdown">
+											 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show trucks
+												 <span class="caret"></span></button>
+											 <ul class="dropdown-menu">
+												 <li><a href="#">No trucks in city</a></li>
+											 </ul>
+										 </div>
+									 </td>
+								 </c:if>
+							 </c:if>
+							 <c:if test="${city.trucksInCity == null}">
+								 <td>
+									 <div class="dropdown">
+										 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Show trucks
+											 <span class="caret"></span></button>
+										 <ul class="dropdown-menu">
+											 <li><a href="#">No trucks in city</a></li>
+										 </ul>
+									 </div>
+								 </td>
+							 </c:if>
+						 </tr>
+						 </c:forEach>
+						 </tbody>
+					 </table>
+				 </div>
+				 <div align="center">
+					 <button id="showMoreCitiesBtn" class="btn btn-primary" type="button" value="Show more cities" onclick="showMoreCities()">Show more cities</button>
+				 </div>
+				 <input id="currentCityPage" value="0" hidden>
+			 </div>
+			 <div id="manageroutes" class="tab-pane fade">
+				 <div class = "sticky-top">
+					 <form action="${pageContext.request.contextPath}/addnewroutepage" method="get">
+						 <h3>Routes <button class = "btn btn-primary" type = "submit">Add new</button></h3>
+					 </form>
+					 <div><input class="form-control" id="myInput6" type="text" placeholder="Search.."></div>
+				 </div>
+				 <div>
+					 <table id="myTable6" class="table table-bordered table-active table-hover">
+						 <thead>
+						 <tr>
+							 <th></th>
+							 <th></th>
+							 <th>City from</th>
+							 <th>City to</th>
+							 <th>Distance</th>
+						 </tr>
+						 </thead>
+						 <tbody>
+						 <c:if test="${routesPgntd != null}">
+							 <c:forEach items="${routesPgntd}" var="route">
+								<tr>
+									<td>
+										<form action="${pageContext.request.contextPath}/adminmainpage/11" method="post" >
+											<button type="submit" class="btn btn-primary">Edit</button>
+											<input type="text" hidden name="id" value="${route.id}">
+										</form>
+									</td>
+									<td>
+										<form action="#" >
+											<button type="submit" class="btn btn-danger" onclick="deleteRoute(${route.id})">Delete</button>
+											<input type="text" hidden name="id" value="${route.id}">
+										</form>
+									</td>
+									<td>${route.cityFrom}</td>
+									<td>${route.cityTo}</td>
+									<td>${route.distance}</td>
+								</tr>
+							 </c:forEach>
+						 </c:if>
+						 </tbody>
+					 </table>
+				 </div>
+                 <div align="center">
+                     <button id="showMoreRoutesBtn" class="btn btn-primary" type="button" value="Show more cities" onclick="showMoreRoutes()">Show more cities</button>
+                 </div>
+                 <input id="currentRoutePage" value="0" hidden>
+                 <br>
+                 <br>
 			 </div>
 		</div>
 

@@ -39,4 +39,7 @@ public interface UserRepository {
     Collection<User> getAll();
 
     void remove(int id);
+
+
+    Collection<User> getUsersForOnePage(int size, int pageNumber);
 }

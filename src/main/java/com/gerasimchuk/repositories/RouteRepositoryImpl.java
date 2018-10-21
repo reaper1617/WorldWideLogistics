@@ -3,11 +3,13 @@ package com.gerasimchuk.repositories;
 import com.gerasimchuk.entities.City;
 import com.gerasimchuk.entities.Route;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.List;
 
 /** Implementation of {@link RouteRepository} interface
  * @author Reaper
@@ -88,5 +90,31 @@ public class RouteRepositoryImpl implements RouteRepository {
         Route removed = sessionFactory.getCurrentSession().get(Route.class,id);
         sessionFactory.getCurrentSession().remove(removed);
         LOGGER.info("URemoved route: id = " + removed.getId() +  ", from " + removed.getCityFrom().getName() + " to" + removed.getCityTo().getName() + ", distance = " + removed.getDistance());
+    }
+
+    @Override
+    @Transactional
+    public Collection<Route> getRoutesForOnePage(int pageSize, int pageNumber) {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getRoutesForOnePage()");
+        if (pageSize == 0) {
+            LOGGER.error("Class: " + this.getClass().getName() + " method: getRoutesForOnePage() error: pageSize = 0");
+            return null;
+        }
+        int recordsNum = ((Long)sessionFactory.getCurrentSession().createQuery("select count(*) from Routes").uniqueResult()).intValue();
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getRoutesForOnePage(), recordsNum = " + recordsNum);
+        int pagesNum = recordsNum/pageSize;
+        if (recordsNum%pageSize !=0) pagesNum +=1;
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getRoutesForOnePage(), pagesNum = " + pagesNum);
+        if (pageNumber > pagesNum-1){
+            LOGGER.error("Class: " + this.getClass().getName() + " method: getRoutesForOnePage() error: page number > total number of pages.");
+            return null;
+        }
+        String query = "select * from Routes desc " + pageSize ;
+        //String testQuery = "select * from Orders limit 0,2"; /// + pageNumber*pageSize + "," + pageSize ;
+        Query q = sessionFactory.getCurrentSession().createQuery("from Routes");
+        q.setFirstResult(pageNumber*pageSize);
+        q.setMaxResults(pageSize);
+        List<Route> res = (List<Route>)q.list();
+        return res;
     }
 }

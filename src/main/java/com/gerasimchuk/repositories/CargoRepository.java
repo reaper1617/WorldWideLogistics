@@ -14,4 +14,6 @@ public interface CargoRepository {
     Cargo getById(int id);
     Collection<Cargo> getAll();
     void remove(int id);
+
+    Collection<Cargo> getCargosForOnePage(int size, int pageNumber);
 }

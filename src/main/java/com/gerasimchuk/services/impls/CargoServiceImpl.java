@@ -6,6 +6,7 @@ import com.gerasimchuk.entities.Cargo;
 import com.gerasimchuk.entities.City;
 import com.gerasimchuk.entities.Route;
 import com.gerasimchuk.enums.CargoStatus;
+import com.gerasimchuk.enums.UpdateMessageType;
 import com.gerasimchuk.repositories.CargoRepository;
 import com.gerasimchuk.repositories.CityRepository;
 import com.gerasimchuk.repositories.RouteRepository;
@@ -127,6 +128,27 @@ public class CargoServiceImpl implements CargoService {
         cargoRepository.remove(cargoId);
         LOGGER.info("Cargo id = " + deleted.getId() + ", name = " + deleted.getName() + " deleted successfully");
         return true;
+    }
+
+    @Override
+    public UpdateMessageType deleteCargo(int cargoId, int val) {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: deleteCargo");
+        if (cargoId <= 0) {
+            LOGGER.error("Error: cargoId is not valid.");
+            return UpdateMessageType.ERROR_CAN_NOT_PARSE_CARGO_ID;
+        }
+        Cargo deleted = cargoRepository.getById(cargoId);
+        if (deleted == null) {
+            LOGGER.error("Error: there is no cargo with this id in database.");
+            return UpdateMessageType.ERROR_NO_CARGO_WITH_THIS_ID;
+        }
+        if (!deleted.getStatus().equals(CargoStatus.PREPARED)){
+            LOGGER.error("Error: cannot delete cargo which status is already " + deleted.getStatus());
+            return UpdateMessageType.ERROR_CAN_NOT_DELETE_CARGO_WITH_SUCH_STATUS;
+        }
+        cargoRepository.remove(cargoId);
+        LOGGER.info("Cargo id = " + deleted.getId() + ", name = " + deleted.getName() + " deleted successfully");
+        return UpdateMessageType.CARGO_DELETED;
     }
 
     public Collection<Cargo> getAvailableCargos() {

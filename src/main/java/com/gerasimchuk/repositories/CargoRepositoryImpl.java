@@ -5,11 +5,13 @@ import com.gerasimchuk.entities.Order;
 import com.gerasimchuk.entities.Route;
 import com.gerasimchuk.enums.CargoStatus;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.List;
 
 /** Implementation of {@link CargoRepository} interface
  * @author Reaper
@@ -88,5 +90,31 @@ public class CargoRepositoryImpl implements CargoRepository {
         Cargo removed = sessionFactory.getCurrentSession().get(Cargo.class,id);
         sessionFactory.getCurrentSession().remove(removed);
         LOGGER.info("Removed cargo: " + removed.getName());
+    }
+
+    @Override
+    @Transactional
+    public Collection<Cargo> getCargosForOnePage(int pageSize, int pageNumber) {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getCargosForOnePage()");
+        if (pageSize == 0) {
+            LOGGER.error("Class: " + this.getClass().getName() + " method: getCargosForOnePage() error: pageSize = 0");
+            return null;
+        }
+        int recordsNum = ((Long)sessionFactory.getCurrentSession().createQuery("select count(*) from Cargos").uniqueResult()).intValue();
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getCargosForOnePage(), recordsNum = " + recordsNum);
+        int pagesNum = recordsNum/pageSize;
+        if (recordsNum%pageSize !=0) pagesNum +=1;
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getCargosForOnePage(), pagesNum = " + pagesNum);
+        if (pageNumber > pagesNum-1){
+            LOGGER.error("Class: " + this.getClass().getName() + " method: getCargosForOnePage() error: page number > total number of pages.");
+            return null;
+        }
+        String query = "select * from Cargos desc " + pageSize ;
+        //String testQuery = "select * from Orders limit 0,2"; /// + pageNumber*pageSize + "," + pageSize ;
+        Query q = sessionFactory.getCurrentSession().createQuery("from Cargos");
+        q.setFirstResult(pageNumber*pageSize);
+        q.setMaxResults(pageSize);
+        List<Cargo> res = (List<Cargo>)q.list();
+        return res;
     }
 }

@@ -11,4 +11,6 @@ public interface CityRepository {
     City getByName(String name);
     Collection<City> getAll();
     void remove(int id);
+
+    Collection<City> getCitiesForOnePage(int size, int pageNumber);
 }

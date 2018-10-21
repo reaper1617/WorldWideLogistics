@@ -3,6 +3,7 @@ package com.gerasimchuk.services.impls;
 
 import com.gerasimchuk.dto.CityDTO;
 import com.gerasimchuk.entities.City;
+import com.gerasimchuk.enums.UpdateMessageType;
 import com.gerasimchuk.repositories.CityRepository;
 import com.gerasimchuk.services.interfaces.CityService;
 import com.gerasimchuk.validators.DTOValidator;
@@ -94,5 +95,29 @@ public class CityServiceImpl implements CityService {
         cityRepository.remove(cityId);
         LOGGER.info("City " + city.getName() + " successfully deleted.");
         return true;
+    }
+
+    @Override
+    public UpdateMessageType deleteCity(int cityId, int val) {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: deleteCity");
+        if (cityId <= 0){
+            LOGGER.error("Error: id value is invalid.(id = " + cityId + ")");
+            return UpdateMessageType.ERROR_CAN_NOT_PARSE_CITY_ID;
+        }
+        City city = cityRepository.getById(cityId);
+        if (city == null) {
+            LOGGER.error("Error: no city with id = " + cityId + " in database");
+            return UpdateMessageType.ERROR_NO_CITY_WITH_THIS_ID;
+        }
+        try {
+            cityRepository.remove(cityId);
+        }
+        catch (Exception e){
+            LOGGER.error("Class: " + this.getClass().getName() + " out from deleteCity method: catched exception: " + e.getMessage());
+            e.printStackTrace();
+            return UpdateMessageType.ERROR_THIS_CITY_USED_IN_ROUTES;
+        }
+        LOGGER.info("City " + city.getName() + " successfully deleted.");
+        return UpdateMessageType.CITY_DELETED;
     }
 }
