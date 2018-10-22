@@ -12,6 +12,7 @@ import com.gerasimchuk.repositories.CityRepository;
 import com.gerasimchuk.repositories.RouteRepository;
 import com.gerasimchuk.services.interfaces.CargoService;
 import com.gerasimchuk.utils.PersonalNumberGenerator;
+import com.gerasimchuk.utils.ReturnValuesContainer;
 import com.gerasimchuk.validators.DTOValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,6 +77,42 @@ public class CargoServiceImpl implements CargoService {
             return false;
         }
     }
+
+//    @Override
+//    public ReturnValuesContainer<Cargo> createCargo(CargoDTO cargoDTO, int val) {
+//        LOGGER.info("Class: " + this.getClass().getName() + " method: createCargo");
+//        if (!dtoValidator.validate(cargoDTO)) {
+//            LOGGER.error("Error: cargoDTO validation failed.");
+//            return new ReturnValuesContainer<Cargo>(UpdateMessageType.ERROR_CARGO_DTO_IS_NOT_VALID, null);
+//        }
+//        String personalNumber = PersonalNumberGenerator.generate(10);
+//        double weight = Double.parseDouble(cargoDTO.getWeight());
+//        CargoStatus status = CargoStatus.PREPARED;//getCargoStatusFromCargoDTO(cargoDTO);
+//        City cityFrom = cityRepository.getByName(cargoDTO.getCityFrom());
+//        City cityTo = cityRepository.getByName(cargoDTO.getCityTo());
+//        if (cityFrom == null) {
+//            LOGGER.error("Error: cityFrom is null.");
+//            return new ReturnValuesContainer<Cargo>(UpdateMessageType.ERROR_CITY_FROM_IS_NULL, null);
+//        }
+//        if (cityTo == null) {
+//            LOGGER.error("Error: cityTo is null.");
+//            return new ReturnValuesContainer<Cargo>(UpdateMessageType.ERROR_CITY_TO_IS_NULL, null);
+//        }
+//        if (cityFrom.getName().equals(cityTo.getName())){
+//            LOGGER.error("Error: cityFrom and cityTo are equal.");
+//            return new ReturnValuesContainer<Cargo>(UpdateMessageType.ERROR_CITY_FROM_EQUALS_CITY_TO, null);
+//        }
+//        Route route = routeRepository.getByCities(cityFrom,cityTo);
+//        if (route!=null){
+//            Cargo created = cargoRepository.create(personalNumber,cargoDTO.getName(),weight,status,route);
+//            LOGGER.info("Cargo id = " + created.getId() + ", name = " + created.getName() + "successfully created");
+//            return new ReturnValuesContainer<Cargo>(UpdateMessageType.CARGO_CREATED, created);
+//        }
+//        else {
+//            LOGGER.error("Error: route between cityFrom = " + cityFrom.getName() + " and cityTo = " + cityTo.getName() + " doesn't exist.");
+//            return new ReturnValuesContainer<Cargo>(UpdateMessageType.ERROR_NO_ROUTE_BETWEEN_THESE_CITIES, null);
+//        }
+//    }
 
     public boolean updateCargo(CargoDTO cargoDTO) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: updateCargo");

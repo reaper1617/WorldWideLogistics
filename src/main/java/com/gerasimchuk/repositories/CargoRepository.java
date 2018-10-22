@@ -12,6 +12,7 @@ public interface CargoRepository {
     Cargo update(int id,String personalNumber, String name, double weight, CargoStatus status, Route route);
     Cargo update(int id,String personalNumber, String name, double weight, CargoStatus status, Route route, Order order);
     Cargo getById(int id);
+    Cargo getByName(String name);
     Collection<Cargo> getAll();
     void remove(int id);
 
