@@ -11,13 +11,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
-	<style>
-		
-		.gradientbackgr{
-  			background: #fffff0;
-	 		background: radial-gradient(#0ed61f, #bfc2ff);
-		}
-	</style>
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/web/css/adminmainpage.css">
 </head>
 <body class="gradientbackgr">
 
@@ -26,23 +20,7 @@
 
 
 
-	<div class = "container-fluid">
-		<h2>Fixed-top container</h2>
- 		<nav class="nav nav-tabs bg-primary bg-light navbar-light fixed-top">
-			<a class="navbar-brand" href="${pageContext.request.contextPath}/drivermainpage/0">Driver account</a>
-			<!-- Nav tabs -->
-			<ul class="nav nav-tabs bg-primary bg-light navbar-light" role="tablist">
-                <form action="${pageContext.request.contextPath}/logout" method="get">
-    			    <li class="nav-item">
-      		      	    	<button type="submit" class="btn btn-primary">Log out</button>
-    			    </li>
-                </form>
-		       </ul>
-
-		</nav>
-
-
-	</div>
+	<jsp:include page="/WEB-INF/views/general/driverheader.jsp"/>
 	<br>
 	<div class = "container-fluid">
 		 <div>
@@ -263,21 +241,7 @@
 			<br>
 		</div>
 	</div>
-	<div class = "container-fluid ">
-		<nav class="nav nav-tabs bg-light navbar-light fixed-bottom">
-			<a class="navbar-brand" href="#">WorldWideLogistics</a>
-			<!-- Nav tabs -->
-			<ul class="nav nav-tabs bg-light navbar-light" role="tablist">
-			    <li class="nav-item">
-			    	<a class="nav-link active " data-toggle="tab" href="#home">Home</a>
-		    	    </li>
-			    <%--<li class="nav-item">--%>
-			    	<%--<a class="nav-link" data-toggle="tab" href="#about">About</a>--%>
- 			    <%--</li>--%>
-		       </ul>
-
-		</nav>
-	</div>
+	<jsp:include page="/WEB-INF/views/general/footer.jsp"/>
 	
 </div>
 

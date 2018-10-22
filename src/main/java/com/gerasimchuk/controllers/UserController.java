@@ -31,10 +31,10 @@ public class UserController {
         LOGGER.info("Controller: UserController, metod = defineUrlForLoggedUser");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.getByPersonalNumber(authentication.getName());
-//        if (user == null){
-//            LOGGER.error("User not authorized");
-//            return "redirect: /login";
-//        }
+        if (user == null){
+            LOGGER.error("User not authorized");
+            return "redirect: /login";
+        }
         if (user.getDriver() != null){
             LOGGER.info("Authorized user is driver");
             return "redirect: /drivermainpage/0";

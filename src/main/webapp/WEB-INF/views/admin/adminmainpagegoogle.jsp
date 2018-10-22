@@ -12,7 +12,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 
-
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/web/css/adminmainpage.css">
 
 	<style>
 		
@@ -39,26 +39,7 @@
 
 
 
-	<div class = "container-fluid">
-		<h2>Fixed-top container</h2>
- 		<nav class="nav nav-tabs bg-primary bg-light navbar-light fixed-top">
-			<a class="navbar-brand" href="${pageContext.request.contextPath}/adminmainpage/0">Admin account</a>
-			<!-- Nav tabs -->
-			<ul class="nav nav-tabs bg-primary bg-light navbar-light" role="tablist">
-				<li class="nav-item">
-					<a class="nav-link active" data-toggle="tab" href="#manageorders">Google view</a>
-				</li>
-				<form action="${pageContext.request.contextPath}/logout" method="get">
-					<li class="nav-item">
-							<button type="submit" class="btn btn-primary">Log out</button>
-					</li>
-				</form>
-		       </ul>
-
-		</nav>
-
-
-	</div>
+	<jsp:include page="/WEB-INF/views/general/adminheader.jsp"/>
 	<br>
 	<div class = "container-fluid">
 		 <h1>GOOGLE VIEW</h1>
@@ -68,21 +49,7 @@
 
 
 	</div>
-	<div class = "container-fluid ">
-		<nav class="nav nav-tabs bg-light navbar-light fixed-bottom">
-			<a class="navbar-brand" href="#">WorldWideLogistics</a>
-			<!-- Nav tabs -->
-			<ul class="nav nav-tabs bg-light navbar-light" role="tablist">
-			    <li class="nav-item">
-			    	<a class="nav-link active " data-toggle="tab" href="#home">Home</a>
-		    	    </li>
-			    <%--<li class="nav-item">--%>
-			    	<%--<a class="nav-link" data-toggle="tab" href="#about">About</a>--%>
- 			    <%--</li>--%>
-		       </ul>
-
-		</nav>
-	</div>
+	<jsp:include page="/WEB-INF/views/general/footer.jsp"/>
 	
 </div>
 
