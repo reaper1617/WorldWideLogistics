@@ -52,6 +52,8 @@ public enum UpdateMessageType {
     // trucks
     ERROR_NO_TRUCK_WITH_THIS_ID,
 
+    ERROR_TRUCK_HAS_NO_ASSIGNED_DRIVERS_TO_EXECUTE_ORDER,
+
     // cargos
     CARGO_DELETED,
     ERROR_CAN_NOT_PARSE_CARGO_ID,
