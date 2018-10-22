@@ -35,6 +35,10 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String personalNumber) throws UsernameNotFoundException {
         LOGGER.info("Class: " + this.getClass().getName() + " method: loadUserByUsername");
         User user = userRepository.getByPersonalNumber(personalNumber);
+        if (user == null){
+            LOGGER.error("Error: load user failed");
+            throw new UsernameNotFoundException("Error: user not found, input personal number is " + personalNumber);
+        }
         LOGGER.info("Loaded user: id = " + user.getId());
         String username = user.getPersonalNumber();
         String password = user.getPassword();
