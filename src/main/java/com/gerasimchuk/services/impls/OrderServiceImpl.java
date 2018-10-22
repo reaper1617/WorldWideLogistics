@@ -481,6 +481,10 @@ public class OrderServiceImpl implements OrderService {
         double orderExecutingTime = getExecutingTime(orderDTO);
         LOGGER.info("Order executing time = " + orderExecutingTime + " hours");
         Collection<Driver> driversInTruck = assignedTruck.getDriversInTruck();
+        if (driversInTruck == null || driversInTruck.isEmpty()){
+            LOGGER.error("Error: truck " + assignedTruck.getRegistrationNumber() + " has no assigned drivers to execute order.");
+            return new ReturnValuesContainer<Order>(UpdateMessageType.ERROR_TRUCK_HAS_NO_ASSIGNED_DRIVERS_TO_EXECUTE_ORDER, null);
+        }
         for(Driver d : driversInTruck){
             LOGGER.info("Driver: " + d.getUser().getPersonalNumber());
             double hoursWorked = d.getHoursWorked();
@@ -777,23 +781,23 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-    public Map<Order, Collection<City>> getRoutes(Collection<Order> orders) throws RouteException {
-        LOGGER.info("Class: " + this.getClass().getName() + " method: getRoutes");
-        if (orders == null){
-            LOGGER.error("Error: orders is null.");
-            return null;
-        }
-        Map<Order, Collection<City>> routes = new HashMap<Order, Collection<City>>();
-        for(Order o: orders){
-            LOGGER.info("Order " + o.getDescription());
-            OrderDTO orderDTO = OrderToDTOConverterImpl.convert(o);
-            Collection<City> route = getOrderRoute(orderDTO,o.getAssignedTruck());
-            LOGGER.info("Order route: " + route + ", siz = " + route.size());
-            routes.put(o,route);
-        }
-        LOGGER.info("RoutesCollection: " + routes + ", size = " + routes.size());
-        return routes;
-    }
+//    public Map<Order, Collection<City>> getRoutes(Collection<Order> orders) throws RouteException {
+//        LOGGER.info("Class: " + this.getClass().getName() + " method: getRoutes");
+//        if (orders == null){
+//            LOGGER.error("Error: orders is null.");
+//            return null;
+//        }
+//        Map<Order, Collection<City>> routes = new HashMap<Order, Collection<City>>();
+//        for(Order o: orders){
+//            LOGGER.info("Order " + o.getDescription());
+//            OrderDTO orderDTO = OrderToDTOConverterImpl.convert(o);
+//            Collection<City> route = getOrderRoute(orderDTO,o.getAssignedTruck());
+//            LOGGER.info("Order route: " + route + ", siz = " + route.size());
+//            routes.put(o,route);
+//        }
+//        LOGGER.info("RoutesCollection: " + routes + ", size = " + routes.size());
+//        return routes;
+//    }
 
 
     private double[][] makeDistancesMatrixForOrderRoute(Collection<City> citiesInOrderRoute) throws NullRouteException {
