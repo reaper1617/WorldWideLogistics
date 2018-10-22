@@ -858,6 +858,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/test/java/com/gerasimchuk/services/impls/CityServiceImplTest.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/test/java/com/gerasimchuk/services/impls/CustomUserDetailsServiceTest.java">
           <value>
             <set />
