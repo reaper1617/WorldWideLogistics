@@ -16,13 +16,7 @@
 	<%--<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/web/css/style.css" type="text/css" media="all" /> <!-- Style-CSS -->--%>
 
 
-	<style>
-		
-		.gradientbackgr{
-  			background: #fffff0;
-	 		background: radial-gradient(#0ed61f, #bfc2ff);
-		}
-	</style>
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/web/css/adminmainpage.css">
 </head>
 <body class="gradientbackgr">
 
@@ -31,35 +25,7 @@
 
 
 
-	<div class = "container-fluid">
-		<h2>Fixed-top container</h2>
- 		<nav class="nav nav-tabs bg-primary bg-light navbar-light fixed-top">
-			<a class="navbar-brand" href="${pageContext.request.contextPath}/adminmainpage/0">Manager account</a>
-			<!-- Nav tabs -->
-			<ul class="nav nav-tabs bg-primary bg-light navbar-light" role="tablist">
-			    <li class="nav-item">
-			    	<a class="nav-link active" data-toggle="tab" href="#home">Home</a>
-		    	    </li>
-			    <li class="nav-item">
-			    	<a class="nav-link" data-toggle="tab" href="#managetrucks">Manage trucks</a>
- 			    </li>
-			    <li class="nav-item">
-				 <a class="nav-link" data-toggle="tab" href="#managedrivers">Manage drivers</a>
-			    </li>   
-			    <li class="nav-item">
-				 <a class="nav-link" data-toggle="tab" href="#managecargos">Manage cargos</a>
-			    </li>
-                <form action="${pageContext.request.contextPath}/logout" method="get">
-    			    <li class="nav-item">
-      		      	    	<button type="submit" class="btn btn-primary" >Log out</button>
-    			    </li>
-                </form>
-		       </ul>
-
-		</nav>
-
-
-	</div>
+	<jsp:include page="/WEB-INF/views/general/managerheader.jsp"/>
 	<br>
 	<div class = "container-fluid">
 		 <div class="tab-content">
@@ -324,21 +290,7 @@
 
 		
 	</div>
-	<div class = "container-fluid ">
-		<nav class="nav nav-tabs bg-light navbar-light fixed-bottom">
-			<a class="navbar-brand" href="#">WorldWideLogistics</a>
-			<!-- Nav tabs -->
-			<ul class="nav nav-tabs bg-light navbar-light" role="tablist">
-			    <li class="nav-item">
-			    	<a class="nav-link active " data-toggle="tab" href="#home">Home</a>
-		    	    </li>
-			    <%--<li class="nav-item">--%>
-			    	<%--<a class="nav-link" data-toggle="tab" href="#about">About</a>--%>
- 			    <%--</li>--%>
-		       </ul>
-
-		</nav>
-	</div>
+	<jsp:include page="/WEB-INF/views/general/footer.jsp"/>
 	
 </div>
 

@@ -15,13 +15,7 @@
 	<%--<script src="resources/web/popper.js"></script>--%>
 	<%--<script src="resources/web/jquery-3.3.1.js"></script>--%>
 
-	<style>
-		
-		.gradientbackgr{
-  			background: #fffff0;
-	 		background: radial-gradient(#0ed61f, #bfc2ff);
-		}
-	</style>
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/web/css/adminmainpage.css">
 
 </head>
 <body class="gradientbackgr">
