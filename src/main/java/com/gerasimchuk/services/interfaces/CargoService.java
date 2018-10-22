@@ -4,6 +4,7 @@ import com.gerasimchuk.dto.CargoDTO;
 import com.gerasimchuk.entities.Cargo;
 import com.gerasimchuk.enums.CargoStatus;
 import com.gerasimchuk.enums.UpdateMessageType;
+import com.gerasimchuk.utils.ReturnValuesContainer;
 
 import java.util.Collection;
 
@@ -15,6 +16,7 @@ import java.util.Collection;
 public interface CargoService {
 
     boolean createCargo(CargoDTO cargoDTO);
+    //ReturnValuesContainer<Cargo> createCargo(CargoDTO cargoDTO, int val);
     boolean updateCargo(CargoDTO cargoDTO);
     boolean deleteCargo(int cargoId);
     UpdateMessageType deleteCargo(int cargoId, int val);

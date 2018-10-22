@@ -76,6 +76,16 @@ public class CargoRepositoryImpl implements CargoRepository {
         return res;
     }
 
+    @Override
+    @Transactional
+    public Cargo getByName(String name) {
+        Collection<Cargo> cargos = sessionFactory.getCurrentSession().createQuery("from Cargos", Cargo.class).getResultList();
+        for(Cargo c: cargos){
+            if (c.getName().equals(name)) return c;
+        }
+        return null;
+    }
+
     @Transactional
     public Collection<Cargo> getAll() {
         LOGGER.info("Class: " + this.getClass().getName() + " method: getAll");
