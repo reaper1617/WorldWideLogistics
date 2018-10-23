@@ -21,7 +21,6 @@ public class SecurityServiceImplTest {
     @Test
     public void findLoggedInUsername() {
         String name = securityService.findLoggedInUsername();
-        System.out.println(name);
         assertNull(name);
     }
 
