@@ -32,7 +32,9 @@
         <intercept-url pattern="/logged.jsp" access="isFullyAuthenticated()"/>
         <intercept-url pattern="/logout.jsp" access="isFullyAuthenticated()"/>
         <!--<intercept-url pattern="/**" access="isFullyAuthenticated()"/>-->
-        <intercept-url pattern="/rest/**" access="isAnonymous() or isFullyAuthenticated()"/>
+        <!--<intercept-url pattern="/rest/**" access="isAnonymous() or isFullyAuthenticated()"/>-->
+        <intercept-url pattern="/orders" access="isAnonymous() or isFullyAuthenticated()"/>
+        <intercept-url pattern="/stats" access="isAnonymous() or isFullyAuthenticated()"/>
         <intercept-url pattern="/adminmainpagegoogle.jsp" access="isFullyAuthenticated() or isAnonymous()"/>
         <intercept-url pattern="/gettoporders" access="isFullyAuthenticated() or isAnonymous()"/>
 
