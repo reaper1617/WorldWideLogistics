@@ -32,30 +32,31 @@ public class TruckServiceImplTest {
     @Autowired
     private TruckRepository truckRepository;
 
-    private static List<Truck> createdTrucks = new ArrayList<Truck>();
+//    private static List<Truck> createdTrucks = new ArrayList<Truck>();
     public TruckServiceImplTest() {
     }
 
-    @Before
-    public void setUp() throws Exception {
-        for(Truck t: createdTrucks){
-            truckRepository.remove(t.getId());
-        }
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        for(Truck t: createdTrucks){
-            truckRepository.remove(t.getId());
-        }
-    }
+//    @Before
+//    public void setUp() throws Exception {
+//        for(Truck t: createdTrucks){
+//            truckRepository.remove(t.getId());
+//        }
+//    }
+//
+//    @After
+//    public void tearDown() throws Exception {
+//        for(Truck t: createdTrucks){
+//            truckRepository.remove(t.getId());
+//        }
+//    }
 
     @Test
     public void createTruck() {
         TruckDTO truckDTO = new TruckDTO("","la48376","3","3","Ready","Moscow",null,null);
         UpdateMessageType result = truckService.createTruck(truckDTO);
         Truck created = truckRepository.getByRegistrationNumber("la48376");
-        createdTrucks.add(created);
+        //
+        truckRepository.remove(created.getId());
         assertEquals(UpdateMessageType.TRUCK_CREATED, result);
     }
 
@@ -64,9 +65,10 @@ public class TruckServiceImplTest {
         TruckDTO truckDTO = new TruckDTO("","lp48576","3","3","Ready","Moscow",null,null);
         UpdateMessageType result = truckService.createTruck(truckDTO);
         Truck created = truckRepository.getByRegistrationNumber("lp48576");
-        createdTrucks.add(created);
         TruckDTO updateTruckDTO = new TruckDTO(Integer.toString(created.getId()),"lp43336","4","4",null,"Moscow",null,null);
         UpdateMessageType res = truckService.updateTruck(updateTruckDTO);
+        //
+        truckRepository.remove(created.getId());
         assertEquals(UpdateMessageType.TRUCK_EDITED, res);
     }
 
