@@ -127,6 +127,24 @@ public class OrderRepositoryImpl implements OrderRepository {
         return res;
     }
 
+    @Override
+    @Transactional
+    public Collection<Order> getLastOrders(int numberOfOrders) {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: getLastOrders()");
+        if (numberOfOrders <= 0) {
+            LOGGER.info("Class: " + this.getClass().getName() + " out from getLastOrders() method: requested number of orders less or equals 0");
+            return null;
+        }
+        //String query = "select * from Orders where status != 'EXECUTED' limit " + size;
+        //String query = "select * from orders o where o.status != 'EXECUTED' limit " + size;
+        String query = "from Orders";
+        Query q = sessionFactory.getCurrentSession().createQuery(query);
+        q.setMaxResults(numberOfOrders);
+        List<Order> res =(List<Order>)(q.list());
+        LOGGER.info("Class: " + this.getClass().getName() + " out from getLastOrders(), result orders collection: " + res);
+        return res;
+    }
+
     @Transactional
     public void remove(int id) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: remove");

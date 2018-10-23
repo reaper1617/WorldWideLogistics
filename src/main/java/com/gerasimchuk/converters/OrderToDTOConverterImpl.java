@@ -14,6 +14,8 @@ import com.gerasimchuk.utils.OrderWithRoute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -125,6 +127,21 @@ public class OrderToDTOConverterImpl implements OrderToDTOConverter{
                 orderWithRouteDTO.getCargosInOrder(),
                 orderWithRouteDTO.getAssignedDrivers(),
                 orderWithRouteDTO.getRoute(), currentCity);
+    }
+
+    @Override
+    public Collection<OrderWithRouteDTO> convertToDTOWithRouteCollection(Collection<Order> orders) throws RouteException {
+        LOGGER.info("Class: " + this.getClass() + ", method: convertToDTOWithRouteCollection");
+        if (orders == null || orders.isEmpty()){
+            LOGGER.info("Class: " + this.getClass() + ", out from convertToDTOWithRouteCollection: input orders list is null or empty.");
+            return null;
+        }
+        Collection<OrderWithRouteDTO> orderWithRouteDTOS = new ArrayList<OrderWithRouteDTO>();
+        for(Order o: orders){
+            orderWithRouteDTOS.add(convertToDTOWithRoute(o));
+        }
+        LOGGER.info("Class: " + this.getClass() + ", out from convertToDTOWithRouteCollection: result collection: " + orderWithRouteDTOS);
+        return orderWithRouteDTOS;
     }
 
 
