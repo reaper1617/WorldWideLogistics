@@ -112,6 +112,7 @@ public class AdminController {
             ui.addAttribute("actionFailed","Error: access violation - user is not an admin");
             return "failure";
         }
+        ui.addAttribute("loggedUser", loggedUser);
         Collection<Cargo> cargos = cargoRepository.getAll();
         Collection<User> users = userRepository.getAll();
         Collection<Truck> trucks = truckRepository.getAll();
