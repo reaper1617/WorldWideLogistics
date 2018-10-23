@@ -1,9 +1,16 @@
 package com.gerasimchuk.services.impls;
 
 import com.gerasimchuk.entities.Driver;
+import com.gerasimchuk.entities.User;
 import com.gerasimchuk.enums.DriverStatus;
+import com.gerasimchuk.repositories.DriverRepository;
+import com.gerasimchuk.repositories.UserRepository;
 import com.gerasimchuk.services.interfaces.DriverService;
+import com.gerasimchuk.services.interfaces.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Collection;
 
 /** Implementation for {@link DriverService} interface
  * @author Reaper
@@ -13,6 +20,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DriverServiceImpl implements DriverService {
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private DriverRepository driverRepository;
+
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(DriverServiceImpl.class);
 
     public DriverStatus getDriverStatusValFromString(String status) {
@@ -35,4 +48,22 @@ public class DriverServiceImpl implements DriverService {
         }
         return result;
     }
+
+    @Override
+    public void updateDriverHoursWorked() {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: updateDriverHoursWorked");
+        Collection<User> driversWithoutOrders = userService.getFreeDrivers();
+        for(User user: driversWithoutOrders){
+            Driver d = user.getDriver();
+            driverRepository.update(d.getId(),0,d.getStatus(),d.getCurrentCity(),d.getCurrentTruck());
+        }
+        LOGGER.info("Class: " + this.getClass().getName() + " out from updateDriverHoursWorked method: all free drivers");
+    }
+
+//    @Override
+//    public void testShedule() {
+//        LOGGER.info("Sheduled! just for visibility of working sheduled method");
+//    }
+
+
 }
