@@ -11,4 +11,7 @@ import com.gerasimchuk.enums.DriverStatus;
 public interface DriverService {
 
     DriverStatus getDriverStatusValFromString(String status);
+    void updateDriverHoursWorked();
+
+//    void testShedule();
 }
