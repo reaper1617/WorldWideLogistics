@@ -34,16 +34,18 @@ public class OrderServiceImpl implements OrderService {
     private CityRepository cityRepository;
     private RouteRepository routeRepository;
     private DTOValidator dtoValidator;
+    private DriverRepository driverRepository;
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(OrderServiceImpl.class);
 
     @Autowired
-    public OrderServiceImpl(CargoRepository cargoRepository, TruckRepository truckRepository, OrderRepository orderRepository, CityRepository cityRepository, RouteRepository routeRepository, DTOValidator dtoValidator) {
+    public OrderServiceImpl(CargoRepository cargoRepository, TruckRepository truckRepository, OrderRepository orderRepository, CityRepository cityRepository, RouteRepository routeRepository, DTOValidator dtoValidator, DriverRepository driverRepository) {
         this.cargoRepository = cargoRepository;
         this.truckRepository = truckRepository;
         this.orderRepository = orderRepository;
         this.cityRepository = cityRepository;
         this.routeRepository = routeRepository;
         this.dtoValidator = dtoValidator;
+        this.driverRepository = driverRepository;
     }
 
     public Collection<Cargo> getChosenCargos(OrderDTO orderDTO) {
@@ -392,6 +394,10 @@ public class OrderServiceImpl implements OrderService {
         double orderExecutingTime = getExecutingTime(orderDTO);
         LOGGER.info("Order executing time = " + orderExecutingTime + " hours");
         Collection<Driver> driversInTruck = assignedTruck.getDriversInTruck();
+        if (driversInTruck == null || driversInTruck.isEmpty()){
+            LOGGER.error("Error: truck " + assignedTruck.getRegistrationNumber() + " has no assigned drivers to execute order.");
+            return UpdateMessageType.ERROR_TRUCK_HAS_NO_ASSIGNED_DRIVERS_TO_EXECUTE_ORDER;
+        }
         ReturnValuesContainer<List<Driver>> driversWithHoursOverLimit = checkIfDriversHoursWorkedOverLimit(orderExecutingTime, date, driversInTruck);
         if (!driversWithHoursOverLimit.getUpdateMessageType().equals(UpdateMessageType.ALL_DRIVERS_HOURS_WORKED_VALID)){
             LOGGER.error("Truck " + assignedTruck.getRegistrationNumber() + " has drivers with hours worked over limit: " + driversWithHoursOverLimit.getReturnedValue());
@@ -410,6 +416,14 @@ public class OrderServiceImpl implements OrderService {
                 LOGGER.info("Cargo successfully associated");
             }
             LOGGER.info("All cargos are assigned to order.");
+            LOGGER.info("Changing driver(s) status to RESTING...");
+
+            for(Driver d: driversInTruck){
+                LOGGER.info("Updating status for driver " + d.getUser().getPersonalNumber() + "...");
+                driverRepository.update(d.getId(),d.getHoursWorked(), DriverStatus.RESTING,d.getCurrentCity(),d.getCurrentTruck());
+                LOGGER.info("Status for driver " + d.getUser().getPersonalNumber() + " updated to RESTING successfully");
+            }
+            LOGGER.info("All drivers statuses are updated successfully");
             LOGGER.info("Order " + newOrder.getDescription() + " successfully created");
             return UpdateMessageType.ORDER_CREATED;
         }
@@ -512,6 +526,13 @@ public class OrderServiceImpl implements OrderService {
                 LOGGER.info("Cargo successfully associated");
             }
             LOGGER.info("All cargos are assigned to order.");
+            for(Driver d: driversInTruck){
+                LOGGER.info("Updating status for driver " + d.getUser().getPersonalNumber() + "...");
+                driverRepository.update(d.getId(),d.getHoursWorked(), DriverStatus.RESTING,d.getCurrentCity(),d.getCurrentTruck());
+                LOGGER.info("Status for driver " + d.getUser().getPersonalNumber() + " updated to RESTING successfully");
+            }
+            LOGGER.info("All drivers statuses are updated successfully");
+            LOGGER.info("Order " + newOrder.getDescription() + " successfully created");
             LOGGER.info("Order " + newOrder.getDescription() + " successfully created");
             return new ReturnValuesContainer<Order>(UpdateMessageType.ORDER_CREATED,newOrder);
         }
@@ -555,6 +576,44 @@ public class OrderServiceImpl implements OrderService {
         }
         LOGGER.error("Error: failed to update order.");
         return UpdateMessageType.ERROR_CAN_NOT_UPDATE_ORDER;
+    }
+
+    @Override
+    public ReturnValuesContainer<Order> updateOrder(OrderDTO orderDTO, int val) throws RouteException, TooManyHoursWorkedForOrderException {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: updateOrder");
+        if (!dtoValidator.validate(orderDTO)){
+            LOGGER.error("Error: orderDTO is not valid.");
+            return new ReturnValuesContainer<Order>(UpdateMessageType.ERROR_ORDER_DTO_IS_NOT_VALID, null);
+        }
+
+        if (orderDTO.getId() == null) {
+            LOGGER.error("Error: id field in orderDTO is null");
+            return new ReturnValuesContainer<Order>(UpdateMessageType.ERROR_ORDER_DTO_IS_NOT_VALID, null);
+        }
+        int id = 0;
+        try {
+            id = Integer.parseInt(orderDTO.getId());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            LOGGER.info("Error: cannot parse id value.");
+            return new ReturnValuesContainer<Order>(UpdateMessageType.ERROR_CAN_NOT_PARSE_ORDER_ID, null);
+        }
+        Order updated = null;
+        if (id != 0){
+            updated = orderRepository.getById(id);
+        }
+        else {
+            LOGGER.error("Error: id value is not valid (id = 0)");
+            return new ReturnValuesContainer<Order>(UpdateMessageType.ERROR_ID_IS_NOT_VALID,null);
+        }
+        if (updated != null){
+            updateOrderWithFieldsFromDTO(updated,orderDTO);
+            LOGGER.info("Order " + updated.getDescription() + " successfully updated");
+            return new ReturnValuesContainer<Order>(UpdateMessageType.ORDER_EDITED, updated);
+        }
+        LOGGER.error("Error: failed to update order.");
+        return new ReturnValuesContainer<Order>(UpdateMessageType.ERROR_CAN_NOT_UPDATE_ORDER, null);
     }
 
     //todo: refactor!!

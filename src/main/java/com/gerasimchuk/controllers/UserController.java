@@ -33,6 +33,7 @@ public class UserController {
         User user = userRepository.getByPersonalNumber(authentication.getName());
         if (user == null) {
             LOGGER.info("User not authorized; definedUrl is null");
+            return null;
         }
 //        if (user == null){
 //            LOGGER.error("User not authorized");
@@ -79,10 +80,9 @@ public class UserController {
         LOGGER.info("Controller: UserController, metod = login,  action = \"/login\", request = POST");
         if (error!=null){
             LOGGER.error("Login error during executing login method");
-            ui.addAttribute("actionFailed", "Login error during executing login method!");
+            ui.addAttribute("actionFailed", "Login error during executing login method!"); //todo: message about error while log in
             return "failure";
         }
-
         return "/login";
     }
 

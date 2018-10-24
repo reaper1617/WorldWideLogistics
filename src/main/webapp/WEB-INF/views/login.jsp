@@ -15,7 +15,7 @@
 	<%--<script src="resources/web/popper.js"></script>--%>
 	<%--<script src="resources/web/jquery-3.3.1.js"></script>--%>
 
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/web/css/adminmainpage.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/web/css/adminmainpage.css">
 
 </head>
 <body class="gradientbackgr">
@@ -48,6 +48,11 @@
 
 				<div>
     					<button type="submit" class="btn btn-primary">Login</button>
+				</div>
+				<div>
+					<c:if test="${messageFromServer != null}">
+						<h2>${messageFromServer}</h2>
+					</c:if>
 				</div>
   			</form>
 		</div>

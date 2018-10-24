@@ -57,13 +57,13 @@ public class StatisticServiceImpl implements StatisticService, JSONconvertable {
     @Override
     public String convertToJSONString() {
         StringBuilder result = new StringBuilder("{");
-        result.append("\"trucksTotal\":").append("\"").append(getNumOfTrucksTotal()).append("\"").append(",");
-        result.append("\"trucksFree\":").append("\"").append(getNumOfTrucksFree()).append("\"").append(",");
-        result.append("\"trucksNotReady\":").append("\"").append(getNumOfTrucksNotReady()).append("\"").append(",");
-        result.append("\"trucksExecOrders\":").append("\"").append(getNumOfTrucksNotReady()).append("\"").append(",");
-        result.append("\"driversTotal\":").append("\"").append(getNumOfDriversTotal()).append("\"").append(",");
-        result.append("\"driversFree\":").append("\"").append(getNumOfDriversFree()).append("\"").append(",");
-        result.append("\"driversExecOrders\":").append("\"").append(getNumOfDriversExecutingOrders()).append("\"").append("}");
+        result.append("\"numOfTrucksTotal\":").append("\"").append(getNumOfTrucksTotal()).append("\"").append(",");
+        result.append("\"numOfTrucksFree\":").append("\"").append(getNumOfTrucksFree()).append("\"").append(",");
+        result.append("\"numOfTrucksNotReady\":").append("\"").append(getNumOfTrucksNotReady()).append("\"").append(",");
+        result.append("\"numOfTrucksExecutingOrders\":").append("\"").append(getNumOfTrucksNotReady()).append("\"").append(",");
+        result.append("\"numOfDriversTotal\":").append("\"").append(getNumOfDriversTotal()).append("\"").append(",");
+        result.append("\"numOfDriversFree\":").append("\"").append(getNumOfDriversFree()).append("\"").append(",");
+        result.append("\"numOfDriversExecutingOrders\":").append("\"").append(getNumOfDriversExecutingOrders()).append("\"").append("}");
         return result.toString();
     }
 }

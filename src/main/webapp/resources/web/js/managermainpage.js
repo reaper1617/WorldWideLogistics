@@ -130,6 +130,12 @@ function showMessageIfTruckHasDriversHoursOverLimit() {
                 message += "\n" + "If you want to assign this truck you need to unassign unsuitable driver(s) first." + "\n";
                 alert(message);
             }
+            else{
+                if (arr.driversInTruck === 'empty'){
+                    var emptyDriversMessage = "\n" + "Warning: this truck is fit but has no assigned drivers. \n If you want to assign this truck you need assign suitable driver(s) first." + "\n";
+                    alert(emptyDriversMessage);
+                }
+            }
         }
     };
     req.open("GET", reqUrl, true);
