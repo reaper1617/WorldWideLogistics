@@ -57,6 +57,7 @@ public class DriverServiceImpl implements DriverService {
             Driver d = user.getDriver();
             driverRepository.update(d.getId(),0,d.getStatus(),d.getCurrentCity(),d.getCurrentTruck());
         }
+        // todo: rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.TRUCK_DELETED, statisticService));
         LOGGER.info("Class: " + this.getClass().getName() + " out from updateDriverHoursWorked method: all free drivers");
     }
 

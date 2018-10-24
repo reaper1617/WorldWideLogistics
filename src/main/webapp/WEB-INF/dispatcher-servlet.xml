@@ -23,8 +23,8 @@
 
 
     <task:scheduled-tasks>
-        <!--<task:scheduled ref="driverServiceImpl" method="updateDriverHoursWorked" cron="0 0 0 1 * *"/>-->
-        <task:scheduled ref="driverServiceImpl" method="updateDriverHoursWorked" cron="*/20 * * * * *"/>
+        <task:scheduled ref="driverServiceImpl" method="updateDriverHoursWorked" cron="0 0 0 1 * *"/>
+        <!--<task:scheduled ref="driverServiceImpl" method="updateDriverHoursWorked" cron="*/20 * * * * *"/>-->
         <!--<task:scheduled ref="driverServiceImpl" method="testShedule" cron="*/5 * * * * *"/>-->
     </task:scheduled-tasks>
     

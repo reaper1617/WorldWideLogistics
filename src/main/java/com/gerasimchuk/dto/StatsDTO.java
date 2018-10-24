@@ -3,7 +3,7 @@ package com.gerasimchuk.dto;
 public class StatsDTO {
     private int numOfTrucksTotal;
     private int numOfTrucksFree;
-    private int mumOfTrucksNotReady;
+    private int numOfTrucksNotReady;
     private int numOfTrucksExecutingOrders;
     private int numOfDriversTotal;
     private int numOfDriversFree;
@@ -12,10 +12,10 @@ public class StatsDTO {
     public StatsDTO() {
     }
 
-    public StatsDTO(int numOfTrucksTotal, int numOfTrucksFree, int mumOfTrucksNotReady, int numOfTrucksExecutingOrders, int numOfDriversTotal, int numOfDriversFree, int numOfDriversExecutingOrders) {
+    public StatsDTO(int numOfTrucksTotal, int numOfTrucksFree, int numOfTrucksNotReady, int numOfTrucksExecutingOrders, int numOfDriversTotal, int numOfDriversFree, int numOfDriversExecutingOrders) {
         this.numOfTrucksTotal = numOfTrucksTotal;
         this.numOfTrucksFree = numOfTrucksFree;
-        this.mumOfTrucksNotReady = mumOfTrucksNotReady;
+        this.numOfTrucksNotReady = numOfTrucksNotReady;
         this.numOfTrucksExecutingOrders = numOfTrucksExecutingOrders;
         this.numOfDriversTotal = numOfDriversTotal;
         this.numOfDriversFree = numOfDriversFree;
@@ -38,12 +38,12 @@ public class StatsDTO {
         this.numOfTrucksFree = numOfTrucksFree;
     }
 
-    public int getMumOfTrucksNotReady() {
-        return mumOfTrucksNotReady;
+    public int getNumOfTrucksNotReady() {
+        return numOfTrucksNotReady;
     }
 
-    public void setMumOfTrucksNotReady(int mumOfTrucksNotReady) {
-        this.mumOfTrucksNotReady = mumOfTrucksNotReady;
+    public void setNumOfTrucksNotReady(int numOfTrucksNotReady) {
+        this.numOfTrucksNotReady = numOfTrucksNotReady;
     }
 
     public int getNumOfTrucksExecutingOrders() {

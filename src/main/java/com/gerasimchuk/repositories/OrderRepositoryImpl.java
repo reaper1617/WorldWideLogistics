@@ -137,7 +137,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         }
         //String query = "select * from Orders where status != 'EXECUTED' limit " + size;
         //String query = "select * from orders o where o.status != 'EXECUTED' limit " + size;
-        String query = "from Orders";
+        String query = "from Orders o order by o.id desc"; // todo: desc
         Query q = sessionFactory.getCurrentSession().createQuery(query);
         q.setMaxResults(numberOfOrders);
         List<Order> res =(List<Order>)(q.list());

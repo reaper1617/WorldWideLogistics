@@ -29,6 +29,7 @@ public interface OrderService {
     UpdateMessageType createOrder(OrderDTO orderDTO) throws RouteException;
     ReturnValuesContainer<Order> createOrder(OrderDTO orderDTO, int val) throws RouteException;
     UpdateMessageType updateOrder(OrderDTO orderDTO) throws RouteException, TooManyHoursWorkedForOrderException;
+    ReturnValuesContainer<Order> updateOrder(OrderDTO orderDTO, int val) throws RouteException, TooManyHoursWorkedForOrderException;
     OrderStatus getOrderStatusFromString(String status);
     boolean areAllCargosDelivered(Order order);
     UpdateMessageType deleteOrder(OrderDTO orderDTO);

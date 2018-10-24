@@ -318,6 +318,10 @@ public class AdminController {
             LOGGER.error("Controller: AdminController, out from getDriversWithHoursWorkedOverLimit method: truck is null.");
             return null;
         }
+        if (t.getDriversInTruck() ==null || t.getDriversInTruck().isEmpty()){
+            LOGGER.error("Controller: AdminController, out from getDriversWithHoursWorkedOverLimit method: there are no assigned drivers.");
+            return "{\"result\":\"ok\", \"driversInTruck\":\"empty\"}";
+        }
         OrderDTO orderDTO = new OrderDTO(null,null,null,null,Integer.toString(truckId),vals);
         double orderExecutingTime = 0;
         try {
@@ -915,19 +919,19 @@ public class AdminController {
             ui.addAttribute("actionFailed", "Error: order Data Access object is empty");
             return "failure";
         }
-        UpdateMessageType result = null;
+        ReturnValuesContainer<Order> result = null;
         try {
-            result = orderService.updateOrder(orderDTO);
+            result = orderService.updateOrder(orderDTO,0);
         }
         catch (Exception e){
             LOGGER.error("Error: " + e.getMessage());
             ui.addAttribute("actionFailed", "Error: " + e.getMessage());
             return "failure";
         }
-        if (result.equals(UpdateMessageType.ORDER_EDITED)) {
+        if (result.getUpdateMessageType().equals(UpdateMessageType.ORDER_EDITED)) {
             LOGGER.info("Order successfully edited!");
             ui.addAttribute("actionSuccess", "Order successfully edited!");
-            rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.ORDER_EDITED,orderRepository.getByPersonalNumber(orderDTO.getPersonalNumber())));
+            rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.ORDER_EDITED,result.getReturnedValue()));
             return "success";
         } else {
             LOGGER.error("Error: updateOrder method in OrderService returned false.");
