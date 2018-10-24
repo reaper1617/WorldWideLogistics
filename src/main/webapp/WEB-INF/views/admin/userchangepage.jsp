@@ -19,17 +19,20 @@
 
 
 
-	<jsp:include page="/WEB-INF/views/general/adminheader.jsp"/>
+	<jsp:include page="/WEB-INF/views/general/neutralheader.jsp"/>
 	<br>
 	<br>
 	<div class = "container-fluid" >
 		
-			<div class="media" >
+			<div align="center" >
 				<%--<div class="media-left">--%>
 		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
 				<%--</div>--%>
 				<div>
 					<form action="${pageContext.request.contextPath}/userchangepage" method="post">
+						<c:if test="${updatedUser != null}">
+							<h1>Change user ${updatedUser.personalNumber}:</h1>
+						</c:if>
 						<div>
 							<c:if test="${updatedUser != null}">
 								<input type="text" hidden name="id" value="${updatedUser.id}">
@@ -37,52 +40,54 @@
 						</div>
 						<div class="form-group">
 					      		<label for="driver_name">Name:</label>
-      							<input type="text" class="form-control" id="driver_name" placeholder="Enter new user name" name="firstName" style="width:350px" >
+      							<input type="text" class="form-control" id="driver_name" placeholder="Enter new user name" name="firstName" style="width:450px" >
 						</div>
 						<div class="form-group">
 					      		<label for="driver_middle_name">Middle name:</label>
-      							<input type="text" class="form-control" id="driver_middle_name" placeholder="Enter new middle name" name="middleName" style="width:350px" >
+      							<input type="text" class="form-control" id="driver_middle_name" placeholder="Enter new middle name" name="middleName" style="width:450px" >
 						</div>
 						<div class="form-group">
 					      		<label for="driver_last_name">Last name:</label>
-      							<input type="text" class="form-control" id="driver_last_name" placeholder="Enter new last name" name="lastName" style="width:350px" >
+      							<input type="text" class="form-control" id="driver_last_name" placeholder="Enter new last name" name="lastName" style="width:450px" >
 						</div>
 						<div class="form-group">
 							<label for="driver_password">Password:</label>
-							<input type="password" class="form-control" id="driver_password" placeholder="Enter password" name="password" style="width:350px" >
+							<input type="password" class="form-control" id="driver_password" placeholder="Enter password" name="password" style="width:450px" >
 						</div>
 
 						<%--if its driver--%>
-						<div class="form-group">
-					      		<label for="hours_worked">Hours worked:</label>
-      							<input type="text" class="form-control" id="hours_worked" placeholder="Enter number of hours worked" name="hoursWorked" style="width:350px" >
-						</div>
-						<div class="form-group">
-							<label for="driver_current_city">Current city</label>
-							 <select class="form-control" id="driver_current_city"  name="currentCityName">
-								 <c:if test="${citiesList != null}">
-									 <c:forEach items="${citiesList}" var="city">
-        								<option>${city.name}</option>
-									 </c:forEach>
-								 </c:if>
-								 <c:if test="${citiesList == null}">
-										 <option>No cities available</option>
-								 </c:if>
-      							</select>
-						</div>
-						<div class="form-group">
-							<label for="driver_current_truck">Assign truck (if necessary):</label>
-							 <select class="form-control" id="driver_current_truck" name="currentTruckRegistrationNumber">
-								 <c:if test="${trucksList != null}">
-									 <c:forEach items="${trucksList}" var="truck">
-        								<option>${truck.registrationNumber}</option>
-									 </c:forEach>
-								 </c:if>
-								 <c:if test="${trucksList == null}">
-										 <option>No trucks available</option>
-								 </c:if>
-      							</select>
-						</div>
+						<c:if test="${updatedUser.driver != null}">
+							<div class="form-group">
+									<label for="hours_worked">Hours worked:</label>
+									<input type="text" class="form-control" id="hours_worked" placeholder="Enter number of hours worked" name="hoursWorked" style="width:450px" >
+							</div>
+							<div class="form-group">
+								<label for="driver_current_city">Current city</label>
+								 <select class="form-control" id="driver_current_city"  name="currentCityName" style="width:450px">
+									 <c:if test="${citiesList != null}">
+										 <c:forEach items="${citiesList}" var="city">
+											<option>${city.name}</option>
+										 </c:forEach>
+									 </c:if>
+									 <c:if test="${citiesList == null}">
+											 <option>No cities available</option>
+									 </c:if>
+									</select>
+							</div>
+							<div class="form-group">
+								<label for="driver_current_truck">Assign truck (if necessary):</label>
+								 <select class="form-control" id="driver_current_truck" name="currentTruckRegistrationNumber" style="width:450px">
+									 <c:if test="${trucksList != null}">
+										 <c:forEach items="${trucksList}" var="truck">
+											<option>${truck.registrationNumber}</option>
+										 </c:forEach>
+									 </c:if>
+									 <c:if test="${trucksList == null}">
+											 <option>No trucks available</option>
+									 </c:if>
+									</select>
+							</div>
+						</c:if>
 						<div>
 							<button type="submit" class="btn btn-primary">Save changes</button>
 							<button type="submit" class="btn btn-primary" form="rollback">Rollback changes</button>

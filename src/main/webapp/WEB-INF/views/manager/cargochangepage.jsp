@@ -19,22 +19,23 @@
 
 
 
-	<jsp:include page="/WEB-INF/views/general/managerheader.jsp"/>
+	<jsp:include page="/WEB-INF/views/general/neutralheader.jsp"/>
 	<br>
 	<br>
 	<div class = "container-fluid" >
-		<c:if test="${updatedCargoId != null}">
-			<h2>Cargo ${updatedCargoId} update:</h2>
-		</c:if>
-		<c:if test="${updatedCargoId == null}">
-			<h2>Something goes wrong...</h2>
-		</c:if>
-			<div class="media" >
+
+			<div align="center" >
 				<%--<div class="media-left">--%>
 		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
 				<%--</div>--%>
 				<div>
 					<form action="${pageContext.request.contextPath}/cargochangepage" method="post">
+						<c:if test="${updatedCargoId != null}">
+							<h1>Cargo ${updatedCargoId} update:</h1>
+						</c:if>
+						<c:if test="${updatedCargoId == null}">
+							<h1>Something goes wrong...</h1>
+						</c:if>
 						<div>
 							<c:if test="${updatedCargoId != null}">
 								<input type="text" hidden name="id" value="${updatedCargoId}">
@@ -45,19 +46,19 @@
 						</div>
     						<div class="form-group">
 					      		<label for="item_id">New cargo personal number:</label>
-      							<input type="text" class="form-control" id="item_id" placeholder="Enter new cargo personal number" name="personalNumber" style="width:350px">
+      							<input type="text" class="form-control" id="item_id" placeholder="Enter new cargo personal number" name="personalNumber" style="width:450px">
 						</div>
 						<div class="form-group">
 					      		<label for="cargo_name">New cargo name</label>
-      							<input type="text" class="form-control" id="cargo_name" placeholder="Enter new cargo name" name="name" style="width:350px">
+      							<input type="text" class="form-control" id="cargo_name" placeholder="Enter new cargo name" name="name" style="width:450px">
 						</div>
 						<div class="form-group">
 					      		<label for="weight">New weight</label>
-      							<input type="text" class="form-control" id="weight" placeholder="Enter new cargo weight" name="weight" style="width:350px">
+      							<input type="text" class="form-control" id="weight" placeholder="Enter new cargo weight" name="weight" style="width:450px">
 						</div>
 						<div class="form-group">
 							<label for="city_from">City from</label>
-							<select class="form-control" id="city_from" name="cityFrom">
+							<select class="form-control" id="city_from" name="cityFrom" style="width:450px">
 								<c:if test="${citiesList != null}">
 									<option hidden>Not selected</option>
 									<c:forEach items="${citiesList}" var="cell">
@@ -71,7 +72,7 @@
 						</div>
 						<div class="form-group">
 							<label for="city_to">City to</label>
-							<select class="form-control" id="city_to" name="cityTo">
+							<select class="form-control" id="city_to" name="cityTo" style="width:450px">
 								<c:if test="${citiesList != null}">
 									<option hidden>Not selected</option>
 									<c:forEach items="${citiesList}" var="cell">
@@ -85,7 +86,7 @@
 						</div>
 						<div class="form-group">
 							<label for="status">Status</label>
-							<select class="form-control" id="status" name="status">
+							<select class="form-control" id="status" name="status" style="width:450px">
 								<option hidden>Not selected</option>
 								<option >Prepared</option>
 								<option >Loaded</option>

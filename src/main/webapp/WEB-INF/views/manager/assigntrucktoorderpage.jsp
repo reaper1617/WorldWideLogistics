@@ -21,7 +21,7 @@
 
 
 
-	<jsp:include page="/WEB-INF/views/general/managerheader.jsp"/>
+	<jsp:include page="/WEB-INF/views/general/neutralheader.jsp"/>
 	<br>
 	<br>
 	<div class = "container-fluid" >
@@ -32,6 +32,9 @@
 				<%--</div>--%>
 				<div>
 					<form action="${pageContext.request.contextPath}/assigntrucktoorderpage", method="post">
+						<div>
+							<h1>Assign truck to order:</h1>
+						</div>
 						<div class="form-group">
 							<input type="text" hidden class="form-control" id="item_descr"  name="description" style="width:450px" value="${orderDTO.description}">
 						</div>

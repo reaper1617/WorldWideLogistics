@@ -680,6 +680,7 @@ public class AdminController {
                 return "failure";
             }
             ui.addAttribute("changedCityId", id);
+            ui.addAttribute("changedCity", cityRepository.getById(id));
             return "/admin/changecitypage";
         }
         if (action == 10){
@@ -719,6 +720,7 @@ public class AdminController {
                 return "failure";
             }
             ui.addAttribute("updatedRouteId", id);
+            ui.addAttribute("updatedRoute", routeRepository.getById(id));
             Collection<City> cities = cityRepository.getAll();
             ui.addAttribute("citiesList", cities);
             return "/admin/changeroutepage";

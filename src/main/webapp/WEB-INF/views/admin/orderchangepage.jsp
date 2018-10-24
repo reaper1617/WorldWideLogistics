@@ -20,29 +20,35 @@
 
 
 
-	<jsp:include page="/WEB-INF/views/general/adminheader.jsp"/>
+	<jsp:include page="/WEB-INF/views/general/neutralheader.jsp"/>
 	<br>
 	<br>
 	<div class = "container-fluid" >
 		 
-			<div class="media" >
+			<div align="center" >
 				<%--<div class="media-left">--%>
 		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
 				<%--</div>--%>
 				<div>
 					<form action="${pageContext.request.contextPath}/orderchangepage" method="post">
+						<c:if test="${updatedOrder != null}">
+							<h1>Change order ${updatedOrder.description}</h1>
+						</c:if>
+						<c:if test="${updatedOrder == null}">
+							<h1>Something goes wrong...</h1>
+						</c:if>
 						<div class="form-group">
 							<label for="item_pNumber">New personal number:</label>
-							<input type="text" class="form-control" id="item_pNumber" placeholder="Enter new personal number" name="personalNumber" style="width:350px" >
+							<input type="text" class="form-control" id="item_pNumber" placeholder="Enter new personal number" name="personalNumber" style="width:450px" >
 						</div>
 						<div class="form-group">
 							<label for="item_descr">New order description:</label>
-      						<input type="text" class="form-control" id="item_descr" placeholder="Enter new order description" name="description" style="width:350px" >
+      						<input type="text" class="form-control" id="item_descr" placeholder="Enter new order description" name="description" style="width:450px" >
 							<input type="text" hidden name="id" value="${updatedOrder.id}">
 						</div>
 						<div class="form-group">
 							<label for="order_status">New status:</label>
-							<select class="form-control" id="order_status" name="status">
+							<select class="form-control" id="order_status" name="status" style="width:450px">
 								<option hidden>Not selected</option>
 								<option>NOT_PREPARED</option>
 								<option>PREPARED</option>
@@ -52,7 +58,7 @@
 						</div>
 						<div class="form-group">
 							<label for="add_cargos">Add cargos</label>
-							 <select multiple class="form-control" id="add_cargos" size="10"  name="cargosInOrder">
+							 <select multiple class="form-control" id="add_cargos" size="10"  name="cargosInOrder" style="width:450px">
         						<c:if test="${availableCargos != null}">
 									<c:if test="${not empty availableCargos}">
 										<c:forEach items="${availableCargos}" var="cargo">
@@ -71,6 +77,8 @@
 						</div>
 					</form>
 					<form action="${pageContext.request.contextPath}/index" method="get" id="rollback"></form>
+					<br>
+					<br>
 				</div>
 			
 					

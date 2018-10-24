@@ -20,24 +20,27 @@
 
 
 
-	<jsp:include page="/WEB-INF/views/general/adminheader.jsp"/>
+	<jsp:include page="/WEB-INF/views/general/neutralheader.jsp"/>
 	<br>
 	<br>
 	<div class = "container-fluid" >
 		
-			<div class="media" >
+			<div align="center" >
 				<%--<div class="media-left">--%>
 		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
 				<%--</div>--%>
 				<div>
 					<form action="${pageContext.request.contextPath}/addnewcitypage" method="post" id="addNewCityForm">
+						<div>
+							<h1>Add new city:</h1>
+						</div>
 						<div class="form-group">
 					      		<label for="city_name">Name:</label>
-      							<input type="text" class="form-control" id="city_name" placeholder="Enter city name" name="name" style="width:350px" required="required">
+      							<input type="text" class="form-control" id="city_name" placeholder="Enter city name" name="name" style="width:450px" required="required">
 						</div>
 						<div class="form-group">
 							<label for="city_has_agency">Has agency:</label>
-							<select class="form-control" id="city_has_agency" required="required" name="hasAgency">
+							<select class="form-control" id="city_has_agency" required="required" name="hasAgency" style="width:450px">
 								<option>HAS</option>
 								<option>HAS_NOT</option>
 							</select>

@@ -19,19 +19,19 @@
 
 
 
-	<jsp:include page="/WEB-INF/views/general/managerheader.jsp"/>
+	<jsp:include page="/WEB-INF/views/general/neutralheader.jsp"/>
 	<br>
 	<br>
 	<div class = "container-fluid" >
-		<c:if test="${updatedTruckId != null}">
-			<h2>Truck ${updatedTruckId} update:</h2>
-		</c:if>
-			<div class="media" >
+			<div align="center" >
 				<%--<div class="media-left">--%>
 		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
 				<%--</div>--%>
 				<div>
 					<form action="${pageContext.request.contextPath}/truckchangepage" method="post">
+						<c:if test="${updatedTruck != null}">
+							<h1>Truck ${updatedTruck.registrationNumber} update:</h1>
+						</c:if>
 						<div>
 							<c:if test="${updatedTruckId != null}">
 								<input type="text" hidden name="id" value="${updatedTruckId}">
@@ -42,19 +42,19 @@
 						</div>
 						<div class="form-group">
 					      		<label for="registration_number">New registration number:</label>
-      							<input type="text" class="form-control" id="registration_number" placeholder="Enter new registration number" name="registrationNumber" style="width:350px">
+      							<input type="text" class="form-control" id="registration_number" placeholder="Enter new registration number" name="registrationNumber" style="width:450px">
 						</div>
 						<div class="form-group">
 					      		<label for="num_of_drivers">New number of drivers:</label>
-      							<input type="text" class="form-control" id="num_of_drivers" placeholder="Enter new number of drivers" name="numberOfDrivers" style="width:350px">
+      							<input type="text" class="form-control" id="num_of_drivers" placeholder="Enter new number of drivers" name="numberOfDrivers" style="width:450px">
 						</div>
 						<div class="form-group">
 					      		<label for="capacity">New capacity</label>
-      							<input type="text" class="form-control" id="capacity" placeholder="Enter new capacity" name="capacity" style="width:350px">
+      							<input type="text" class="form-control" id="capacity" placeholder="Enter new capacity" name="capacity" style="width:450px">
 						</div>
 						<div class="form-group">
 							<label for="truck_state">Status</label>
-							<select class="form-control" id="truck_state" name="state">
+							<select class="form-control" id="truck_state" name="state" style="width:450px">
 								<option hidden>Not selected</option>
 								<option >Ready</option>
 								<option >Not ready</option>
@@ -62,7 +62,7 @@
 						</div>
 						<div class="form-group">
 							<label for="change_city">New current city:</label>
-							<select class="form-control" id="change_city"  name="currentCity">
+							<select class="form-control" id="change_city"  name="currentCity" style="width:450px">
 								<option hidden>Not selected</option>
 								<c:if test="${citiesList != null}">
 									<c:forEach items="${citiesList}" var="city">
@@ -93,7 +93,7 @@
 
 							<div class="form-group">
 								<label for="change_assigned_drivers">New assigned drivers:</label>
-								<select class="form-control" id="change_assigned_drivers"  name="assignedDrivers" multiple size="5">
+								<select class="form-control" id="change_assigned_drivers"  name="assignedDrivers" multiple size="5" style="width:450px">
 									<c:if test="${driversList != null}">
 										<c:if test="${ empty driversList}">
 											<option>No drivers available</option>
@@ -146,9 +146,8 @@
 						</div>
 					</form>
 					<form action="${pageContext.request.contextPath}/index" method="get" id="rollback"></form>
+					<br>
 				</div>
-			
-					
     			</div>
   			
 	</div>

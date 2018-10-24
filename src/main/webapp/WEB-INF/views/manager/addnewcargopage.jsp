@@ -21,28 +21,31 @@
 
 
 
-	<jsp:include page="/WEB-INF/views/general/managerheader.jsp"/>
+	<jsp:include page="/WEB-INF/views/general/neutralheader.jsp"/>
 	<br>
 	<br>
 	<div class = "container-fluid" >
 		 
-			<div class="media" >
+			<div align="center" >
 				<%--<div class="media-left">--%>
 		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
 				<%--</div>--%>
 				<div>
 					<form action="${pageContext.request.contextPath}/addnewcargopage" method="post" id="addNewCargoForm">
+						<div>
+							<h1>Add new cargo:</h1>
+						</div>
 						<div class="form-group">
 					      		<label for="cargo_name">Cargo name</label>
-      							<input type="text" class="form-control" id="cargo_name" placeholder="Enter cargo name" name="name" style="width:350px" required="required">
+      							<input type="text" class="form-control" id="cargo_name" placeholder="Enter cargo name" name="name" style="width:450px" required="required">
 						</div>
 						<div class="form-group">
 					      		<label for="weight">Cargo weight:</label>
-      							<input type="text" class="form-control" id="weight" placeholder="Enter cargo weight" name="weight" style="width:350px" required="required">
+      							<input type="text" class="form-control" id="weight" placeholder="Enter cargo weight" name="weight" style="width:450px" required="required">
 						</div>
 						<div class="form-group">
 							<label for="city_from">City from</label>
-							 <select class="form-control" id="city_from" required="required" name="cityFrom">
+							 <select class="form-control" id="city_from" required="required" name="cityFrom" style="width: 450px;">
 								 <c:if test="${citiesList != null}">
 									 <c:forEach items="${citiesList}" var="cell">
 										<option>${cell.name}</option>
@@ -55,7 +58,7 @@
 						</div>
 						<div class="form-group">
 							<label for="city_to">City to</label>
-							 <select class="form-control" id="city_to" required="required" name="cityTo">
+							 <select class="form-control" id="city_to" required="required" name="cityTo" style="width: 450px;">
 								 <c:if test="${citiesList != null}">
 									 <c:forEach items="${citiesList}" var="cell">
 										 <option>${cell.name}</option>
