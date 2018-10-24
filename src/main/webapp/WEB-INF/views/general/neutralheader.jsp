@@ -11,24 +11,6 @@
         <a class="navbar-brand" href="${pageContext.request.contextPath}/adminmainpage/0">WorldWideLogistics</a>
         <!-- Nav tabs -->
         <ul class="nav nav-tabs " role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active bg-dark" data-toggle="tab" href="#manageorders">Manage orders</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link bg-dark" data-toggle="tab" href="#managetrucks">Manage trucks</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link bg-dark" data-toggle="tab" href="#manageusers">Manage users</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link bg-dark" data-toggle="tab" href="#managecargos">Manage cargos</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link bg-dark" data-toggle="tab" href="#managecities">Manage cities</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link bg-dark" data-toggle="tab" href="#manageroutes">Manage routes</a>
-            </li>
             <form id="logoutForm" action="/logout" method="get">
                 <li class="nav-item">
                     <a class="nav-link bg-dark" data-toggle="tab" href="#" onclick="logOut()">Log out</a>
@@ -36,12 +18,8 @@
             </form>
             <button id="logoutBtn" hidden type="submit" class="btn btn-dark" form="logoutForm">Log out</button></li>
         </ul>
-
     </nav>
-
-
 </div>
-
 <script>
     function logOut() {
         var logoutBtn = document.getElementById('logoutBtn');

@@ -11,12 +11,19 @@
         <a class="navbar-brand" href="${pageContext.request.contextPath}/drivermainpage/0">Driver account</a>
         <!-- Nav tabs -->
         <ul class="nav nav-tabs bg-primary bg-dark navbar-dark" role="tablist">
-            <form action="${pageContext.request.contextPath}/logout" method="get">
-                <li class="nav-item bg-dark">
-                    <button type="submit" class="btn btn-primary">Log out</button>
+            <form id="logoutForm" action="/logout" method="get">
+                <li class="nav-item">
+                    <a class="nav-link bg-dark" data-toggle="tab" href="#" onclick="logOut()">Log out</a>
                 </li>
             </form>
+            <button id="logoutBtn" hidden type="submit" class="btn btn-dark" form="logoutForm">Log out</button></li>
         </ul>
 
     </nav>
 </div>
+<script>
+    function logOut() {
+        var logoutBtn = document.getElementById('logoutBtn');
+        logoutBtn.click();
+    }
+</script>

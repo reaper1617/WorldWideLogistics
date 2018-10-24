@@ -26,6 +26,9 @@
 
 
 	<jsp:include page="/WEB-INF/views/general/managerheader.jsp"/>
+	<c:if test="${loggedUser != null}">
+		<h3 id="loggedUserHeader">Logged as: ${loggedUser.name} ${loggedUser.middleName} ${loggedUser.lastName}</h3>
+	</c:if>
 	<br>
 	<div class = "container-fluid">
 		 <div class="tab-content">

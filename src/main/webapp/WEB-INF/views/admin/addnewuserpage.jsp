@@ -19,40 +19,47 @@
 
 
 
-	<jsp:include page="/WEB-INF/views/general/adminheader.jsp"/>
+	<jsp:include page="/WEB-INF/views/general/neutralheader.jsp"/>
 	<br>
 	<br>
 	<div class = "container-fluid" >
 		
-			<div class="media" >
+			<div align="center" >
 				<%--<div class="media-left">--%>
 		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
 				<%--</div>--%>
 				<div>
 					<form action="${pageContext.request.contextPath}/addnewuserpage" method="post">
+						<div>
+							<h1>Add new user:</h1>
+						</div>
 						<div class="form-group">
 					      		<label for="driver_name">Name:</label>
-      							<input type="text" class="form-control" id="driver_name" placeholder="Enter user name" name="firstName" style="width:350px" required="required">
+      							<input type="text" class="form-control" id="driver_name" placeholder="Enter user name" name="firstName" style="width:450px" required="required">
 						</div>
 						<div class="form-group">
 					      		<label for="driver_middle_name">Middle name:</label>
-      							<input type="text" class="form-control" id="driver_middle_name" placeholder="Enter middle name" name="middleName" style="width:350px" required="required">
+      							<input type="text" class="form-control" id="driver_middle_name" placeholder="Enter middle name" name="middleName" style="width:450px" required="required">
 						</div>
 						<div class="form-group">
 					      		<label for="driver_last_name">Last name:</label>
-      							<input type="text" class="form-control" id="driver_last_name" placeholder="Enter last name" name="lastName" style="width:350px" required="required">
+      							<input type="text" class="form-control" id="driver_last_name" placeholder="Enter last name" name="lastName" style="width:450px" required="required">
 						</div>
 						<div class="form-group">
 							<label for="driver_password">Password:</label>
-							<input type="password" class="form-control" id="driver_password" placeholder="Enter password" name="password" style="width:350px" required="required">
+							<input type="password" class="form-control" id="driver_password" placeholder="Enter password" name="password" style="width:450px" required="required">
 						</div>
 						<div class="form-group">
 							<label for="user_role">Define role:</label>
-							<select class="form-control" id="user_role"  name="role">
+							<select class="form-control" id="user_role"  name="role" style="width:450px" onchange="showDriverFields()" required="required">
 								<c:if test="${userRoles != null}">
+									<%--<option selected hidden>Choose role</option>--%>
 									<c:forEach items="${userRoles}" var="role">
 										<option>${role}</option>
 									</c:forEach>
+									<%--<option>ADMIN</option>--%>
+									<%--<option>MANAGER</option>--%>
+									<%--<option>DRIVER</option>--%>
 								</c:if>
 								<c:if test="${userRoles == null}">
 										<option>No roles available</option>
@@ -60,35 +67,37 @@
 							</select>
 						</div>
 
-						<div class="form-group">
-					      		<label for="hours_worked">Hours worked:</label>
-      							<input type="text" class="form-control" id="hours_worked" placeholder="Enter number of hours worked" name="hoursWorked" style="width:350px" >
-						</div>
-						<div class="form-group">
-							<label for="driver_current_city">Current city</label>
-							 <select class="form-control" id="driver_current_city"  name="currentCityName">
-								 <c:if test="${citiesList != null}">
-									 <c:forEach items="${citiesList}" var="city">
-        								<option>${city.name}</option>
-									 </c:forEach>
-								 </c:if>
-								 <c:if test="${citiesList == null}">
-										 <option>No cities available</option>
-								 </c:if>
-      							</select>
-						</div>
-						<div class="form-group">
-							<label for="driver_current_truck">Assign truck (if necessary):</label>
-							 <select class="form-control" id="driver_current_truck" name="currentTruckRegistrationNumber">
-								 <c:if test="${trucksList != null}">
-									 <c:forEach items="${trucksList}" var="truck">
-        								<option>${truck.registrationNumber}</option>
-									 </c:forEach>
-								 </c:if>
-								 <c:if test="${trucksList == null}">
-										 <option>No trucks available</option>
-								 </c:if>
-      							</select>
+						<div id="driverFields" style="display: none">
+							<div class="form-group">
+									<label for="hours_worked">Hours worked:</label>
+									<input type="text" class="form-control" id="hours_worked" placeholder="Enter number of hours worked" name="hoursWorked" style="width:450px" >
+							</div>
+							<div class="form-group">
+								<label for="driver_current_city">Current city</label>
+								 <select class="form-control" id="driver_current_city"  name="currentCityName" style="width:450px">
+									 <c:if test="${citiesList != null}">
+										 <c:forEach items="${citiesList}" var="city">
+											<option>${city.name}</option>
+										 </c:forEach>
+									 </c:if>
+									 <c:if test="${citiesList == null}">
+											 <option>No cities available</option>
+									 </c:if>
+									</select>
+							</div>
+							<div class="form-group">
+								<label for="driver_current_truck">Assign truck (if necessary):</label>
+								 <select class="form-control" id="driver_current_truck" name="currentTruckRegistrationNumber" style="width:450px">
+									 <c:if test="${trucksList != null}">
+										 <c:forEach items="${trucksList}" var="truck">
+											<option>${truck.registrationNumber}</option>
+										 </c:forEach>
+									 </c:if>
+									 <c:if test="${trucksList == null}">
+											 <option>No trucks available</option>
+									 </c:if>
+									</select>
+							</div>
 						</div>
 						<div>
 							<button type="submit" class="btn btn-primary">Save changes</button>
@@ -119,6 +128,40 @@ $(document).ready(function(){
   });
 });
 </script>
+
+<script>
+	$(document).ready(function () {
+        var chosen = document.getElementById('user_role');
+        var value = chosen.value;
+        // alert("chosen: " + value);
+        if (value === 'DRIVER') {
+            var fields = document.getElementById('driverFields');
+            fields.style.display = 'block';
+        }
+        else {
+            var fields = document.getElementById('driverFields');
+            fields.style.display = 'none';
+        }
+    })
+</script>
+
+<script>
+	function showDriverFields() {
+		var chosen = document.getElementById('user_role');
+		var value = chosen.value;
+		// alert("chosen: " + value);
+		if (value === 'DRIVER') {
+            var fields = document.getElementById('driverFields');
+            fields.style.display = 'block';
+        }
+        else {
+            var fields = document.getElementById('driverFields');
+            fields.style.display = 'none';
+		}
+    }
+</script>
+
+
 
 </body>
 </html>

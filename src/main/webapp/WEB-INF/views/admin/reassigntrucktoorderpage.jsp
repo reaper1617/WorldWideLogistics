@@ -19,31 +19,34 @@
 
 
 
-	<jsp:include page="/WEB-INF/views/general/adminheader.jsp"/>
+	<jsp:include page="/WEB-INF/views/general/neutralheader.jsp"/>
 	<br>
 	<br>
 	<div class = "container-fluid" >
 		 
-			<div class="media" >
+			<div align="center" >
 				<%--<div class="media-left">--%>
 		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
 				<%--</div>--%>
 				<div>
 					<form action="${pageContext.request.contextPath}/reassigntrucktoorderpage", method="post">
-						<div class="form-group">
-							<input type="text" hidden class="form-control" id="item_id"  name="id" style="width:350px" value="${updatedOrderDTO.id}">
+						<div>
+							<h1>Reassign truck to order:</h1>
 						</div>
 						<div class="form-group">
-							<input type="text" hidden class="form-control" id="item_pNumber"  name="personalNumber" style="width:350px" value="${updatedOrderDTO.personalNumber}">
+							<input type="text" hidden class="form-control" id="item_id"  name="id" style="width:450px" value="${updatedOrderDTO.id}">
 						</div>
 						<div class="form-group">
-							<input type="text" hidden class="form-control" id="item_descr"  name="description" style="width:350px" value="${updatedOrderDTO.description}">
+							<input type="text" hidden class="form-control" id="item_pNumber"  name="personalNumber" style="width:450px" value="${updatedOrderDTO.personalNumber}">
 						</div>
 						<div class="form-group">
-							<input type="text" hidden class="form-control" id="item_status"  name="status" style="width:350px" value="${updatedOrderDTO.status}">
+							<input type="text" hidden class="form-control" id="item_descr"  name="description" style="width:450px" value="${updatedOrderDTO.description}">
 						</div>
 						<div class="form-group">
-							<select hidden multiple class="form-control" id="add_cargos"  name="cargosInOrder">
+							<input type="text" hidden class="form-control" id="item_status"  name="status" style="width:450px" value="${updatedOrderDTO.status}">
+						</div>
+						<div class="form-group">
+							<select hidden multiple class="form-control" id="add_cargos"  name="cargosInOrder" style="width:450px">
 								<c:if test="${chosenCargos != null}">
 									<c:if test="${not empty chosenCargos}">
 										<c:forEach items="${chosenCargos}" var="cargo">
@@ -58,7 +61,7 @@
 						</div>
 						<div class="form-group">
 							<label for="add_truck">Assign truck:</label>
-							 <select  class="form-control" id="add_truck" size="10" required="required" name="assignedTruckId">
+							 <select  class="form-control" id="add_truck" size="10" required="required" name="assignedTruckId" style="width:450px">
         						<c:if test="${availableTrucks != null}">
 									<c:if test="${not empty availableTrucks}">
 										<c:forEach items="${availableTrucks}" var="truck">

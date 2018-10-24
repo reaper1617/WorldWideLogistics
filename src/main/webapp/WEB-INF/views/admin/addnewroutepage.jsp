@@ -20,20 +20,23 @@
 
 
 
-	<jsp:include page="/WEB-INF/views/general/adminheader.jsp"/>
+	<jsp:include page="/WEB-INF/views/general/neutralheader.jsp"/>
 	<br>
 	<br>
 	<div class = "container-fluid" >
 		
-			<div class="media" >
+			<div align="center" >
 				<%--<div class="media-left">--%>
 		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
 				<%--</div>--%>
 				<div>
 					<form action="${pageContext.request.contextPath}/addnewroutepage" method="post">
+						<div>
+							<h1>Add new route:</h1>
+						</div>
 						<div class="form-group">
 							<label for="city_from">Choose city from:</label>
-							<select class="form-control" id="city_from"  name="cityFrom" required="required">
+							<select class="form-control" id="city_from"  name="cityFrom" required="required" style="width: 450px">
 								<c:if test="${citiesList != null}">
 									<c:forEach items="${citiesList}" var="city">
 										<option>${city.name}</option>
@@ -46,7 +49,7 @@
 						</div>
 						<div class="form-group">
 							<label for="city_to">Choose city to:</label>
-							<select class="form-control" id="city_to"  name="cityTo" required="required">
+							<select class="form-control" id="city_to"  name="cityTo" required="required"  style="width: 450px">
 								<c:if test="${citiesList != null}">
 									<c:forEach items="${citiesList}" var="city">
 										<option>${city.name}</option>
@@ -59,7 +62,7 @@
 						</div>
 						<div class="form-group">
 							<label for="distance">Distance:</label>
-							<input type="text" class="form-control" id="distance" placeholder="Enter distance" name="distance" style="width:350px" required="required">
+							<input type="text" class="form-control" id="distance" placeholder="Enter distance" name="distance" style="width:450px" required="required">
 						</div>
 						<div>
 							<button type="submit" class="btn btn-primary">Save changes</button>

@@ -19,40 +19,43 @@
 
 
 
-	<jsp:include page="/WEB-INF/views/general/managerheader.jsp"/>
+	<jsp:include page="/WEB-INF/views/general/neutralheader.jsp"/>
 	<br>
 	<br>
 	<div class = "container-fluid" >
 		
-			<div class="media" >
+			<div align="center" >
 				<%--<div class="media-left">--%>
 		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
 				<%--</div>--%>
 				<div>
 					<form action="${pageContext.request.contextPath}/addnewdriverpage" method="post">
+						<div>
+							<h1>Add new driver:</h1>
+						</div>
 						<div class="form-group">
 					      		<label for="driver_name">Name:</label>
-      							<input type="text" class="form-control" id="driver_name" placeholder="Enter driver name" name="firstName" style="width:350px" required="required">
+      							<input type="text" class="form-control" id="driver_name" placeholder="Enter driver name" name="firstName" style="width:450px" required="required">
 						</div>
 						<div class="form-group">
 					      		<label for="driver_middle_name">Middle name:</label>
-      							<input type="text" class="form-control" id="driver_middle_name" placeholder="Enter middle name" name="middleName" style="width:350px" required="required">
+      							<input type="text" class="form-control" id="driver_middle_name" placeholder="Enter middle name" name="middleName" style="width:450px" required="required">
 						</div>
 						<div class="form-group">
 					      		<label for="driver_last_name">Last name:</label>
-      							<input type="text" class="form-control" id="driver_last_name" placeholder="Enter last name" name="lastName" style="width:350px" required="required">
+      							<input type="text" class="form-control" id="driver_last_name" placeholder="Enter last name" name="lastName" style="width:450px" required="required">
 						</div>
 						<div class="form-group">
 							<label for="driver_password">Password:</label>
-							<input type="password" class="form-control" id="driver_password" placeholder="Enter password" name="password" style="width:350px" required="required">
+							<input type="password" class="form-control" id="driver_password" placeholder="Enter password" name="password" style="width:450px" required="required">
 						</div>
 						<div class="form-group">
 					      		<label for="hours_worked">Hours worked:</label>
-      							<input type="text" class="form-control" id="hours_worked" placeholder="Enter number of hours worked" name="hoursWorked" style="width:350px" required="required">
+      							<input type="text" class="form-control" id="hours_worked" placeholder="Enter number of hours worked" name="hoursWorked" style="width:450px" required="required">
 						</div>
 						<div class="form-group">
 							<label for="driver_current_city">Current city</label>
-							 <select class="form-control" id="driver_current_city" required="required" name="currentCityName">
+							 <select class="form-control" id="driver_current_city" required="required" name="currentCityName" style="width:450px">
 								 <c:if test="${citiesList != null}">
 									 <c:forEach items="${citiesList}" var="city">
         								<option>${city.name}</option>
@@ -65,7 +68,7 @@
 						</div>
 						<div class="form-group">
 							<label for="driver_current_truck">Assign truck (if necessary):</label>
-							 <select class="form-control" id="driver_current_truck" name="currentTruckRegistrationNumber">
+							 <select class="form-control" id="driver_current_truck" name="currentTruckRegistrationNumber" style="width:450px">
 								 <c:if test="${trucksList != null}">
 									 <c:forEach items="${trucksList}" var="truck">
         								<option>${truck.registrationNumber}</option>

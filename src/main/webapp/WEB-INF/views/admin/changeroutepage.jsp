@@ -20,18 +20,24 @@
 
 
 
-	<jsp:include page="/WEB-INF/views/general/adminheader.jsp"/>
+	<jsp:include page="/WEB-INF/views/general/neutralheader.jsp"/>
 
 	<br>
 	<br>
 	<div class = "container-fluid" >
 		
-			<div class="media" >
+			<div align="center" >
 				<%--<div class="media-left">--%>
 		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
 				<%--</div>--%>
 				<div>
 					<form action="${pageContext.request.contextPath}/changeroutepage" method="post">
+						<c:if test="${updatedRoute != null}">
+							<h1>Change route id = ${updatedRoute.id} (now from ${updatedRoute.cityFrom.name} to ${updatedRoute.cityTo.name})</h1>
+						</c:if>
+						<c:if test="${updatedRoute == null}">
+							<h1>Something goes wrong...</h1>
+						</c:if>
 						<div>
 							<c:if test="${updatedRouteId != null}">
 								<input type="text" hidden name="id" value="${updatedRouteId}">
@@ -39,7 +45,7 @@
 						</div>
 						<div class="form-group">
 							<label for="city_from">Choose new city from:</label>
-							<select class="form-control" id="city_from"  name="cityFrom">
+							<select class="form-control" id="city_from"  name="cityFrom" style="width: 450px;">
 								<c:if test="${citiesList != null}">
 									<c:forEach items="${citiesList}" var="city">
 										<option>${city.name}</option>
@@ -52,7 +58,7 @@
 						</div>
 						<div class="form-group">
 							<label for="city_to">Choose new city to:</label>
-							<select class="form-control" id="city_to"  name="cityTo">
+							<select class="form-control" id="city_to"  name="cityTo" style="width: 450px;">
 								<c:if test="${citiesList != null}">
 									<c:forEach items="${citiesList}" var="city">
 										<option>${city.name}</option>
@@ -65,7 +71,7 @@
 						</div>
 						<div class="form-group">
 							<label for="distance">New distance:</label>
-							<input type="text" class="form-control" id="distance" placeholder="Enter new distance" name="distance" style="width:350px" required="required">
+							<input type="text" class="form-control" id="distance" placeholder="Enter new distance" name="distance" style="width:450px" required="required">
 						</div>
 						<div>
 							<button type="submit" class="btn btn-primary">Save changes</button>

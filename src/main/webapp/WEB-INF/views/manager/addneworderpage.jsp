@@ -21,7 +21,7 @@
 
 
 
-	<jsp:include page="/WEB-INF/views/general/managerheader.jsp"/>
+	<jsp:include page="/WEB-INF/views/general/neutralheader.jsp"/>
 	<br>
 	<br>
 	<div class = "container-fluid" >
@@ -32,6 +32,9 @@
 				<%--</div>--%>
 				<div>
 					<form action="${pageContext.request.contextPath}/addneworderpage" method="post">
+						<div>
+							<h1>Add new order:</h1>
+						</div>
 						<div class="form-group">
 					      		<label for="item_descr">New order description:</label>
       							<input type="text" class="form-control" id="item_descr" placeholder="Enter order description" name="description" style="width:450px" required="required">

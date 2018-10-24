@@ -88,7 +88,7 @@ public class ManagerController {
             ui.addAttribute("actionFailed","Error: access violation - user is not a manager");
             return "failure";
         }
-
+        ui.addAttribute("loggedUser", loggedUser);
         //
 
         Collection<Cargo> cargos = cargoRepository.getAll();

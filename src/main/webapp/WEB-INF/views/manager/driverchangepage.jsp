@@ -19,19 +19,20 @@
 
 
 
-	<jsp:include page="/WEB-INF/views/general/managerheader.jsp"/>
+	<jsp:include page="/WEB-INF/views/general/neutralheader.jsp"/>
 	<br>
 	<br>
 	<div class = "container-fluid" >
-		<c:if test="${updatedDriverId != null}">
-			<h2>Driver ${updatedDriverId} update:</h2>
-		</c:if>
+
 			<div class="media" >
 				<%--<div class="media-left">--%>
 		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
 				<%--</div>--%>
 				<div>
 					<form action="${pageContext.request.contextPath}/driverchangepage" method="post">
+						<c:if test="${updatedDriverId != null}">
+							<h1>Driver ${updatedDriverId} update:</h1>
+						</c:if>
 						<c:if test="${updatedDriverId != null}">
 							<div>
 								<input type="text" hidden name="id" value="${updatedDriverId}">

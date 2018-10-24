@@ -268,7 +268,7 @@ public class TruckServiceImpl implements TruckService {
         }
         else newCapacity = updated.getCapacity();
         LOGGER.info("New capacity: " + newCapacity);
-        if (truckDTO.getState()!=null && truckDTO.getState().length()!=0) newState = getTruckStateFromTruckDTO(truckDTO);
+        if (truckDTO.getState()!=null && truckDTO.getState().length()!=0 && !truckDTO.getState().equals("Not selected")) newState = getTruckStateFromTruckDTO(truckDTO);
         else newState = updated.getState();
         LOGGER.info("New state: " + newState);
         if (truckDTO.getCurrentCity()!=null && truckDTO.getCurrentCity().length()!=0 && !truckDTO.getCurrentCity().equals("Not selected") && !truckDTO.getCurrentCity().equals("No cities available")) newCurrentCity = cityRepository.getByName(truckDTO.getCurrentCity());
