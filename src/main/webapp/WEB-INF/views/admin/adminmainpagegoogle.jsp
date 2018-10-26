@@ -13,14 +13,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/web/css/adminmainpage.css">
-
 	<style>
-		
-		.gradientbackgr{
-  			background: #fffff0;
-	 		background: radial-gradient(#0ed61f, #bfc2ff);
-		}
-
 		#map {
 			height: 100%;
 		}
@@ -39,21 +32,18 @@
 
 
 
-	<jsp:include page="/WEB-INF/views/general/adminheader.jsp"/>
+	<jsp:include page="/WEB-INF/views/general/neutralheader.jsp"/>
 	<br>
 	<div class = "container-fluid">
-		 <h1>GOOGLE VIEW</h1>
+		 <h1>Orders on map:</h1>
 		<div id = respFromGoogle></div>
 		<div id="googleMap" style="width:100%;height:500px;"></div>
-
-
-
 	</div>
 	<jsp:include page="/WEB-INF/views/general/footer.jsp"/>
 	
 </div>
 
 <script src="/resources/web/js/googlemaps.js"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3u4AscXSUnSsUvydrR1K1MbN8oJgJo_8&callback=myMap"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-kLRYC4_d1Z7zDgGJj_DplCfC7a_Mr3k&callback=myMap"></script>
 </body>
 </html>

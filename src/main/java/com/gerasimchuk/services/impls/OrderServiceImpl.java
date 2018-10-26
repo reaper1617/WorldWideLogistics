@@ -1,22 +1,27 @@
 package com.gerasimchuk.services.impls;
 
 import com.gerasimchuk.constants.WWLConstants;
+import com.gerasimchuk.converters.OrderToDTOConverter;
 import com.gerasimchuk.converters.OrderToDTOConverterImpl;
 import com.gerasimchuk.dto.OrderDTO;
+import com.gerasimchuk.dto.OrderWithRouteDTO;
 import com.gerasimchuk.entities.*;
 import com.gerasimchuk.enums.*;
 import com.gerasimchuk.exceptions.driverexceptions.TooManyHoursWorkedForOrderException;
 import com.gerasimchuk.exceptions.routeexceptions.NullRouteException;
 import com.gerasimchuk.exceptions.routeexceptions.RouteException;
+import com.gerasimchuk.rabbit.RabbitMQSender;
 import com.gerasimchuk.repositories.*;
 import com.gerasimchuk.services.interfaces.OrderService;
 import com.gerasimchuk.utils.DateParser;
+import com.gerasimchuk.utils.MessageConstructor;
 import com.gerasimchuk.utils.PersonalNumberGenerator;
 import com.gerasimchuk.utils.ReturnValuesContainer;
 import com.gerasimchuk.validators.DTOValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 /** Implementation for {@link OrderService} interface
@@ -35,10 +40,13 @@ public class OrderServiceImpl implements OrderService {
     private RouteRepository routeRepository;
     private DTOValidator dtoValidator;
     private DriverRepository driverRepository;
+//    private OrderToDTOConverter orderToDTOConverter;
+    private RabbitMQSender rabbitMQSender;
+    private MessageConstructor messageConstructor;
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(OrderServiceImpl.class);
 
     @Autowired
-    public OrderServiceImpl(CargoRepository cargoRepository, TruckRepository truckRepository, OrderRepository orderRepository, CityRepository cityRepository, RouteRepository routeRepository, DTOValidator dtoValidator, DriverRepository driverRepository) {
+    public OrderServiceImpl(CargoRepository cargoRepository, TruckRepository truckRepository, OrderRepository orderRepository, CityRepository cityRepository, RouteRepository routeRepository, DTOValidator dtoValidator, DriverRepository driverRepository, RabbitMQSender rabbitMQSender, MessageConstructor messageConstructor) {
         this.cargoRepository = cargoRepository;
         this.truckRepository = truckRepository;
         this.orderRepository = orderRepository;
@@ -46,6 +54,8 @@ public class OrderServiceImpl implements OrderService {
         this.routeRepository = routeRepository;
         this.dtoValidator = dtoValidator;
         this.driverRepository = driverRepository;
+        this.rabbitMQSender = rabbitMQSender;
+        this.messageConstructor = messageConstructor;
     }
 
     public Collection<Cargo> getChosenCargos(OrderDTO orderDTO) {
@@ -723,7 +733,7 @@ public class OrderServiceImpl implements OrderService {
             LOGGER.info("Status is " + result);
         }
         else {
-            LOGGER.error("Error: srarus is null.");
+            LOGGER.error("Error: status is null.");
         }
         return result;
     }
@@ -789,10 +799,102 @@ public class OrderServiceImpl implements OrderService {
             LOGGER.info("Cargo " + c.getName() + " unassigned successfully.");
         }
         LOGGER.info("All cargos are unassigned successfully.");
+        Collection<Driver> drivers = deleted.getAssignedTruck().getDriversInTruck();
+        LOGGER.info("Updating driver(s) statuses to FREE...");
+        for(Driver d: drivers){
+            driverRepository.update(d.getId(),d.getHoursWorked(),DriverStatus.FREE,d.getCurrentCity(),d.getCurrentTruck());
+        }
+        LOGGER.info("All drivers statuses uprated to FREE...");
         orderRepository.remove(deleted.getId());
         LOGGER.info("Order " + deleted.getDescription() + " deleted successfully");
         LOGGER.info("Class: " + this.getClass().getName() + " out from deleteOrder method: order deleted successfully");
         return UpdateMessageType.ORDER_DELETED;
+    }
+
+    @Override
+    public UpdateMessageType updateOrderStatus(int orderId, OrderStatus newStatus) {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: updateOrderStatus");
+        if (orderId <=0){
+            LOGGER.error("Class: " + this.getClass().getName() + " out from updateOrderStatus method: order id is invalid");
+            return UpdateMessageType.ERROR_ORDER_ID_IS_NOT_VALID;
+        }
+        if (newStatus == null){
+            LOGGER.error("Class: " + this.getClass().getName() + " out from updateOrderStatus method: new order status is null");
+            return UpdateMessageType.ERROR_ORDER_STATUS_IS_NULL;
+        }
+        Order order = orderRepository.getById(orderId);
+        if (order == null){
+            LOGGER.error("Class: " + this.getClass().getName() + " out from updateOrderStatus method: there is no such order");
+            return UpdateMessageType.ERROR_NO_ORDER_WITH_THIS_ID;
+        }
+        OrderStatus currentStatus = order.getStatus();
+//        OrderStatus[] statuses = {OrderStatus.NOT_PREPARED, OrderStatus.PREPARED, OrderStatus.EXECUTING, OrderStatus.EXECUTED};
+        List<OrderStatus> statuses = new ArrayList<OrderStatus>();
+        statuses.add(OrderStatus.NOT_PREPARED);
+        statuses.add(OrderStatus.PREPARED);
+        statuses.add(OrderStatus.EXECUTING);
+        statuses.add(OrderStatus.EXECUTED);
+        int currentStatusIndex = statuses.indexOf(currentStatus);
+        int newStatusIndex = statuses.indexOf(newStatus);
+        if (newStatusIndex < currentStatusIndex){
+            LOGGER.error("Class: " + this.getClass().getName() + " out from updateOrderStatus method: can not update order status to lower");
+            return UpdateMessageType.ERROR_CAN_NOT_UPDATE_ORDER_STATUS_TO_LOWER;
+        }
+        if (newStatus.equals(OrderStatus.EXECUTED)&& !areAllCargosDelivered(order)){
+            LOGGER.error("Class: " + this.getClass().getName() + " out from updateOrderStatus method: can not update order status to EXECUTED while not all cargos are delivered");
+            return UpdateMessageType.ERROR_CAN_NOT_UPDATE_STATUS_FOR_ORDER_WITH_UNDELIVERED_CARGOS;
+        }
+        if (newStatus.equals(OrderStatus.EXECUTED) && areAllCargosDelivered(order)){
+            //o
+            Truck truck = order.getAssignedTruck();
+            OrderWithRouteDTO orderWithRouteDTO = null;
+            try {
+                orderWithRouteDTO = new OrderToDTOConverterImpl(this).convertToDTOWithRoute(order);
+            } catch (RouteException e) {
+                e.printStackTrace();
+                LOGGER.error("Class: " + this.getClass().getName() + " out from updateOrderStatus method: catched exception: " + e.getMessage());
+                return UpdateMessageType.ERROR_NO_ROUTE_BETWEEN_THESE_CITIES;
+            }
+            if (orderWithRouteDTO == null){
+                LOGGER.error("Class: " + this.getClass().getName() + " out from updateOrderStatus method: can not create orderWithRouteDTO");
+                return UpdateMessageType.ERROR_CAN_NOT_GET_ORDER_ROUTE;
+            }
+            String[] route = orderWithRouteDTO.getRoute();
+            String finalCityName = route[route.length-1];
+            City finalDestinationCity = cityRepository.getByName(finalCityName);
+            if (finalDestinationCity == null){
+                LOGGER.error("Class: " + this.getClass().getName() + " out from updateOrderStatus method: can not find final city");
+                return UpdateMessageType.ERROR_NO_CITY_WITH_THIS_NAME;
+            }
+            if (truck == null){
+                LOGGER.error("Class: " + this.getClass().getName() + " out from updateOrderStatus method: assigned truck is null!!!");
+                return UpdateMessageType.ERROR_ASSIGNED_TRUCK_IS_NULL_FOR_EXECUTING_ORDER;
+            }
+            Collection<Driver> drivers = truck.getDriversInTruck();
+            double orderExecutingTime = 0;
+            try {
+                orderExecutingTime = getExecutingTime(OrderToDTOConverterImpl.convert(order));
+            } catch (RouteException e) {
+                e.printStackTrace();
+                LOGGER.error("Class: " + this.getClass().getName() + " out from updateOrderStatus method: catched exception: " +e.getMessage());
+                return UpdateMessageType.ERROR_NO_ROUTE_BETWEEN_THESE_CITIES;
+            }
+            if (orderExecutingTime == 0) {
+                LOGGER.error("Class: " + this.getClass().getName() + " out from updateOrderStatus method: can not count order executing time");
+                return UpdateMessageType.ERROR_CAN_NOT_COUNT_ORDER_EXECUTING_TIME;
+            }
+            for(Driver d: drivers){
+                double newHoursWorked = d.getHoursWorked() + orderExecutingTime;
+                if (newHoursWorked > WWLConstants.MAX_DRIVER_HOURS_WORKED_IN_MONTH) newHoursWorked -=WWLConstants.MAX_DRIVER_HOURS_WORKED_IN_MONTH;
+                driverRepository.update(d.getId(),newHoursWorked,DriverStatus.FREE,finalDestinationCity,d.getCurrentTruck());
+            }
+            orderRepository.update(order.getId(),order.getPersonalNumber(),order.getDescription(),order.getDate(),newStatus,null);
+            rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.ORDER_EDITED, order));
+            return UpdateMessageType.ORDER_STATUS_UPDATED;
+        }
+        orderRepository.update(order.getId(),order.getPersonalNumber(),order.getDescription(),order.getDate(),newStatus,order.getAssignedTruck());
+        rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.ORDER_EDITED, order));
+        return UpdateMessageType.ORDER_STATUS_UPDATED;
     }
 
     @Override

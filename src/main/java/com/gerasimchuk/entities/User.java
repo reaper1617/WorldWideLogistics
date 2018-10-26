@@ -1,10 +1,12 @@
 package com.gerasimchuk.entities;
 
+import com.gerasimchuk.utils.JSONconvertable;
+
 import javax.persistence.*;
 
 @Entity(name = "Users")
 @Table(name = "users", schema = "mywwldatabase", catalog = "")
-public class User {
+public class User implements JSONconvertable {
     private int id;
     private String name;
     private String middleName;
@@ -125,4 +127,14 @@ public class User {
     }
 
 
+    @Override
+    public String convertToJSONString() {
+        StringBuilder result = new StringBuilder("{");
+        result.append("\"id\":\"").append(id).append("\",");
+        result.append("\"name\":\"").append(name).append("\",");
+        result.append("\"middleName\":\"").append(middleName).append("\",");
+        result.append("\"lastName\":\"").append(lastName).append("\",");
+        result.append("\"personalNumber\":\"").append(personalNumber).append("\"}");
+        return result.toString();
+    }
 }

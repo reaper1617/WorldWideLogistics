@@ -93,62 +93,7 @@ public class AdminController {
 
     @RequestMapping(value = "/adminmainpage/{id}", method = RequestMethod.GET)
     public String adminMainPage(@PathVariable("id") int id, Model ui, HttpServletRequest req) {
-//        req.getContextPath();
-        ui.addAttribute("context", req.getContextPath());
         LOGGER.info("Controller: AdminController, metod = adminMainPage,  action = \"/adminmainpage\", request = GET");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String personalNumber = authentication.getName();
-       // amqpTemplate.convertAndSend("myQueue", "Authenticated user personal number:" + personalNumber);
-        rabbitMQSender.sendMessage("Message by RabbitMQSender: admin in da house!");
-        LOGGER.info("Authenticated user personal number:" + personalNumber);
-        User loggedUser = userRepository.getByPersonalNumber(personalNumber);
-        if (loggedUser == null){
-            LOGGER.error("Error: logged user not found!");
-            ui.addAttribute("actionFailed", "Error: logged user not found!");
-            return "failure";
-        }
-        if (loggedUser.getAdmin() == null) {
-            LOGGER.error("Error: access violation - user is not an admin");
-            ui.addAttribute("actionFailed","Error: access violation - user is not an admin");
-            return "failure";
-        }
-        ui.addAttribute("loggedUser", loggedUser);
-        Collection<Cargo> cargos = cargoRepository.getAll();
-        Collection<User> users = userRepository.getAll();
-        Collection<Truck> trucks = truckRepository.getAll();
-        Collection<Order> orders = orderRepository.getAll();
-        //Map<Order, Collection<City>> routes = orderService.getRoutes(orders);
-        //Collection<City> routePoints = orderService.getO
-        Collection<Route> routesList = routeRepository.getAll();
-        Collection<City> citiesList = cityRepository.getAll();
-        List<OrderWithRoute> ordersWithRoutes = new ArrayList<OrderWithRoute>();
-        for (Order o : orders) {
-            try {
-                List<City> cities = orderService.getOrderRoute(OrderToDTOConverterImpl.convert(o), o.getAssignedTruck());
-                ordersWithRoutes.add(new OrderWithRoute(o, cities));
-            }
-            catch (Exception e){
-                e.printStackTrace();
-                LOGGER.error("Error: cannot create route for order " + o.getDescription());
-            }
-        }
-        ui.addAttribute("cargoList", cargos);
-        ui.addAttribute("usersList", users);
-        ui.addAttribute("trucksList", trucks);
-        ui.addAttribute("ordersList", ordersWithRoutes);
-        ui.addAttribute("citiesList", citiesList);
-        ui.addAttribute("routesList", routesList);
-
-
-
-        return "/admin/adminmainpage";
-    }
-
-
-    @RequestMapping(value = "/adminmainpagepgntd", method = RequestMethod.GET)
-    public String adminPgntd(Model ui){
-        /**test section*/
-        LOGGER.info("Controller: AdminController, metod = adminPgntd,  action = \"/adminmainpagepgntd\", request = GET");
         // orders
         Collection<Order> ordersPgntd = orderRepository.getOrdersForOnePage(2,0);
         List<OrderWithRouteDTO> orderWithRouteDTOS = new ArrayList<OrderWithRouteDTO>();
@@ -156,7 +101,7 @@ public class AdminController {
             try {
                 orderWithRouteDTOS.add(orderToDTOConverter.convertToDTOWithRoute(o));
             } catch (RouteException e) {
-                LOGGER.info("Controller: AdminController, metod = adminPgntd, catched exception:" + e.getMessage());
+                LOGGER.info("Controller: AdminController, metod = adminMainPage, catched exception:" + e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -182,9 +127,96 @@ public class AdminController {
         List<RouteDTO> routeDTOS = routeToDTOConverter.convert(routes);
         ui.addAttribute("routesPgntd", routeDTOS);
 
-        LOGGER.info("Controller: AdminController, out from metod = adminPgntd");
-        return "/admin/adminmainpagepgntd";
+        LOGGER.info("Controller: AdminController, out from metod = adminMainPage");
+        return "admin/adminmainpage";
+////        req.getContextPath();
+//        ui.addAttribute("context", req.getContextPath());
+//        LOGGER.info("Controller: AdminController, metod = adminMainPage,  action = \"/adminmainpage\", request = GET");
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String personalNumber = authentication.getName();
+//       // amqpTemplate.convertAndSend("myQueue", "Authenticated user personal number:" + personalNumber);
+//        rabbitMQSender.sendMessage("Message by RabbitMQSender: admin in da house!");
+//        LOGGER.info("Authenticated user personal number:" + personalNumber);
+//        User loggedUser = userRepository.getByPersonalNumber(personalNumber);
+//        if (loggedUser == null){
+//            LOGGER.error("Error: logged user not found!");
+//            ui.addAttribute("actionFailed", "Error: logged user not found!");
+//            return "failure";
+//        }
+//        if (loggedUser.getAdmin() == null) {
+//            LOGGER.error("Error: access violation - user is not an admin");
+//            ui.addAttribute("actionFailed","Error: access violation - user is not an admin");
+//            return "failure";
+//        }
+//        ui.addAttribute("loggedUser", loggedUser);
+//        Collection<Cargo> cargos = cargoRepository.getAll();
+//        Collection<User> users = userRepository.getAll();
+//        Collection<Truck> trucks = truckRepository.getAll();
+//        Collection<Order> orders = orderRepository.getAll();
+//        //Map<Order, Collection<City>> routes = orderService.getRoutes(orders);
+//        //Collection<City> routePoints = orderService.getO
+//        Collection<Route> routesList = routeRepository.getAll();
+//        Collection<City> citiesList = cityRepository.getAll();
+//        List<OrderWithRoute> ordersWithRoutes = new ArrayList<OrderWithRoute>();
+//        for (Order o : orders) {
+//            try {
+//                List<City> cities = orderService.getOrderRoute(OrderToDTOConverterImpl.convert(o), o.getAssignedTruck());
+//                ordersWithRoutes.add(new OrderWithRoute(o, cities));
+//            }
+//            catch (Exception e){
+//                e.printStackTrace();
+//                LOGGER.error("Error: cannot create route for order " + o.getDescription());
+//            }
+//        }
+//        ui.addAttribute("cargoList", cargos);
+//        ui.addAttribute("usersList", users);
+//        ui.addAttribute("trucksList", trucks);
+//        ui.addAttribute("ordersList", ordersWithRoutes);
+//        ui.addAttribute("citiesList", citiesList);
+//        ui.addAttribute("routesList", routesList);
     }
+
+
+//    @RequestMapping(value = "/adminmainpagepgntd", method = RequestMethod.GET)
+//    public String adminPgntd(Model ui){
+//        /**test section*/
+//        LOGGER.info("Controller: AdminController, metod = adminPgntd,  action = \"/adminmainpagepgntd\", request = GET");
+//        // orders
+//        Collection<Order> ordersPgntd = orderRepository.getOrdersForOnePage(2,0);
+//        List<OrderWithRouteDTO> orderWithRouteDTOS = new ArrayList<OrderWithRouteDTO>();
+//        for(Order o: ordersPgntd){
+//            try {
+//                orderWithRouteDTOS.add(orderToDTOConverter.convertToDTOWithRoute(o));
+//            } catch (RouteException e) {
+//                LOGGER.info("Controller: AdminController, metod = adminPgntd, catched exception:" + e.getMessage());
+//                e.printStackTrace();
+//            }
+//        }
+//        ui.addAttribute("ordersPgntd", orderWithRouteDTOS);
+//        // trucks
+//        List<Truck> trucksPgntd = (List<Truck>)truckRepository.getTrucksForOnePage(2,0);
+//        List<TruckDTO> truckDTOS = truckToDTOConverter.convert(trucksPgntd);
+//        ui.addAttribute("trucksPgntd", truckDTOS);
+//
+//        List<User> users = (List<User>) userRepository.getUsersForOnePage(2,0);
+//        List<UserDTO> userDTOS = userToDTOConverter.convert(users);
+//        ui.addAttribute("usersPgntd", userDTOS);
+//
+//        List<Cargo> cargos = (List<Cargo>) cargoRepository.getCargosForOnePage(2,0);
+//        List<CargoDTO> cargoDTOS = cargoToDTOConverter.convert(cargos);
+//        ui.addAttribute("cargosPgntd", cargoDTOS);
+//
+//        List<City> cities = (List<City>) cityRepository.getCitiesForOnePage(2,0);
+//        List<CityDTO> citiesDTOS = cityToDTOConverter.convert(cities);
+//        ui.addAttribute("citiesPgntd", citiesDTOS);
+//
+//        List<Route> routes = (List<Route>) routeRepository.getRoutesForOnePage(2,0);
+//        List<RouteDTO> routeDTOS = routeToDTOConverter.convert(routes);
+//        ui.addAttribute("routesPgntd", routeDTOS);
+//
+//        LOGGER.info("Controller: AdminController, out from metod = adminPgntd");
+//        return "admin/adminmainpage";
+//    }
 
     @RequestMapping(value = "/getpaginatedorderslist", method = RequestMethod.GET)
     @ResponseBody
@@ -394,7 +426,7 @@ public class AdminController {
         return res;
     }
 
-    @RequestMapping(value = "/deleteorder", method = RequestMethod.GET)
+    @RequestMapping(value = "/deleteorder", method = RequestMethod.POST)
     @ResponseBody
     public String deleteOrderById(@RequestParam(name = "orderId") int orderId){
         LOGGER.info("Controller: AdminController, metod = deleteOrderById,  action = \"/deleteorder\", request = GET");
@@ -402,7 +434,9 @@ public class AdminController {
             LOGGER.info("Controller: AdminController, out from deleteOrderById: orderId is invalid");
             return null;
         }
+        Order deleted = orderRepository.getById(orderId);
         UpdateMessageType result =  orderService.deleteOrder(orderId);
+        if (result.equals(UpdateMessageType.ORDER_DELETED)) rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.ORDER_DELETED,deleted));
         return new Gson().toJson(result);
     }
 
@@ -414,8 +448,10 @@ public class AdminController {
             LOGGER.info("Controller: AdminController, out from deleteOrderById: orderId is invalid");
             return null;
         }
+        Truck deleted = truckRepository.getById(truckId);
         UpdateMessageType result =  truckService.deleteTruck(truckId);
         String s = new Gson().toJson(result);
+        if (result.equals(UpdateMessageType.TRUCK_DELETED)) rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.TRUCK_DELETED,deleted));
         return s;
     }
 
@@ -427,8 +463,10 @@ public class AdminController {
             LOGGER.info("Controller: AdminController, out from deleteUserById: orderId is invalid");
             return null;
         }
+        User deleted = userRepository.getById(userId);
         UpdateMessageType result =  userService.deleteUser(userId);
         String s = new Gson().toJson(result);
+        if (result.equals(UpdateMessageType.USER_DELETED)) rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.USER_DELETED,deleted));
         return s;
     }
 

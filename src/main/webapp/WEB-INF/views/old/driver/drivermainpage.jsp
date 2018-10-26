@@ -12,9 +12,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/web/css/adminmainpage.css">
-
-	<script src="/resources/web/js/drivermainpage.js"></script>
-
 </head>
 <body class="gradientbackgr">
 
@@ -71,12 +68,7 @@
 									</ul>
 								</div>
 							</td>
-							<c:if test="${loggedDriver.driver.currentTruck != null}">
-								<td>${loggedDriver.driver.currentTruck.registrationNumber}</td>
-							</c:if>
-							<c:if test="${loggedDriver.driver.currentTruck == null}">
-								<td>No assigned truck</td>
-							</c:if>
+							<td>${loggedDriver.driver.currentTruck.registrationNumber}</td>
 							<c:if test="${loggedDriver.driver.currentTruck.assignedOrder != null}">
 								<td>${loggedDriver.driver.currentTruck.assignedOrder.description}</td>
 							</c:if>
@@ -111,30 +103,54 @@
 
 
 		</div>
-
-
 		<div>
-			<input hidden type="text" value="${loggedDriver.id}" name="driverId">
-			<table id="driverStatusAndOrderInfo" class="table table-active table-hover" align="center">
-				<thead align="center">
-					<th align="center">Your status</th>
-					<th align="center">Current order status</th>
-				</thead>
-				<tbody>
+			<form action="${pageContext.request.contextPath}/drivermainpage/0" method="post" id="updateStatus">
+				<input hidden type="text" value="${loggedDriver.id}" name="driverId">
+				<b>Your status info:</b>
+				<table id="driverStatusInfo" class="table table-active table-hover" >
+					<thead></thead>
+					<tbody>
+						<tr>
+							<td><h3>Current status:</h3></td>
+							<td align="center">
+								<select class="form-control" id="driver_status" name="driverStatus" style="width: 400px;">
+									<c:if test="${loggedDriver.driver != null}">
+										<option style="color: #0ed61f">${loggedDriver.driver.status}</option>
+										<c:forEach items="${driverStatusList}" var="status">
+											<c:if test="${status != loggedDriver.driver.status}">
+												<option>${status}</option>
+											</c:if>
+										</c:forEach>
+									</c:if>
+								</select>
+							</td>
+							<td align="center"><button type="submit" class="btn btn-primary" form="updateStatus" >Update your status</button></td>
+
+							<c:if test="${driverStatusUpdatedSuccessfully != null}">
+								<td>
+									<h5 style="color: darkcyan; width: 200px">${driverStatusUpdatedSuccessfully}</h5>
+								</td>
+							</c:if>
+
+						</tr>
+					</tbody>
+				</table>
+			</form>
+		</div>
+		<div>
+			<form action="${pageContext.request.contextPath}/drivermainpage/1" method="post" id="order_details">
+				<c:if test="${loggedDriver.driver.currentTruck != null}">
+					<c:if test="${loggedDriver.driver.currentTruck.assignedOrder != null}">
+						<input hidden type="text" value="${loggedDriver.driver.currentTruck.assignedOrder.id}" name="orderId">
+					</c:if>
+				</c:if>
+				<b>Your order info:</b>
+				<table id="driverOrderInfo" class="table table-active table-hover">
+					<thead></thead>
+					<tbody>
 					<tr>
-						<td align="center" id="driverStatusSelect">
-							<select class="form-control" id="driver_status" name="driverStatus" style="width: 400px;">
-								<c:if test="${loggedDriver.driver != null}">
-									<option style="color: #0ed61f">${loggedDriver.driver.status}</option>
-									<c:forEach items="${driverStatusList}" var="status">
-										<c:if test="${status != loggedDriver.driver.status}">
-											<option>${status}</option>
-										</c:if>
-									</c:forEach>
-								</c:if>
-							</select>
-						</td>
-						<td align="center" id="orderStatusSelect">
+						<td><h3>Order status:</h3></td>
+						<td align="center">
 							<select class="form-control" id="order_status" name="orderStatus" style="width: 400px">
 								<c:if test="${loggedDriver.driver.currentTruck != null}">
 									<c:if test="${loggedDriver.driver.currentTruck.assignedOrder != null}">
@@ -150,37 +166,22 @@
 									</c:if>
 								</c:if>
 								<c:if test="${loggedDriver.driver.currentTruck == null}">
-									<option>No assigned order</option>
+										<option>No assigned order</option>
 								</c:if>
 							</select>
 						</td>
+						<td align="center"><button type="submit" class="btn btn-primary" form="order_details" >Update order status</button></td>
+						<c:if test="${orderStatusUpdatedSuccessfully != null}">
+							<td>
+								<h5 style="color: darkcyan; width: 200px">${orderStatusUpdatedSuccessfully}</h5>
+							</td>
+						</c:if>
 					</tr>
-					<tr>
-						<td align="center">
-							<button type="button" class="btn btn-primary" onclick="updateDriverStatus(${loggedDriver.driver.id})" >Update your status</button>
-						</td>
-						<td align="center">
-							<c:if test="${loggedDriver.driver.currentTruck != null}">
-								<c:if test="${loggedDriver.driver.currentTruck.assignedOrder != null}">
-									<button type="button" class="btn btn-primary" onclick="updateOrderStatus(${loggedDriver.driver.currentTruck.assignedOrder.id})" >Update order status</button>
-								</c:if>
-								<c:if test="${loggedDriver.driver.currentTruck.assignedOrder == null}">
-									<button type="button" class="btn btn-primary">Update order status</button>
-								</c:if>
-							</c:if>
-							<c:if test="${loggedDriver.driver.currentTruck == null}">
-								<button type="button" class="btn btn-primary" >Update order status</button>
-							</c:if>
-						</td>
-					</tr>
-				</tbody>
+					</tbody>
+				</table>
 
-
-			</table>
-
+			</form>
 		</div>
-
-
 		<div>
 
 				<div class="sticky-top">
@@ -203,14 +204,14 @@
 									<c:if test="${loggedDriver.driver.currentTruck.assignedOrder.cargosInOrder != null}">
 										<c:forEach items="${loggedDriver.driver.currentTruck.assignedOrder.cargosInOrder}" var="cargo">
 											<tr>
-												<%--<form action="${pageContext.request.contextPath}/drivermainpage/2" method="post" >--%>
+												<form action="${pageContext.request.contextPath}/drivermainpage/2" method="post" >
 													<input hidden type="text" value="${cargo.id}" name="cargoId">
 													<td>${cargo.personalNumber}</td>
 													<td>${cargo.name}</td>
 													<td>${cargo.route.cityFrom.name}</td>
 													<td>${cargo.route.cityTo.name}</td>
-													<td id="cargoStatusTd_${cargo.id}">
-														<select class="form-control"  name="cargoStatus" style="width: 200px" id="cargoStatusSelect_${cargo.id}">
+													<td>
+														<select class="form-control"  name="cargoStatus" style="width: 200px">
 															<option style="color: #0ed61f">${cargo.status}</option>
 															<c:if test="${cargoStatusList != null}">
 																<c:forEach items="${cargoStatusList}" var="cargoStatus">
@@ -222,22 +223,19 @@
 														</select>
 													</td>
 													<td>
-														<button type="button" class="btn btn-primary"  style="width: 200px" onclick="updateCargoStatus(${cargo.id})">Update cargo status</button>
+														<c:if test="${cargoStatusUpdatedSuccessfully != null}">
+															<c:if test="${updatedCargoId == cargo.id}">
+																<h5 style="color: darkcyan">Updated successfully!</h5>
+															</c:if>
+															<c:if test="${updatedCargoId != cargo.id}">
+																<button type="submit" class="btn btn-primary"  style="width: 200px">Update cargo status</button>
+															</c:if>
+														</c:if>
+														<c:if test="${cargoStatusUpdatedSuccessfully == null}">
+															<button type="submit" class="btn btn-primary"  style="width: 200px">Update cargo status</button>
+														</c:if>
 													</td>
-													<%--<td>--%>
-														<%--<c:if test="${cargoStatusUpdatedSuccessfully != null}">--%>
-															<%--<c:if test="${updatedCargoId == cargo.id}">--%>
-																<%--<h5 style="color: darkcyan">Updated successfully!</h5>--%>
-															<%--</c:if>--%>
-															<%--<c:if test="${updatedCargoId != cargo.id}">--%>
-																<%--<button type="submit" class="btn btn-primary"  style="width: 200px">Update cargo status</button>--%>
-															<%--</c:if>--%>
-														<%--</c:if>--%>
-														<%--<c:if test="${cargoStatusUpdatedSuccessfully == null}">--%>
-															<%--<button type="submit" class="btn btn-primary"  style="width: 200px">Update cargo status</button>--%>
-														<%--</c:if>--%>
-													<%--</td>--%>
-												<%--</form>--%>
+												</form>
 											</tr>
 										</c:forEach>
 									</c:if>
@@ -254,6 +252,18 @@
 	<jsp:include page="/WEB-INF/views/general/footer.jsp"/>
 	
 </div>
+
+
+<script>
+$(document).ready(function(){
+  $("#myCargoDetailsInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myCargoDetailsTable tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
 
 
 </body>

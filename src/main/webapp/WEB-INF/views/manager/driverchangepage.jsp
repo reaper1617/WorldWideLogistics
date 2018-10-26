@@ -24,7 +24,7 @@
 	<br>
 	<div class = "container-fluid" >
 
-			<div class="media" >
+			<div align="center" >
 				<%--<div class="media-left">--%>
 		      			<%--<img src="img_avatar1.png" class="media-object" style="width:100px">--%>
 				<%--</div>--%>
@@ -40,27 +40,27 @@
 						</c:if>
 						<div class="form-group">
 							<label for="driver_name">New name:</label>
-							<input type="text" class="form-control" id="driver_name" placeholder="Enter new driver name" name="firstName" style="width:350px">
+							<input type="text" class="form-control" id="driver_name" placeholder="Enter new driver name" name="firstName" style="width:450px">
 						</div>
 						<div class="form-group">
 							<label for="driver_middle_name">New middle name:</label>
-							<input type="text" class="form-control" id="driver_middle_name" placeholder="Enter new middle name" name="middleName" style="width:350px">
+							<input type="text" class="form-control" id="driver_middle_name" placeholder="Enter new middle name" name="middleName" style="width:450px">
 						</div>
 						<div class="form-group">
 							<label for="driver_last_name">New last name:</label>
-							<input type="text" class="form-control" id="driver_last_name" placeholder="Enter new last name" name="lastName" style="width:350px">
+							<input type="text" class="form-control" id="driver_last_name" placeholder="Enter new last name" name="lastName" style="width:450px">
 						</div>
 						<div class="form-group">
 							<label for="driver_personal_number">New personal number:</label>
-							<input type="text" class="form-control" id="driver_personal_number" placeholder="Enter new personal number" name="personalNumber" style="width:350px">
+							<input type="text" class="form-control" id="driver_personal_number" placeholder="Enter new personal number" name="personalNumber" style="width:450px">
 						</div>
 						<div class="form-group">
 							<label for="driver_password">New password:</label>
-							<input type="password" class="form-control" id="driver_password" placeholder="Enter new password" name="password" style="width:350px" >
+							<input type="password" class="form-control" id="driver_password" placeholder="Enter new password" name="password" style="width:450px" >
 						</div>
 						<div class="form-group">
 							<label for="driver_status">New status:</label>
-							<select class="form-control" id="driver_status" name="driverStatus">
+							<select class="form-control" id="driver_status" name="driverStatus" style="width:450px">
 								<option hidden>Not selected</option>
 								<option>Free</option>
 								<option>Resting</option>
@@ -71,11 +71,11 @@
 						</div>
 						<div class="form-group">
 							<label for="hours_worked">Hours worked:</label>
-							<input type="text" class="form-control" id="hours_worked" placeholder="Enter new number of hours worked" name="hoursWorked" style="width:350px">
+							<input type="text" class="form-control" id="hours_worked" placeholder="Enter new number of hours worked" name="hoursWorked" style="width:450px">
 						</div>
 						<div class="form-group">
 							<label for="driver_current_city">Current city</label>
-							<select class="form-control" id="driver_current_city" name="currentCityName">
+							<select class="form-control" id="driver_current_city" name="currentCityName" style="width:450px">
 								<option hidden>Not selected</option>
 								<c:if test="${citiesList != null}">
 									<c:forEach items="${citiesList}" var="city">
@@ -91,7 +91,7 @@
 						</div>
 						<div class="form-group">
 							<label for="driver_current_truck">Assign truck (if necessary):</label>
-							<select class="form-control" id="driver_current_truck" name="currentTruckRegistrationNumber">
+							<select class="form-control" id="driver_current_truck" name="currentTruckRegistrationNumber" style="width:450px">
 								<c:if test="${trucksList != null}">
 									<option hidden>Not selected</option>
 									<c:forEach items="${trucksList}" var="truck">

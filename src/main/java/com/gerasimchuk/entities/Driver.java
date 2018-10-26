@@ -1,12 +1,14 @@
 package com.gerasimchuk.entities;
 
 import com.gerasimchuk.enums.DriverStatus;
+import com.gerasimchuk.utils.JSONconvertable;
+import com.google.gson.Gson;
 
 import javax.persistence.*;
 
 @Entity(name = "Drivers")
 @Table(name = "drivers", schema = "mywwldatabase", catalog = "")
-public class Driver {
+public class Driver implements JSONconvertable {
 
     private int id;
     private double hoursWorked;
@@ -88,4 +90,15 @@ public class Driver {
     }
 
 
+    @Override
+    public String convertToJSONString() {
+        StringBuilder result = new StringBuilder("{");
+        result.append("\"id\":\"").append(id).append("\",");
+        result.append("\"hoursWorked\":\"").append(hoursWorked).append("\",");
+        result.append("\"status\":\"").append(status).append("\",");
+        result.append("\"currentCity\":\"").append(currentCity.getName()).append("\"");
+        if (currentTruck != null) result.append(",\"currentTruck\":\"").append(currentTruck.getRegistrationNumber()).append("\"");
+        result.append("}");
+        return result.toString();
+    }
 }

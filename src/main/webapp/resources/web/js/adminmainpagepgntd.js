@@ -69,16 +69,16 @@ function showMoreOrders() {
     console.log("Making onreadystatechangefunction!");
     req.onreadystatechange = function () {
         // alert("readyState=" + this.readyState + "status = " + this.status);
-        console.log("readyState=" + this.readyState + "status = " + this.status);
+        // console.log("readyState=" + this.readyState + "status = " + this.status);
         if (this.readyState === 4 && this.status === 200){
-            alert("resp text:" + this.responseText);
-            console.log("resp text:" + this.responseText);
+            // alert("resp text:" + this.responseText);
+            // console.log("resp text:" + this.responseText);
             var ordersArr = JSON.parse(this.responseText);
             // alert("parsed:" + ordersArr);
-            console.log("parsed: " + ordersArr);
-            alert("ordersArr length = " + ordersArr.length);
+            // console.log("parsed: " + ordersArr);
+            // alert("ordersArr length = " + ordersArr.length);
             for(var i = 0; i < ordersArr.length; i++){
-                alert("ordersArr["+i+"] = " + ordersArr[i]);
+                // alert("ordersArr["+i+"] = " + ordersArr[i]);
                 console.log("ordersArr[i] = " + ordersArr[i]);
                 var item = ordersArr[i];
                 var tbody = document.getElementById('myTable').getElementsByTagName('TBODY')[0];
@@ -102,7 +102,7 @@ function showMoreOrders() {
                 row.appendChild(tdAssignedTruck);
                 row.appendChild(tdAssignedDrivers);
                 row.appendChild(tdRoute);
-                tdEditBtn.innerHTML = "<form action=\"${pageContext.request.contextPath}/adminmainpage/1\" method=\"post\" >\n" +
+                tdEditBtn.innerHTML = "<form action=\"/adminmainpage/1\" method=\"post\" >\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t\t<button type=\"submit\" class=\"btn btn-primary\">Edit</button>\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" hidden name=\"id\" value=\"" + item.id + "\">\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t</form>";
@@ -165,7 +165,7 @@ function showMoreOrders() {
             var currentOrderPageNum = (Number)(document.getElementById('currentOrderPage').getAttribute('value'));
             var newNum = (Number)(currentOrderPageNum + 1);
             document.getElementById('currentOrderPage').setAttribute('value',newNum);
-            alert("current order page=" + newNum);
+            // alert("current order page=" + newNum);
         }
     };
     var pageSize = 2; //document.getElementById('currentOrderPage').value();
@@ -191,7 +191,7 @@ function deleteOrder(orderId) {
         var req = new XMLHttpRequest();
         req.onreadystatechange = function () {
             if (this.status === 200 && this.readyState === 4) {
-                alert("resp:" + this.responseText);
+                // alert("resp:" + this.responseText);
                 var res = JSON.parse(this.responseText);
                 // alert("resp:" + res);
                 if (res === "ERROR_CAN_NOT_DELETE_ORDER_WITH_SUCH_STATUS"){
@@ -203,28 +203,28 @@ function deleteOrder(orderId) {
             }
         }
         var url = "/deleteorder?orderId=" + orderId;
-        req.open('GET', url, true);
+        req.open('POST', url, true);
         req.send();
     }
 }
 
 function showMoreTrucks() {
-    alert("Gonna show more trucks!");
-    console.log("Gonna show more orders!");
+    // alert("Gonna show more trucks!");
+    // console.log("Gonna show more orders!");
     var req = new XMLHttpRequest();
     // alert("Making onreadystatechangefunction!");
-    console.log("Making onreadystatechangefunction!");
+    // console.log("Making onreadystatechangefunction!");
     req.onreadystatechange = function () {
-        alert("readyState=" + this.readyState + "status = " + this.status);
+        // alert("readyState=" + this.readyState + "status = " + this.status);
     //     console.log("readyState=" + this.readyState + "status = " + this.status);
         if (this.readyState === 4 && this.status === 200){
-            alert("resp text:" + this.responseText);
+            // alert("resp text:" + this.responseText);
             var trucksArr = JSON.parse(this.responseText);
-            alert("parsed:" + trucksArr);
+            // alert("parsed:" + trucksArr);
     //         console.log("parsed: " + ordersArr);
     //         alert("ordersArr length = " + ordersArr.length);
             for(var i = 0; i < trucksArr.length; i++){
-                alert("trucksArr["+i+"] = " + trucksArr[i]);
+                // alert("trucksArr["+i+"] = " + trucksArr[i]);
     //             console.log("ordersArr[i] = " + ordersArr[i]);
                 var item = trucksArr[i];
                 var tbody = document.getElementById('myTable2').getElementsByTagName('TBODY')[0];
@@ -296,7 +296,7 @@ function showMoreTrucks() {
             var currentTruckPageNum = (Number)(document.getElementById('currentTruckPage').getAttribute('value'));
             var newNum = (Number)(currentTruckPageNum + 1);
             document.getElementById('currentTruckPage').setAttribute('value',newNum);
-            alert("current truck page=" + newNum);
+            // alert("current truck page=" + newNum);
         }
     };
     var pageSize = 2; //document.getElementById('currentOrderPage').value();
@@ -315,17 +315,17 @@ function showMoreTrucks() {
 }
 
 function deleteTruck(truckId) {
-    alert("in deleteTruck!");
-    alert("truckId:" + truckId);
+    // alert("in deleteTruck!");
+    // alert("truckId:" + truckId);
     var sureDelete = confirm("Do you really want to delete this truck?");
     if (sureDelete) {
         var req = new XMLHttpRequest();
         req.onreadystatechange = function () {
-            alert("readyState=" + this.readyState + "status = " + this.status);
+            // alert("readyState=" + this.readyState + "status = " + this.status);
             if (this.status === 200 && this.readyState === 4) {
-                alert("resp:" + this.responseText);
+                // alert("resp:" + this.responseText);
                 var res = JSON.parse(this.responseText);
-                alert("resp:" + res);
+                // alert("resp:" + res);
                 if (res === "TRUCK_DELETED"){
                     alert("Truck del!");
                 }
@@ -348,22 +348,22 @@ function deleteTruck(truckId) {
 }
 
 function showMoreUsers() {
-    alert("Gonna show more users!");
-    console.log("Gonna show more orders!");
+    // alert("Gonna show more users!");
+    // console.log("Gonna show more orders!");
     var req = new XMLHttpRequest();
     // alert("Making onreadystatechangefunction!");
     console.log("Making onreadystatechangefunction!");
     req.onreadystatechange = function () {
-        alert("readyState=" + this.readyState + "status = " + this.status);
+        // alert("readyState=" + this.readyState + "status = " + this.status);
         //     console.log("readyState=" + this.readyState + "status = " + this.status);
         if (this.readyState === 4 && this.status === 200){
-            alert("resp text:" + this.responseText);
+            // alert("resp text:" + this.responseText);
             var trucksArr = JSON.parse(this.responseText);
-            alert("parsed:" + trucksArr);
+            // alert("parsed:" + trucksArr);
             //         console.log("parsed: " + ordersArr);
             //         alert("ordersArr length = " + ordersArr.length);
             for(var i = 0; i < trucksArr.length; i++){
-                alert("usersArr["+i+"] = " + trucksArr[i]);
+                // alert("usersArr["+i+"] = " + trucksArr[i]);
                 //             console.log("ordersArr[i] = " + ordersArr[i]);
                 var item = trucksArr[i];
                 var tbody = document.getElementById('myTable3').getElementsByTagName('TBODY')[0];
@@ -418,7 +418,7 @@ function showMoreUsers() {
             var currentUserPageNum = (Number)(document.getElementById('currentUserPage').getAttribute('value'));
             var newNum = (Number)(currentUserPageNum + 1);
             document.getElementById('currentUserPage').setAttribute('value',newNum);
-            alert("current user page=" + newNum);
+            // alert("current user page=" + newNum);
         }
     };
     var pageSize = 2; //document.getElementById('currentOrderPage').value();
@@ -437,17 +437,17 @@ function showMoreUsers() {
 }
 
 function deleteUser(userId) {
-    alert("in deleteUser!");
-    alert("userId:" + userId);
+    // alert("in deleteUser!");
+    // alert("userId:" + userId);
     var sureDelete = confirm("Do you really want to delete this user?");
     if (sureDelete) {
         var req = new XMLHttpRequest();
         req.onreadystatechange = function () {
-            alert("readyState=" + this.readyState + "status = " + this.status);
+            // alert("readyState=" + this.readyState + "status = " + this.status);
             if (this.status === 200 && this.readyState === 4) {
-                alert("resp:" + this.responseText);
+                // alert("resp:" + this.responseText);
                 var res = JSON.parse(this.responseText);
-                alert("resp:" + res);
+                // alert("resp:" + res);
                 if (res === "USER_DELETED"){
                     alert("User succesfully deleted!");
                 }
@@ -463,22 +463,22 @@ function deleteUser(userId) {
 }
 
 function showMoreCargos() {
-    alert("Gonna show more users!");
-    console.log("Gonna show more orders!");
+    // alert("Gonna show more users!");
+    // console.log("Gonna show more orders!");
     var req = new XMLHttpRequest();
     // alert("Making onreadystatechangefunction!");
-    console.log("Making onreadystatechangefunction!");
+    // console.log("Making onreadystatechangefunction!");
     req.onreadystatechange = function () {
-        alert("readyState=" + this.readyState + "status = " + this.status);
+        // alert("readyState=" + this.readyState + "status = " + this.status);
         //     console.log("readyState=" + this.readyState + "status = " + this.status);
         if (this.readyState === 4 && this.status === 200){
-            alert("resp text:" + this.responseText);
+            // alert("resp text:" + this.responseText);
             var cargosArr = JSON.parse(this.responseText);
-            alert("parsed:" + cargosArr);
+            // alert("parsed:" + cargosArr);
             //         console.log("parsed: " + ordersArr);
             //         alert("ordersArr length = " + ordersArr.length);
             for(var i = 0; i < cargosArr.length; i++){
-                alert("cargosArr["+i+"] = " + cargosArr[i]);
+                // alert("cargosArr["+i+"] = " + cargosArr[i]);
                 //             console.log("ordersArr[i] = " + ordersArr[i]);
                 var item = cargosArr[i];
                 var tbody = document.getElementById('myTable4').getElementsByTagName('TBODY')[0];
@@ -523,7 +523,7 @@ function showMoreCargos() {
             var currentCargoPageNum = (Number)(document.getElementById('currentCargoPage').getAttribute('value'));
             var newNum = (Number)(currentCargoPageNum + 1);
             document.getElementById('currentCargoPage').setAttribute('value',newNum);
-            alert("current cargo page=" + newNum);
+            // alert("current cargo page=" + newNum);
         }
     };
     var pageSize = 2; //document.getElementById('currentOrderPage').value();
@@ -548,11 +548,11 @@ function deleteCargo(cargoId) {
     if (sureDelete) {
         var req = new XMLHttpRequest();
         req.onreadystatechange = function () {
-            alert("readyState=" + this.readyState + "status = " + this.status);
+            // alert("readyState=" + this.readyState + "status = " + this.status);
             if (this.status === 200 && this.readyState === 4) {
-                alert("resp:" + this.responseText);
+                // alert("resp:" + this.responseText);
                 var res = JSON.parse(this.responseText);
-                alert("resp:" + res);
+                // alert("resp:" + res);
                 if (res === "CARGO_DELETED"){
                     alert("Cargo succesfully deleted!");
                 }
@@ -568,7 +568,7 @@ function deleteCargo(cargoId) {
 }
 
 function showMoreCities() {
-    alert("Gonna show more cities!");
+    // alert("Gonna show more cities!");
     // console.log("Gonna show more orders!");
     var req = new XMLHttpRequest();
     // alert("Making onreadystatechangefunction!");
