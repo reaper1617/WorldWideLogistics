@@ -733,6 +733,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/driver/drivermainpage2.jsp">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/errors/error404.jsp">
           <value>
             <set />
@@ -884,6 +889,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/webapp/resources/web/js/adminmainpagepgntd.js">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/webapp/resources/web/js/drivermainpage.js">
           <value>
             <set />
           </value>

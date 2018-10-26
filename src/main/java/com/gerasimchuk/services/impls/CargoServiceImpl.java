@@ -228,6 +228,32 @@ public class CargoServiceImpl implements CargoService {
         return result;
     }
 
+    @Override
+    public UpdateMessageType updateCargoStatus(int cargoId, CargoStatus newStatus) {
+        LOGGER.info("Class: " + this.getClass().getName() + " method: updateCargoStatus");
+        if (cargoId <=0){
+            LOGGER.error("Class: " + this.getClass().getName() + " out from updateCargoStatus method: cargo id is not valid");
+            return UpdateMessageType.ERROR_CARGO_ID_IS_NOT_VALID;
+        }
+        if (newStatus == null){
+            LOGGER.error("Class: " + this.getClass().getName() + " out from updateCargoStatus method: new cargo status is null");
+            return UpdateMessageType.ERROR_CARGO_STATUS_IS_NOT_VALID;
+        }
+        Cargo cargo = cargoRepository.getById(cargoId);
+        if (cargo == null){
+            LOGGER.error("Class: " + this.getClass().getName() + " out from updateCargoStatus method: no such cargo in database.");
+            return UpdateMessageType.ERROR_NO_CARGO_WITH_THIS_ID;
+        }
+        CargoStatus currentStatus = cargo.getStatus();
+        if (currentStatus.equals(CargoStatus.DELIVERED) && !newStatus.equals(CargoStatus.DELIVERED)){
+            LOGGER.error("Class: " + this.getClass().getName() + " out from updateCargoStatus method: can not change status of cargo which is already delivered.");
+            return UpdateMessageType.ERROR_CAN_NOT_CHANGE_CARGO_STATUS_FROM_DELIVERED_TO_ANOTHER;
+        }
+        cargoRepository.update(cargo.getId(),cargo.getPersonalNumber(),cargo.getName(),cargo.getWeight(),newStatus,cargo.getRoute());
+        LOGGER.info("Class: " + this.getClass().getName() + " out from updateCargoStatus method: cargo status updated successfully.");
+        return UpdateMessageType.CARGO_STATUS_UPDATED;
+    }
+
     // ** util methods
 
     private CargoStatus getCargoStatusFromCargoDTO(CargoDTO cargoDTO){

@@ -23,4 +23,5 @@ public interface CargoService {
 
     Collection<Cargo> getAvailableCargos();
     CargoStatus getCargoStatusFromString(String status);
+    UpdateMessageType updateCargoStatus(int cargoId, CargoStatus newStatus);
 }

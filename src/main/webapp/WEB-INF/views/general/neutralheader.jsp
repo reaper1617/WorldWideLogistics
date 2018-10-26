@@ -8,7 +8,7 @@
 <div class = "container-fluid">
     <h2>Fixed-top container</h2>
     <nav class="nav nav-tabs bg-dark navbar-dark fixed-top">
-        <a class="navbar-brand" href="${pageContext.request.contextPath}/adminmainpage/0">WorldWideLogistics</a>
+        <a class="navbar-brand" href="#">WorldWideLogistics</a>
         <!-- Nav tabs -->
         <ul class="nav nav-tabs " role="tablist">
             <form id="logoutForm" action="/logout" method="get">

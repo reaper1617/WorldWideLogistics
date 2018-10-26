@@ -63,7 +63,7 @@
 				</div>
 					<br>
 					<div class="form-group">
-						<label>Current route(you can change it on next step):</label>
+						<label>Current route:</label>
 						<div id="currentRoute"></div>
 					</div>
 					

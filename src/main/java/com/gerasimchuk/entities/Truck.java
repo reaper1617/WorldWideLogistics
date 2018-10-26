@@ -2,13 +2,14 @@ package com.gerasimchuk.entities;
 
 
 import com.gerasimchuk.enums.TruckState;
+import com.gerasimchuk.utils.JSONconvertable;
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity(name = "Trucks")
 @Table(name = "trucks", schema = "mywwldatabase", catalog = "")
-public class Truck {
+public class Truck implements JSONconvertable {
 
     private int id;
     private String registrationNumber;
@@ -122,6 +123,17 @@ public class Truck {
         this.assignedOrder = assignedOrder;
     }
 
+    @Override
+    public String convertToJSONString() {
+        StringBuilder result = new StringBuilder("{");
+        result.append("\"id\":\"").append(id).append("\",");
+        result.append("\"registrationNumber\":\"").append(registrationNumber).append("\",");
+        result.append("\"numOfDrivers\":\"").append(numOfDrivers).append("\",");
+        result.append("\"capacity\":\"").append(capacity).append("\",");
+        result.append("\"state\":\"").append(state).append("\",");
+        result.append("\"currentCity\":\"").append(currentCity).append("\"}");
+        return result.toString();
+    }
 
 
     //todo: onetomany with drivers

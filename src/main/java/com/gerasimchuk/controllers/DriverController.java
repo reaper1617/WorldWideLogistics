@@ -18,15 +18,14 @@ import com.gerasimchuk.services.interfaces.OrderService;
 import com.gerasimchuk.services.interfaces.StatisticService;
 import com.gerasimchuk.utils.MessageConstructor;
 import com.gerasimchuk.utils.OrderWithRoute;
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -71,22 +70,22 @@ public class DriverController {
         this.messageConstructor = messageConstructor;
     }
 
-    private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(DriverController.class);
+    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(DriverController.class);
 
     private String setDriverMainPageAttributes(Model ui){
-        log.info("Controller: DriverController, metod = setDriverMainPageAttributes");
+        LOGGER.info("Controller: DriverController, metod = setDriverMainPageAttributes");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String personalNumber = authentication.getName();
-        log.info("Authenticated user personal number:" + personalNumber);
+        LOGGER.info("Authenticated user personal number:" + personalNumber);
         User loggedUser = userRepository.getByPersonalNumber(personalNumber);
         if (loggedUser == null){
-            log.error("Error: logged user not found!");
+            LOGGER.error("Error: logged user not found!");
             ui.addAttribute("actionFailed", "Error: logged user not found!");
             return "failure";
         }
         ui.addAttribute("loggedDriver" , loggedUser);
         if (loggedUser.getDriver() == null) {
-            log.error("Error: access violation - user is not a driver");
+            LOGGER.error("Error: access violation - user is not a driver");
             ui.addAttribute("actionFailed","Error: access violation - user is not a driver");
             return "failure";
         }
@@ -103,7 +102,7 @@ public class DriverController {
                     ui.addAttribute("orderWithRoute", orderWithRoute);
                 }
                 catch (Exception e){
-                    log.error("Error: " + e.getMessage());
+                    LOGGER.error("Error: " + e.getMessage());
                     ui.addAttribute("Error: " + e.getMessage());
                     return "failure";
                 }
@@ -137,21 +136,29 @@ public class DriverController {
 
     @RequestMapping(value = "/drivermainpage/{id}", method = RequestMethod.GET)
     String driverMainPage(@PathVariable("id") int id, Model ui){
-        log.info("Controller: DriverController, metod = driverMainPage,  action = \"/drivermainpage\", request = GET");
+        LOGGER.info("Controller: DriverController, metod = driverMainPage,  action = \"/drivermainpage\", request = GET");
         String resultUrl = setDriverMainPageAttributes(ui);
         return resultUrl;
     }
 
+//    @RequestMapping(value = "/drivermainpage2/{id}", method = RequestMethod.GET)
+//    String driverMainPage2(@PathVariable("id") int id, Model ui){
+//        LOGGER.info("Controller: DriverController, metod = driverMainPage2,  action = \"/drivermainpage2\", request = GET");
+//        String resultUrl = setDriverMainPageAttributes(ui);
+//        resultUrl += "2";
+//        return resultUrl;
+//    }
+
     @RequestMapping(value = "/drivermainpage/{id}", method = RequestMethod.POST)
     public String driverMainPagePost(@PathVariable("id") int action, DriverAccountDTO driverAccountDTO, BindingResult bindingResult, Model ui){
-        log.info("Controller: DriverController, metod = driverMainPagePost,  action = \"/drivermainpage\", request = POST");
+        LOGGER.info("Controller: DriverController, metod = driverMainPagePost,  action = \"/drivermainpage\", request = POST");
         if (driverAccountDTO == null){
-            log.error("Error: DriverAccount Data Transger Object is empty!");
+            LOGGER.error("Error: DriverAccount Data Transger Object is empty!");
             ui.addAttribute("actionFailed", "Error: DriverAccount Data Transger Object is empty!" );
             return "failure";
         }
         if (action == 0){
-            log.info("Trying to update driver status");
+            LOGGER.info("Trying to update driver status");
             // update driver status
             int id = 0;
             try{
@@ -159,18 +166,18 @@ public class DriverController {
             }
             catch (Exception e){
                 e.printStackTrace();
-                log.error("Error: driver id is not valid");
+                LOGGER.error("Error: driver id is not valid");
                 ui.addAttribute("actionFailed", "Error: driver id is not valid" );
                 return "failure";
             }
             User user = userRepository.getById(id);
-            log.info("Trying to update status for driver id = " + driverAccountDTO.getDriverId());
+            LOGGER.info("Trying to update status for driver id = " + driverAccountDTO.getDriverId());
             if (user.getDriver() != null){
                 Driver driver = user.getDriver();
                 // get status!!
                 DriverStatus status = driverService.getDriverStatusValFromString(driverAccountDTO.getDriverStatus());
                 if (status == null) {
-                    log.error("Error: driver status value is not valid!");
+                    LOGGER.error("Error: driver status value is not valid!");
                     ui.addAttribute("actionFailed", "Error: driver status value is not valid!");
                     return "failure";
                 }
@@ -184,14 +191,14 @@ public class DriverController {
         }
         if (action == 1){
             // update current order info
-            log.info("Trying to update order status");
+            LOGGER.info("Trying to update order status");
             int id = 0;
             try{
                 id = Integer.parseInt(driverAccountDTO.getOrderId());
             }
             catch (Exception e){
                 e.printStackTrace();
-                log.error("Error: order id is not valid");
+                LOGGER.error("Error: order id is not valid");
                 ui.addAttribute("Error: order id is not valid");
                 return "failure";
             }
@@ -202,7 +209,7 @@ public class DriverController {
                 if (orderStatus != null) {
                     Order updatedOrder = null;
                     if (!orderService.areAllCargosDelivered(order)&&orderStatus.equals(OrderStatus.EXECUTED)){
-                        log.error("Error: not all cargos in order are delivered!");
+                        LOGGER.error("Error: not all cargos in order are delivered!");
                         ui.addAttribute("actionFailed", "Error: not all of cargos in order are delivered!");
                         return "failure";
                     }
@@ -248,7 +255,7 @@ public class DriverController {
                     return setDriverMainPageAttributes(ui);
                 }
                 else {
-                    log.error("Error: order status value is not valid!");
+                    LOGGER.error("Error: order status value is not valid!");
                     ui.addAttribute("actionFailed", "Error: order status value is not valid!");
                     return "failure";
                 }
@@ -264,13 +271,13 @@ public class DriverController {
             }
             catch (Exception e){
                 e.printStackTrace();
-                log.error("Error: cargo id is not valid");
+                LOGGER.error("Error: cargo id is not valid");
                 ui.addAttribute("actionFailed", "Error: cargo id is not valid");
                 return "failure";
             }
             CargoStatus cargoStatus = cargoService.getCargoStatusFromString(driverAccountDTO.getCargoStatus());
             if (cargoStatus == null){
-                log.error("Error: cargo status value is not valid!");
+                LOGGER.error("Error: cargo status value is not valid!");
                 ui.addAttribute("actionFailed", "Error: cargo status value is not valid!");
                 return "failure";
             }
@@ -289,4 +296,64 @@ public class DriverController {
         ui.addAttribute("actionFailed", "Error: unknown action!");
         return "failure";
     }
+
+    @RequestMapping(value = "/updatedriverstatus", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateDriverStatus(@RequestParam("driverId") int driverId, @RequestParam("newStatus") String newStatus){
+        LOGGER.info("Class: " + this.getClass().getName() + " method: updateDriverStatus");
+        if (driverId <=0){
+            LOGGER.error("Class:" + this.getClass().getName() + " out from updateDriverStatus method: driver id is not valid.");
+            return null;
+        }
+        if (newStatus == null){
+            LOGGER.error("Class:" + this.getClass().getName() + " out from updateDriverStatus method: new driver status is not valid.");
+            return null;
+        }
+        DriverStatus driverStatus = driverService.getDriverStatusValFromString(newStatus);
+        UpdateMessageType result = driverService.updateDriverStatus(driverId,driverStatus);
+        Gson gson = new Gson();
+        String res = gson.toJson(result);
+        return res;
+    }
+
+    @RequestMapping(value = "/updateorderstatus", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateOrderStatus(@RequestParam("orderId") int orderId, @RequestParam("newStatus") String newStatus){
+        LOGGER.info("Class: " + this.getClass().getName() + " method: updateOrderStatus");
+        if (orderId <=0){
+            LOGGER.error("Class:" + this.getClass().getName() + " out from updateOrderStatus method: order id is not valid.");
+            return null;
+        }
+        if (newStatus == null){
+            LOGGER.error("Class:" + this.getClass().getName() + " out from updateOrderStatus method: new order status is not valid.");
+            return null;
+        }
+//        DriverStatus driverStatus = driverService.getDriverStatusValFromString(newStatus);
+        OrderStatus orderStatus = orderService.getOrderStatusFromString(newStatus);
+        UpdateMessageType result = orderService.updateOrderStatus(orderId,orderStatus);
+        Gson gson = new Gson();
+        String res = gson.toJson(result);
+        return res;
+    }
+
+    @RequestMapping(value = "/updatecargostatus", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateCargoStatus(@RequestParam("cargoId") int cargoId, @RequestParam("newStatus") String newStatus){
+        LOGGER.info("Class: " + this.getClass().getName() + " method: updateCargoStatus");
+        if (cargoId <=0){
+            LOGGER.error("Class:" + this.getClass().getName() + " out from updateCargoStatus method: order id is not valid.");
+            return null;
+        }
+        if (newStatus == null){
+            LOGGER.error("Class:" + this.getClass().getName() + " out from updateCargoStatus method: new order status is not valid.");
+            return null;
+        }
+        CargoStatus cargoStatus = cargoService.getCargoStatusFromString(newStatus);
+        UpdateMessageType result = cargoService.updateCargoStatus(cargoId,cargoStatus);
+        Gson gson = new Gson();
+        String res = gson.toJson(result);
+        return res;
+    }
+
+
 }
