@@ -11,7 +11,7 @@
         <a class="navbar-brand" href="${pageContext.request.contextPath}/drivermainpage/0">Driver account</a>
         <!-- Nav tabs -->
         <ul class="nav nav-tabs bg-primary bg-dark navbar-dark" role="tablist">
-            <form id="logoutForm" action="/logout" method="get">
+            <form id="logoutForm" action="${pageContext.request.contextPath}/logout" method="get">
                 <li class="nav-item">
                     <a class="nav-link bg-dark" data-toggle="tab" href="#" onclick="logOut()">Log out</a>
                 </li>

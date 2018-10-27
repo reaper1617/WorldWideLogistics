@@ -1,4 +1,4 @@
-
+let contextName = "/worldwidelogistics";
 function myMap() {
     const mapProp = {
         center: new google.maps.LatLng(59.939095, 30.315868),
@@ -25,7 +25,7 @@ function myMap() {
                 const routeArr = orderItem.route;
                 const routeSize = routeArr.length;
                 const routePointOrigin = routeArr[0];
-                const routePointDestination = routeArr[length - 1];
+                const routePointDestination = routeArr[routeSize - 1];
                 alert("from " + routePointOrigin + " to " + routePointDestination);
                 const wayPoints = [];
                 for(let m=1; m < routeSize-1; m++){
@@ -126,7 +126,7 @@ function myMap() {
     const size = 10;
     //var reqURL = 'http://localhost:8080/gettoporders?size='+size;
     //var reqURL = 'http://localhost:8085/worldwidelogistics/gettoporders?size='+size;
-    const reqURL = '/gettoporders?size=' + size;
+    const reqURL = contextName +  '/gettoporders?size=' + size;
     req.open("GET", reqURL, true);
     req.send();
 }

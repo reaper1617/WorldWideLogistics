@@ -1,4 +1,6 @@
 
+let contextName = "/worldwidelogistics";
+
 $(document).ready(function(){
     $("#myInput").on("keyup", function() {
         var value = $(this).val().toLowerCase();
@@ -176,7 +178,7 @@ function showMoreOrders() {
     //var reqURL = 'http://localhost:8080/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
 
     //var reqURL = 'http://localhost:8085/worldwidelogistics/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
-    var reqURL = '/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
+    var reqURL = contextName + '/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
     // alert("req opening... :" + reqURL);
     req.open("GET", reqURL, true);
     // alert("req sending...");
@@ -202,7 +204,7 @@ function deleteOrder(orderId) {
                 }
             }
         }
-        var url = "/deleteorder?orderId=" + orderId;
+        var url = contextName +"/deleteorder?orderId=" + orderId;
         req.open('POST', url, true);
         req.send();
     }
@@ -307,7 +309,7 @@ function showMoreTrucks() {
     //var reqURL = 'http://localhost:8080/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
 
     //var reqURL = 'http://localhost:8085/worldwidelogistics/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
-    var reqURL = '/getpaginatedtruckslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
+    var reqURL = contextName + '/getpaginatedtruckslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
     // alert("req opening... :" + reqURL);
     req.open("GET", reqURL, true);
     // alert("req sending...");
@@ -341,7 +343,7 @@ function deleteTruck(truckId) {
                 //         }
             }
         }
-        var url = "/deletetruck?truckId=" + truckId;
+        var url = contextName + "/deletetruck?truckId=" + truckId;
         req.open('POST', url, true);
         req.send();
     }
@@ -429,7 +431,7 @@ function showMoreUsers() {
     //var reqURL = 'http://localhost:8080/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
 
     //var reqURL = 'http://localhost:8085/worldwidelogistics/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
-    var reqURL = '/getpaginateduserslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
+    var reqURL = contextName + '/getpaginateduserslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
     // alert("req opening... :" + reqURL);
     req.open("GET", reqURL, true);
     // alert("req sending...");
@@ -456,7 +458,7 @@ function deleteUser(userId) {
                 }
             }
         }
-        var url = "/deleteuser?userId=" + userId;
+        var url = contextName + "/deleteuser?userId=" + userId;
         req.open('POST', url, true);
         req.send();
     }
@@ -534,7 +536,7 @@ function showMoreCargos() {
     //var reqURL = 'http://localhost:8080/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
 
     //var reqURL = 'http://localhost:8085/worldwidelogistics/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
-    var reqURL = '/getpaginatedcargoslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
+    var reqURL =contextName + '/getpaginatedcargoslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
     // alert("req opening... :" + reqURL);
     req.open("GET", reqURL, true);
     // alert("req sending...");
@@ -561,7 +563,7 @@ function deleteCargo(cargoId) {
                 }
             }
         }
-        var url = "/deletecargo?cargoId=" + cargoId;
+        var url = contextName + "/deletecargo?cargoId=" + cargoId;
         req.open('POST', url, true);
         req.send();
     }
@@ -677,7 +679,7 @@ function showMoreCities() {
     //var reqURL = 'http://localhost:8080/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
 
     //var reqURL = 'http://localhost:8085/worldwidelogistics/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
-    var reqURL = '/getpaginatedcitieslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
+    var reqURL = contextName +'/getpaginatedcitieslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
     // alert("req opening... :" + reqURL);
     req.open("GET", reqURL, true);
     // alert("req sending...");
@@ -705,7 +707,7 @@ function deleteCity(cityId) {
                 }
             }
         };
-        var url = "/deletecity?cityId=" + cityId;
+        var url = contextName + "/deletecity?cityId=" + cityId;
         req.open('POST', url, true);
         req.send();
     }
@@ -774,7 +776,7 @@ function showMoreRoutes() {
     //var reqURL = 'http://localhost:8080/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
 
     //var reqURL = 'http://localhost:8085/worldwidelogistics/getpaginatedorderslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
-    var reqURL = '/getpaginatedrouteslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
+    var reqURL = contextName + '/getpaginatedrouteslist?pageSize='+pageSize+'&pageNumber='+necessaryPageNumber;
     // alert("req opening... :" + reqURL);
     req.open("GET", reqURL, true);
     // alert("req sending...");
@@ -802,7 +804,7 @@ function deleteRoute(routeId) {
                 }
             }
         };
-        var url = "/deleteroute?routeId=" + routeId;
+        var url = contextName + "/deleteroute?routeId=" + routeId;
         req.open('POST', url, true);
         req.send();
     }

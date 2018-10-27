@@ -1,3 +1,4 @@
+let contextName = "/worldwidelogistics";
 
 $(document).ready(function(){
     $("#myCargoDetailsInput").on("keyup", function() {
@@ -41,7 +42,7 @@ function updateDriverStatus(driverId) {
             }
         }
     };
-    var url = "/updatedriverstatus?driverId=" + driverId + "&newStatus=" + newStatusVal;
+    var url = contextName + "/updatedriverstatus?driverId=" + driverId + "&newStatus=" + newStatusVal;
     xmlReq.open("POST", url, true);
     xmlReq.send();
 }

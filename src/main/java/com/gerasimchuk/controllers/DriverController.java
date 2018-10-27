@@ -72,7 +72,12 @@ public class DriverController {
 
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(DriverController.class);
 
-    private String setDriverMainPageAttributes(Model ui){
+    private void setUpDriverPageAttributes(Model ui) {
+
+
+    }
+
+    public String setDriverMainPageAttributes(Model ui){
         LOGGER.info("Controller: DriverController, metod = setDriverMainPageAttributes");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String personalNumber = authentication.getName();

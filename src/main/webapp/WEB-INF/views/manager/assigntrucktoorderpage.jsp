@@ -11,7 +11,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 
 
-	<script src="/resources/web/js/managermainpage.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/web/js/managermainpage.js"></script>
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/web/css/adminmainpage.css">
 </head>
 <body class="gradientbackgr">
@@ -21,7 +21,7 @@
 
 
 
-	<jsp:include page="/WEB-INF/views/general/neutralheader.jsp"/>
+	<jsp:include page="../general/neutralheader.jsp"/>
 	<br>
 	<br>
 	<div class = "container-fluid" >
@@ -58,7 +58,12 @@
         						<c:if test="${availableTrucks != null}">
 									<c:if test="${not empty availableTrucks}">
 										<c:forEach items="${availableTrucks}" var="truck">
-								 			<option value="${truck.id}">Reg.num: ${truck.registrationNumber}, current city: ${truck.currentCity.name}</option>
+											<c:if test="${truck.driversInTruck == null or empty truck.driversInTruck}">
+												<option id="truck+${truck.id}" value="${truck.id}" style="color: #bd2130">Reg.num: ${truck.registrationNumber}, current city: ${truck.currentCity.name}</option>
+											</c:if>
+											<c:if test="${truck.driversInTruck != null and not empty truck.driversInTruck}">
+												<option value="${truck.id}">Reg.num: ${truck.registrationNumber}, current city: ${truck.currentCity.name}</option>
+											</c:if>
 										</c:forEach>
 									</c:if>
 									<c:if test="${empty availableTrucks}">
@@ -101,10 +106,13 @@
     			</div>
   			
 	</div>
-	<jsp:include page="/WEB-INF/views/general/footer.jsp"/>
+	<jsp:include page="../general/footer.jsp"/>
 	
 </div>
 
+<script>
+	$(document).ready(makeRedIfTruckHasDriversHoursOverLimit());
+</script>
 
 </body>
 </html>

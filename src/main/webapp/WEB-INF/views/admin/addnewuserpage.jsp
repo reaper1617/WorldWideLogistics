@@ -19,7 +19,7 @@
 
 
 
-	<jsp:include page="/WEB-INF/views/general/neutralheader.jsp"/>
+	<jsp:include page="../general/neutralheader.jsp"/>
 	<br>
 	<br>
 	<div class = "container-fluid" >
@@ -113,7 +113,7 @@
     			</div>
   			
 	</div>
-	<jsp:include page="/WEB-INF/views/general/footer.jsp"/>
+	<jsp:include page="../general/footer.jsp"/>
 	
 </div>
 
@@ -130,33 +130,29 @@ $(document).ready(function(){
 </script>
 
 <script>
-	$(document).ready(function () {
-        var chosen = document.getElementById('user_role');
-        var value = chosen.value;
-        // alert("chosen: " + value);
-        if (value === 'DRIVER') {
-            var fields = document.getElementById('driverFields');
-            fields.style.display = 'block';
-        }
-        else {
-            var fields = document.getElementById('driverFields');
-            fields.style.display = 'none';
-        }
-    })
+	$(document).ready(showDriverFields());
 </script>
 
 <script>
 	function showDriverFields() {
-		var chosen = document.getElementById('user_role');
-		var value = chosen.value;
+        let chosen = document.getElementById('user_role');
+        let value = chosen.value;
 		// alert("chosen: " + value);
 		if (value === 'DRIVER') {
-            var fields = document.getElementById('driverFields');
+            let fields = document.getElementById('driverFields');
             fields.style.display = 'block';
+            let driverCurrentCitySelect = document.getElementById('driver_current_city');
+            driverCurrentCitySelect.setAttribute("required","");
+			let driverHoursWorked = document.getElementById('hours_worked');
+			driverHoursWorked.setAttribute("required","");
         }
         else {
-            var fields = document.getElementById('driverFields');
+            let fields = document.getElementById('driverFields');
             fields.style.display = 'none';
+            let driverCurrentCitySelect = document.getElementById('driver_current_city');
+            driverCurrentCitySelect.removeAttribute("required");
+            let driverHoursWorked = document.getElementById('hours_worked');
+            driverHoursWorked.removeAttribute("required");
 		}
     }
 </script>

@@ -91,17 +91,15 @@ public class AdminController {
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(AdminController.class);
 
 
-    @RequestMapping(value = "/adminmainpage/{id}", method = RequestMethod.GET)
-    public String adminMainPage(@PathVariable("id") int id, Model ui, HttpServletRequest req) {
-        LOGGER.info("Controller: AdminController, metod = adminMainPage,  action = \"/adminmainpage\", request = GET");
-        // orders
+    public void setUpAdminPageAttributes(Model ui){
+        LOGGER.info("Controller: AdminController, metod = setUpAdminPageAttributes ");
         Collection<Order> ordersPgntd = orderRepository.getOrdersForOnePage(2,0);
         List<OrderWithRouteDTO> orderWithRouteDTOS = new ArrayList<OrderWithRouteDTO>();
         for(Order o: ordersPgntd){
             try {
                 orderWithRouteDTOS.add(orderToDTOConverter.convertToDTOWithRoute(o));
             } catch (RouteException e) {
-                LOGGER.info("Controller: AdminController, metod = adminMainPage, catched exception:" + e.getMessage());
+                LOGGER.info("Controller: AdminController, metod = setUpAdminPageAttributes, catched exception:" + e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -126,6 +124,14 @@ public class AdminController {
         List<Route> routes = (List<Route>) routeRepository.getRoutesForOnePage(2,0);
         List<RouteDTO> routeDTOS = routeToDTOConverter.convert(routes);
         ui.addAttribute("routesPgntd", routeDTOS);
+        LOGGER.info("Controller: AdminController, out from setUpAdminPageAttributes metod ");
+    }
+
+    @RequestMapping(value = "/adminmainpage/{id}", method = RequestMethod.GET)
+    public String adminMainPage(@PathVariable("id") int id, Model ui, HttpServletRequest req) {
+        LOGGER.info("Controller: AdminController, metod = adminMainPage,  action = \"/adminmainpage\", request = GET");
+        // orders
+        setUpAdminPageAttributes(ui);
 
         LOGGER.info("Controller: AdminController, out from metod = adminMainPage");
         return "admin/adminmainpage";

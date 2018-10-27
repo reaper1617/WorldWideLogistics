@@ -23,7 +23,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class UserController {
 
     private UserRepository userRepository;
-
+    private AdminController adminController;
+    private DriverController driverController;
+    private ManagerController managerController;
 
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(UserController.class);
 
@@ -41,30 +43,44 @@ public class UserController {
 //        }
         if (user.getDriver() != null){
             LOGGER.info("Authorized user is driver");
-            return "redirect: /drivermainpage/0";
+            return "/drivermainpage";
         }
         if (user.getManager() != null){
             LOGGER.info("Authorized user is manager");
-            return "redirect: /managermainpage/0";
+            return "/managermainpage";
         }
         if (user.getAdmin() != null){
             LOGGER.info("Authorized user is admin");
-            return "redirect: /adminmainpage/0";
+            return "/adminmainpage";
         }
         return null;
     }
 
     @Autowired
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, AdminController adminController, DriverController driverController, ManagerController managerController) {
         this.userRepository = userRepository;
+        this.adminController = adminController;
+        this.driverController = driverController;
+        this.managerController = managerController;
     }
 
     @RequestMapping(value = {"/","/index"}, method = RequestMethod.GET)
-    public String index() {
+    public String index(Model ui) {
         LOGGER.info("Controller: UserController, metod = index,  action = \"/\", request = GET");
         String url = defineUrlForLoggedUser();
-        if (url == null) return "redirect: /login";
-        return url;
+        if (url == null) return "/login";
+        if (url.equals("/adminmainpage")) {
+            adminController.setUpAdminPageAttributes(ui);
+            return "/admin/adminmainpage";
+        }
+        if (url.equals("/drivermainpage")){
+            return driverController.setDriverMainPageAttributes(ui);
+        }
+        if (url.equals("/managermainpage")){
+            return managerController.setManagerMainPageAttributes(ui);
+        }
+        ui.addAttribute("actionFailed", "Can not define logged user");
+        return "failure";
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
