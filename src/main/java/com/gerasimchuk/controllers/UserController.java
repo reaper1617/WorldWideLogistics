@@ -84,8 +84,13 @@ public class UserController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login(){
+    public String login(@RequestParam(value = "login_error", required = false)String error, Model ui){
         LOGGER.info("Controller: UserController, metod = login,  action = \"/login\", request = GET");
+        if (!error.isEmpty()){
+            LOGGER.error("Controller: UserController, metod = login, error: wrong personal number or password");
+            ui.addAttribute("actionFailed", "Wrong personal number or password!");
+            return "failure";
+        }
         String url = defineUrlForLoggedUser();
         if (url == null) return "/login";
         return url;
@@ -108,9 +113,9 @@ public class UserController {
         return "/login/logged";
     }
 
-    @RequestMapping(value = "/error", method = RequestMethod.GET)
-    public String error(){
-        LOGGER.info("Controller: UserController, metod = error,  action = \"/error\", request = GET");
-        return "/error";
+    @RequestMapping(value = "/loginerror", method = RequestMethod.GET)
+    public String loginError(){
+        LOGGER.info("Controller: UserController, metod = loginError,  action = \"/loginerror\", request = GET");
+        return "loginerror";
     }
 }

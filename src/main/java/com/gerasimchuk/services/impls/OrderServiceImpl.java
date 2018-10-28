@@ -889,7 +889,6 @@ public class OrderServiceImpl implements OrderService {
                 driverRepository.update(d.getId(),newHoursWorked,DriverStatus.FREE,finalDestinationCity,d.getCurrentTruck());
             }
             orderRepository.update(order.getId(),order.getPersonalNumber(),order.getDescription(),order.getDate(),newStatus,null);
-            rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.ORDER_EDITED, order));
             return UpdateMessageType.ORDER_STATUS_UPDATED;
         }
         orderRepository.update(order.getId(),order.getPersonalNumber(),order.getDescription(),order.getDate(),newStatus,order.getAssignedTruck());

@@ -316,6 +316,10 @@ public class DriverController {
         }
         DriverStatus driverStatus = driverService.getDriverStatusValFromString(newStatus);
         UpdateMessageType result = driverService.updateDriverStatus(driverId,driverStatus);
+        Driver d = driverRepository.getById(driverId);
+        if (d!=null && result.equals(UpdateMessageType.DRIVER_STATUS_UPDATED)){
+            rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.DRIVER_EDITED, d));
+        }
         Gson gson = new Gson();
         String res = gson.toJson(result);
         return res;
@@ -336,6 +340,10 @@ public class DriverController {
 //        DriverStatus driverStatus = driverService.getDriverStatusValFromString(newStatus);
         OrderStatus orderStatus = orderService.getOrderStatusFromString(newStatus);
         UpdateMessageType result = orderService.updateOrderStatus(orderId,orderStatus);
+        Order o = orderRepository.getById(orderId);
+        if (o!=null && result.equals(UpdateMessageType.ORDER_STATUS_UPDATED)){
+            rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.ORDER_EDITED, o));
+        }
         Gson gson = new Gson();
         String res = gson.toJson(result);
         return res;

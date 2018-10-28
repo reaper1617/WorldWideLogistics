@@ -47,11 +47,12 @@
 					<div>
 							<button type="submit" class="btn btn-primary">Login</button>
 					</div>
-					<div>
-						<c:if test="${messageFromServer != null}">
-							<h2>${messageFromServer}</h2>
-						</c:if>
-					</div>
+					<c:if test="${not empty sessionScope.SPRING_SECURITY_LAST_EXCEPTION}">
+						<div style="color: #bd2130">
+							Your login attempt was not successful, try again.<br />
+							<%--Reason: ${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message}--%>
+						</div>
+					</c:if>
 				</form>
 			</div>
 		</div>
