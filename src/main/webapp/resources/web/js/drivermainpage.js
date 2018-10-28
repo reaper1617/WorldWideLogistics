@@ -80,7 +80,7 @@ function updateOrderStatus(orderId) {
             }
         }
     };
-    var url = "/updateorderstatus?orderId=" + orderId + "&newStatus=" + newStatusVal;
+    var url = contextName + "/updateorderstatus?orderId=" + orderId + "&newStatus=" + newStatusVal;
     xmlReq.open("POST", url, true);
     xmlReq.send();
 }

@@ -109,7 +109,6 @@ public class DriverServiceImpl implements DriverService {
             return UpdateMessageType.ERROR_DRIVER_HAS_UNEXECUTED_ASSIGNED_ORDER;
         }
         Driver upd = driverRepository.update(d.getId(),d.getHoursWorked(),newStatus,d.getCurrentCity(),d.getCurrentTruck());
-        rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.DRIVER_EDITED, upd));
         return UpdateMessageType.DRIVER_STATUS_UPDATED;
     }
 

@@ -29,6 +29,7 @@ public class RabbitMQSenderImpl implements RabbitMQSender {
         }
         catch (Exception e){
             e.printStackTrace();
+            init();
         }
 
     }

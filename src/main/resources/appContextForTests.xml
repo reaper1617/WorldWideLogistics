@@ -27,7 +27,7 @@
 
     <http auto-config="true" use-expressions="true">
         <intercept-url pattern="/" access="isFullyAuthenticated() or isAnonymous()"/>
-        <!--<intercept-url pattern="/error.jsp" access="IS_AUTHENTICATED_ANONYMOUSLY"/>-->
+        <!--<intercept-url pattern="/loginerror.jsp" access="IS_AUTHENTICATED_ANONYMOUSLY"/>-->
         <intercept-url pattern="/WEB-INF/views/login.jsp" access="isFullyAuthenticated() or isAnonymous()"/>
         <intercept-url pattern="/logged.jsp" access="isFullyAuthenticated()"/>
         <intercept-url pattern="/logout.jsp" access="isFullyAuthenticated()"/>
