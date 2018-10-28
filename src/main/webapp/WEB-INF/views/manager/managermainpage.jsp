@@ -17,6 +17,7 @@
 
 
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/web/css/adminmainpage.css">
+
 </head>
 <body class="gradientbackgr">
 
@@ -25,7 +26,7 @@
 
 
 
-	<jsp:include page="/WEB-INF/views/general/managerheader.jsp"/>
+	<jsp:include page="../general/managerheader.jsp"/>
 	<c:if test="${loggedUser != null}">
 		<h3 id="loggedUserHeader">Logged as: ${loggedUser.name} ${loggedUser.middleName} ${loggedUser.lastName}</h3>
 	</c:if>
@@ -35,9 +36,9 @@
   			<div id="home" class="tab-pane active ">
     				<div class = "sticky-top">
 						<form action="${pageContext.request.contextPath}/addneworderpage", method="get">
-							<h3>Orders <button class = "btn btn-primary" type = "submit">Add new</button> </h3>
+							<h3>Orders <button class = "btn btn-primary" type = "submit">Add new</button> <button class = "btn btn-primary" type = "submit" form="googlePageForm">Show on map</button> </h3>
 						</form>
-    				
+						<form action="${pageContext.request.contextPath}/adminmainpagegoogle" method="get" id="googlePageForm"></form>
 				<div><input class="form-control" id="myInput" type="text" placeholder="Search.."></div>
 				</div>
 				<div>
@@ -293,7 +294,7 @@
 
 		
 	</div>
-	<jsp:include page="/WEB-INF/views/general/footer.jsp"/>
+	<jsp:include page="../general/footer.jsp"/>
 	
 </div>
 

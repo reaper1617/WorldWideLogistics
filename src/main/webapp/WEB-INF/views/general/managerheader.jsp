@@ -7,10 +7,10 @@
 --%>
 <div class = "container-fluid">
     <h2>Fixed-top container</h2>
-    <nav class="nav nav-tabs bg-primary bg-dark navbar-dark fixed-top">
+    <nav class="nav nav-tabs bg-dark navbar-dark fixed-top">
         <a class="navbar-brand" href="${pageContext.request.contextPath}/adminmainpage/0">Manager account</a>
         <!-- Nav tabs -->
-        <ul class="nav nav-tabs bg-primary bg-light navbar-light" role="tablist">
+        <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
                 <a class="nav-link active bg-dark" data-toggle="tab" href="#home">Home</a>
             </li>
@@ -23,7 +23,7 @@
             <li class="nav-item">
                 <a class="nav-link bg-dark" data-toggle="tab" href="#managecargos">Manage cargos</a>
             </li>
-            <form id="logoutForm" action="/logout" method="get">
+            <form id="logoutForm" action="${pageContext.request.contextPath}/logout" method="get">
                 <li class="nav-item">
                     <a class="nav-link bg-dark" data-toggle="tab" href="#" onclick="logOut()">Log out</a>
                 </li>

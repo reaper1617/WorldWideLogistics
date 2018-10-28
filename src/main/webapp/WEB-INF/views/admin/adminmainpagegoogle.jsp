@@ -32,7 +32,7 @@
 
 
 
-	<jsp:include page="/WEB-INF/views/general/neutralheader.jsp"/>
+	<jsp:include page="../general/neutralheader.jsp"/>
 	<br>
 	<div class = "container-fluid">
 		 <h1>Orders on map:</h1>
@@ -43,7 +43,7 @@
 	
 </div>
 
-<script src="/resources/web/js/googlemaps.js"></script>
+<script src="${pageContext.request.contextPath}/resources/web/js/googlemaps.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-kLRYC4_d1Z7zDgGJj_DplCfC7a_Mr3k&callback=myMap"></script>
 </body>
 </html>

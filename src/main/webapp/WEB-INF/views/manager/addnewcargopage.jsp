@@ -21,7 +21,7 @@
 
 
 
-	<jsp:include page="/WEB-INF/views/general/neutralheader.jsp"/>
+	<jsp:include page="../general/neutralheader.jsp"/>
 	<br>
 	<br>
 	<div class = "container-fluid" >
@@ -82,7 +82,7 @@
     			</div>
   			
 	</div>
-	<jsp:include page="/WEB-INF/views/general/footer.jsp"/>
+	<jsp:include page="../general/footer.jsp"/>
 	
 </div>
 

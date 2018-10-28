@@ -11,13 +11,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 
 
-	<style>
-		
-		.gradientbackgr{
-  			background: #fffff0;
-	 		background: radial-gradient(#0ed61f, #bfc2ff);
-		}
-	</style>
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/web/css/adminmainpage.css">
 
 </head>
 <body class="gradientbackgr">
@@ -25,8 +19,7 @@
 
 	<div class="container-fluid">
 
-		<div class = "container-fluid fixed-top">
-
+		<jsp:include page="general/neutralheader.jsp"/>
 		</div>
 		<br>
 		<br>
@@ -49,10 +42,7 @@
 				</form>
 			</div>
 		</div>
-		<div class = "container-fluid fixed-bottom">
-			<h5 align="center">WorldWideLogistics 2018</h5>
-		</div>
-	</div>
+	<jsp:include page="general/footer.jsp"/>
 </div>
 </body>
 </html>

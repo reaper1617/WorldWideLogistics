@@ -21,44 +21,41 @@
 <body class="gradientbackgr">
 <div class="gradientstyle">
 
-<div class="container-fluid">
+	<div class="container-fluid">
 
-	<div class = "container-fluid fixed-top">
-		
-	</div>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<div class = "container-fluid">
-		<div align="center" >
-			<h1 class="text-primary">Welcome to logistic system!</h1>
-			<br>
-			<form action="<c:url value='login'/>" method="post">
-    				<div class="form-group">
-      					<label class="text-primary"  for="text">Personal number:</label>
-      					<input style="width: 40%" type="text" class="form-control" id="text" placeholder="Enter your personal number" name="username" value="">
-    				</div>
-    				<div class="form-group">
-      					<label class="text-primary" for="pwd">Password:</label>
-      					<input style="width: 40% "type="password" class="form-control" id="pwd" placeholder="Enter password" name="password">
-    				</div>
+		<jsp:include page="/WEB-INF/views/general/loginheader.jsp"/>
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+		<div class = "container-fluid">
+			<div align="center" >
+				<h1 class="text-primary">Welcome to logistic system!</h1>
+				<br>
+				<form action="<c:url value='login'/>" method="post">
+						<div class="form-group">
+							<label class="text-primary"  for="text">Personal number:</label>
+							<input style="width: 40%" type="text" class="form-control" id="text" placeholder="Enter your personal number" name="username" value="">
+						</div>
+						<div class="form-group">
+							<label class="text-primary" for="pwd">Password:</label>
+							<input style="width: 40% "type="password" class="form-control" id="pwd" placeholder="Enter password" name="password">
+						</div>
 
-				<div>
-    					<button type="submit" class="btn btn-primary">Login</button>
-				</div>
-				<div>
-					<c:if test="${messageFromServer != null}">
-						<h2>${messageFromServer}</h2>
-					</c:if>
-				</div>
-  			</form>
+					<div>
+							<button type="submit" class="btn btn-primary">Login</button>
+					</div>
+					<div>
+						<c:if test="${messageFromServer != null}">
+							<h2>${messageFromServer}</h2>
+						</c:if>
+					</div>
+				</form>
+			</div>
 		</div>
-	</div>
-	<div class = "container-fluid fixed-bottom">
-		<h5 align="center">WorldWideLogistics 2018</h5>
+		<jsp:include page="/WEB-INF/views/general/footer.jsp"/>
 	</div>
 </div>
 </body>

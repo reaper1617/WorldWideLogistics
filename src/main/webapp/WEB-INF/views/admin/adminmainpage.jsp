@@ -21,7 +21,7 @@
 
 <div class="container-fluid">
 
-	<jsp:include page="/WEB-INF/views/general/adminheader.jsp"/>
+	<jsp:include page="../general/adminheader.jsp"/>
 
 	<br>
 	<div class = "container-fluid">
@@ -31,7 +31,7 @@
 						<form action="${pageContext.request.contextPath}/addneworderpage", method="get">
 							<h3>Orders <button class = "btn btn-primary" type = "submit">Add new</button> <button class = "btn btn-primary" type = "submit" form="googlePageForm">Show on map</button> </h3>
 						</form>
-						<form action="/adminmainpagegoogle" method="get" id="googlePageForm"></form>
+						<form action="${pageContext.request.contextPath}/adminmainpagegoogle" method="get" id="googlePageForm"></form>
 				<div><input class="form-control" id="myInput" type="text" placeholder="Search.."></div>
 				</div>
 				<div>
@@ -502,7 +502,7 @@
 		</div>
 
 
-	<jsp:include page="/WEB-INF/views/general/footer.jsp"/>
+	<jsp:include page="../general/footer.jsp"/>
 
 	
 </div>

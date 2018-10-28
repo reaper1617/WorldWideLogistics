@@ -100,7 +100,10 @@ public class DriverServiceImpl implements DriverService {
         }
         Order currentOrder = null;
         if (currentTruck != null) currentOrder = currentTruck.getAssignedOrder();
-
+        if (currentOrder == null && !newStatus.equals(DriverStatus.FREE)){
+            LOGGER.error("Class:" + this.getClass().getName() + " out from updateDriverStatus method: can not change driver status: driver doesn't execute ny order");
+            return UpdateMessageType.ERROR_DRIVER_HAS_NO_ASSIGNED_ORDER;
+        }
         if (newStatus.equals(DriverStatus.FREE) && currentOrder!=null && !currentOrder.getStatus().equals(OrderStatus.EXECUTED)){
             LOGGER.error("Class:" + this.getClass().getName() + " out from updateDriverStatus method: can not change driver status to FREE when driver has an assigned order which is not executed yet");
             return UpdateMessageType.ERROR_DRIVER_HAS_UNEXECUTED_ASSIGNED_ORDER;

@@ -13,7 +13,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/web/css/adminmainpage.css">
 
-	<script src="/resources/web/js/drivermainpage.js"></script>
+	<script src="<c:url value="/resources/web/js/drivermainpage.js"/>"></script>
 
 </head>
 <body class="gradientbackgr">
@@ -23,7 +23,7 @@
 
 
 
-	<jsp:include page="/WEB-INF/views/general/driverheader.jsp"/>
+	<jsp:include page="../general/driverheader.jsp"/>
 	<br>
 	<div class = "container-fluid">
 		 <div>
@@ -251,7 +251,7 @@
 			<br>
 		</div>
 	</div>
-	<jsp:include page="/WEB-INF/views/general/footer.jsp"/>
+	<jsp:include page="../general/footer.jsp"/>
 	
 </div>
 

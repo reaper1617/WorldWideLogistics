@@ -66,13 +66,7 @@ public class ManagerController {
         this.statisticService = statisticService;
     }
 
-    @RequestMapping(value = "/managermainpage/{id}", method = RequestMethod.GET)
-    String managerMainPage(@PathVariable("id") int id, Model ui){
-//        if (id == 0 || id == 1 || id == 2){
-//            return "/manager/managermainpage";
-//        }
-        LOGGER.info("Controller: ManagerController, metod = managerMainPage,  action = \"/managermainpage\", request = GET");
-        //
+    public String setManagerMainPageAttributes(Model ui){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String personalNumber = authentication.getName();
         LOGGER.info("Authenticated user personal number:" + personalNumber);
@@ -114,6 +108,12 @@ public class ManagerController {
         ui.addAttribute("trucksList", trucks);
         ui.addAttribute("ordersList", ordersWithRoutes);
         return "/manager/managermainpage";
+    }
+
+    @RequestMapping(value = "/managermainpage/{id}", method = RequestMethod.GET)
+    String managerMainPage(@PathVariable("id") int id, Model ui){
+        LOGGER.info("Controller: ManagerController, metod = managerMainPage,  action = \"/managermainpage\", request = GET");
+        return setManagerMainPageAttributes(ui);
     }
 
     @RequestMapping(value = "/managermainpage/{id}", method = RequestMethod.POST)

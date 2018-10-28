@@ -29,7 +29,7 @@
             <li class="nav-item">
                 <a class="nav-link bg-dark" data-toggle="tab" href="#manageroutes">Manage routes</a>
             </li>
-            <form id="logoutForm" action="/logout" method="get">
+            <form id="logoutForm" action="${pageContext.request.contextPath}/logout" method="get">
                 <li class="nav-item">
                     <a class="nav-link bg-dark" data-toggle="tab" href="#" onclick="logOut()">Log out</a>
                 </li>

@@ -369,7 +369,7 @@ public class UserServiceImpl implements UserService {
 
     public Collection<UserRole> getRoles() {
         LOGGER.info("Class: " + this.getClass().getName() + " method: getRoles");
-        Collection<UserRole> userRoles = new HashSet<UserRole>();
+        Collection<UserRole> userRoles = new ArrayList<UserRole>();
         userRoles.add(UserRole.ADMIN);
         userRoles.add(UserRole.DRIVER);
         userRoles.add(UserRole.MANAGER);
