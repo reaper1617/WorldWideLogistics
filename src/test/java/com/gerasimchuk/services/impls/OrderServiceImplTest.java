@@ -1,6 +1,7 @@
 package com.gerasimchuk.services.impls;
 
 import com.gerasimchuk.constants.WWLConstants;
+import com.gerasimchuk.dto.CargoDTO;
 import com.gerasimchuk.dto.OrderDTO;
 import com.gerasimchuk.entities.*;
 import com.gerasimchuk.enums.*;
@@ -19,6 +20,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -54,19 +56,33 @@ public class OrderServiceImplTest {
     @Autowired
     private DriverRepository driverRepository;
 
+    @Autowired
+    private CargoService cargoService;
+
     @Test
     public void getChosenCargos() {
-        Collection<Cargo> cargos = cargoRepository.getAll();
+
+        CargoDTO cargoDTO = new CargoDTO("","","TestCargo","10","Moscow","Petrozavodsk","");
+        cargoService.createCargo(cargoDTO);
+        Cargo persistedCargo = cargoRepository.getByName("TestCargo");
+//        Collection<Cargo> cargos = cargoRepository.getAll();
         String[] cargosInOrder = new String[1];
-        for(Cargo c: cargos){
-            if (c.getStatus().equals(CargoStatus.PREPARED)) {
-                cargosInOrder[0] = Integer.toString(c.getId());
-                break;
-            }
-        }
+        cargosInOrder[0] = Integer.toString(persistedCargo.getId());
+//        for(Cargo c: cargos){
+//            if (c.getStatus().equals(CargoStatus.PREPARED)) {
+//                cargosInOrder[0] = Integer.toString(c.getId());
+//                break;
+//            }
+//        }
         OrderDTO orderDTO = new OrderDTO(null,null,null,null,null,cargosInOrder);
         Collection<Cargo> cargos1 = orderService.getChosenCargos(orderDTO);
-        assertEquals(1, cargos1.size());
+
+        cargoService.deleteCargo(persistedCargo.getId());
+        Cargo c = cargos1.iterator().next();
+        if (c == null) fail();
+        boolean res = c.getName().equals("TestCargo") && cargos1.size()==1;
+//        assertEquals(1, cargos1.size());
+        assertTrue(res);
     }
 
     @Test
@@ -263,17 +279,16 @@ public class OrderServiceImplTest {
 
     @Test
     public void areAllCargosDelivered() {
-        Order order = orderRepository.getByPersonalNumber("5681333239");
-        if (order == null) fail();
-        Set<Cargo> cargos = order.getCargosInOrder();
-        boolean areAllCargosDelivered = true;
-        for(Cargo c:cargos){
-            if (!c.getStatus().equals(CargoStatus.DELIVERED)) {
-                areAllCargosDelivered = false;
-                break;
-            }
-        }
-        assertTrue(areAllCargosDelivered);
+        City city = new City("TestCity",true);
+        City cityTo = new City("TestCityTo",true);
+        Truck truck = new Truck("dd20394",2,2,TruckState.READY,city);
+        Order order = new Order("7736452837","TestOrderDescr","15 OCT 2018 15:08:22",OrderStatus.NOT_PREPARED,truck);
+        Set<Cargo> cargosInOrder = new HashSet<Cargo>();
+        Route r = new Route(city,cityTo,500);
+        cargosInOrder.add(new Cargo("7364987629","TestCargo",10,CargoStatus.DELIVERED,r));
+        order.setCargosInOrder(cargosInOrder);
+        boolean res = orderService.areAllCargosDelivered(order);
+        assertTrue(res);
     }
 
     @Test
