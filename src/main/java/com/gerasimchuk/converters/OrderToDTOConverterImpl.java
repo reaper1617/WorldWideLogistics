@@ -19,11 +19,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-/** Order to Data Transfer Object converter
+/**
+ * Order to Data Transfer Object converter
+ *
  * @author Reaper
  * @version 1.0
  */
-
 @Component
 public class OrderToDTOConverterImpl implements OrderToDTOConverter{
 
@@ -32,11 +33,22 @@ public class OrderToDTOConverterImpl implements OrderToDTOConverter{
 
     private OrderService orderService;
 
+    /**
+     * Instantiates a new Order to dto converter.
+     *
+     * @param orderService the order service
+     */
     @Autowired
     public OrderToDTOConverterImpl(OrderService orderService) {
         this.orderService = orderService;
     }
 
+    /**
+     * Convert order dto.
+     *
+     * @param order the order
+     * @return the order dto
+     */
     public static OrderDTO convert(Order order){
         LOGGER.info("Class: OrderToDTOConvert, method: convert");
         LOGGER.info("Trying to convert order " + order.getDescription() + " to OrderDTO");

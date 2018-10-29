@@ -24,11 +24,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.*;
 
-/** Manager Controller
+/**
+ * Manager Controller
+ *
  * @author Reaper
  * @version 1.0
  */
-
 @Controller
 public class ManagerController {
 
@@ -38,6 +39,9 @@ public class ManagerController {
     private CityRepository cityRepository;
     private TruckRepository truckRepository;
     private UserRepository userRepository;
+    /**
+     * The Order repository.
+     */
     public OrderRepository orderRepository;
 
     private CargoService cargoService;
@@ -50,6 +54,22 @@ public class ManagerController {
 
     private StatisticService statisticService;
 
+    /**
+     * Instantiates a new Manager controller.
+     *
+     * @param cargoRepository    the cargo repository
+     * @param cityRepository     the city repository
+     * @param truckRepository    the truck repository
+     * @param userRepository     the user repository
+     * @param orderRepository    the order repository
+     * @param cargoService       the cargo service
+     * @param userService        the user service
+     * @param truckService       the truck service
+     * @param orderService       the order service
+     * @param rabbitMQSender     the rabbit mq sender
+     * @param messageConstructor the message constructor
+     * @param statisticService   the statistic service
+     */
     @Autowired
     public ManagerController(CargoRepository cargoRepository, CityRepository cityRepository, TruckRepository truckRepository, UserRepository userRepository, OrderRepository orderRepository, CargoService cargoService, UserService userService, TruckService truckService, OrderService orderService, RabbitMQSender rabbitMQSender, MessageConstructor messageConstructor, StatisticService statisticService) {
         this.cargoRepository = cargoRepository;
@@ -66,6 +86,12 @@ public class ManagerController {
         this.statisticService = statisticService;
     }
 
+    /**
+     * Set manager main page attributes string.
+     *
+     * @param ui the ui
+     * @return the string
+     */
     public String setManagerMainPageAttributes(Model ui){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String personalNumber = authentication.getName();
@@ -110,12 +136,28 @@ public class ManagerController {
         return "/manager/managermainpage";
     }
 
+    /**
+     * Manager main page string.
+     *
+     * @param id the id
+     * @param ui the ui
+     * @return the string
+     */
     @RequestMapping(value = "/managermainpage/{id}", method = RequestMethod.GET)
     String managerMainPage(@PathVariable("id") int id, Model ui){
         LOGGER.info("Controller: ManagerController, metod = managerMainPage,  action = \"/managermainpage\", request = GET");
         return setManagerMainPageAttributes(ui);
     }
 
+    /**
+     * Manager main page post string.
+     *
+     * @param action        the action
+     * @param idDTO         the id dto
+     * @param bindingResult the binding result
+     * @param ui            the ui
+     * @return the string
+     */
     @RequestMapping(value = "/managermainpage/{id}", method = RequestMethod.POST)
     String managerMainPagePost(@PathVariable("id") int action, IdDTO idDTO, BindingResult bindingResult, Model ui){
         LOGGER.info("Controller: ManagerController, metod = managerMainPage,  action = \"/managermainpage\", request = POST");
@@ -165,7 +207,12 @@ public class ManagerController {
     }
 
 
-
+    /**
+     * Add new cargo page string.
+     *
+     * @param ui the ui
+     * @return the string
+     */
     @RequestMapping(value = "/addnewcargopage", method = RequestMethod.GET)
     String addNewCargoPage(Model ui){
         LOGGER.info("Controller: ManagerController, metod = addNewCargoPage,  action = \"/addnewcargopage\", request = GET");
@@ -174,6 +221,14 @@ public class ManagerController {
         return "/manager/addnewcargopage";
     }
 
+    /**
+     * Add new cargo page post string.
+     *
+     * @param cargoDTO      the cargo dto
+     * @param bindingResult the binding result
+     * @param ui            the ui
+     * @return the string
+     */
     @RequestMapping(value = "/addnewcargopage", method = RequestMethod.POST)
     String addNewCargoPagePost(CargoDTO cargoDTO, BindingResult bindingResult, Model ui){
         LOGGER.info("Controller: ManagerController, metod = addNewCargoPage,  action = \"/addnewcargopage\", request = POST");
@@ -192,7 +247,12 @@ public class ManagerController {
     }
 
 
-
+    /**
+     * Add new driver page string.
+     *
+     * @param ui the ui
+     * @return the string
+     */
     @RequestMapping(value = "/addnewdriverpage", method = RequestMethod.GET)
     String addNewDriverPage(Model ui){
         LOGGER.info("Controller: ManagerController, metod = addNewDriverPage,  action = \"/addnewdriverpage\", request = GET");
@@ -204,6 +264,14 @@ public class ManagerController {
         return "/manager/addnewdriverpage";
     }
 
+    /**
+     * Add new driver page post string.
+     *
+     * @param driverDTO     the driver dto
+     * @param bindingResult the binding result
+     * @param ui            the ui
+     * @return the string
+     */
     @RequestMapping(value = "/addnewdriverpage", method = RequestMethod.POST)
     String addNewDriverPagePost(DriverDTO driverDTO, BindingResult bindingResult, Model ui){
         LOGGER.info("Controller: ManagerController, metod = addNewDriverPage,  action = \"/addnewdriverpage\", request = POST");
@@ -233,6 +301,12 @@ public class ManagerController {
 
     }
 
+    /**
+     * Add new order page string.
+     *
+     * @param ui the ui
+     * @return the string
+     */
     @RequestMapping(value = "/addneworderpage", method = RequestMethod.GET)
     String addNewOrderPage(Model ui){
         LOGGER.info("Controller: ManagerController, metod = addNewOrderPage,  action = \"/addneworderpage\", request = GET");
@@ -242,6 +316,14 @@ public class ManagerController {
         return "/manager/addneworderpage";
     }
 
+    /**
+     * Add new order page post string.
+     *
+     * @param orderDTO      the order dto
+     * @param bindingResult the binding result
+     * @param ui            the ui
+     * @return the string
+     */
     @RequestMapping(value = "/addneworderpage", method = RequestMethod.POST)
     String addNewOrderPagePost(OrderDTO orderDTO, BindingResult bindingResult, Model ui){
         LOGGER.info("Controller: ManagerController, metod = addNewOrderPage,  action = \"/addneworderpage\", request = POST");
@@ -287,6 +369,12 @@ public class ManagerController {
         return "/manager/assigntrucktoorderpage";
     }
 
+    /**
+     * Assign truck to order page string.
+     *
+     * @param ui the ui
+     * @return the string
+     */
     @RequestMapping(value = "/assigntrucktoorderpage", method = RequestMethod.GET)
     public String assignTruckToOrderPage(Model ui){
         LOGGER.info("Controller: ManagerController, metod = assignTruckToOrderPage,  action = \"/assigntrucktoorderpage\", request = GET");
@@ -323,6 +411,14 @@ public class ManagerController {
         return "/manager/assigntrucktoorderpage";
     }
 
+    /**
+     * Assign truck to order page post string.
+     *
+     * @param orderDTO      the order dto
+     * @param bindingResult the binding result
+     * @param ui            the ui
+     * @return the string
+     */
     @RequestMapping(value = "/assigntrucktoorderpage", method = RequestMethod.POST)
     public String assignTruckToOrderPagePost(OrderDTO orderDTO, BindingResult bindingResult,Model ui){
         LOGGER.info("Controller: ManagerController, metod = assignTruckToOrderPage,  action = \"/assigntrucktoorderpage\", request = POST");
@@ -357,6 +453,12 @@ public class ManagerController {
         }
     }
 
+    /**
+     * Add new truck page string.
+     *
+     * @param ui the ui
+     * @return the string
+     */
     @RequestMapping(value = "/addnewtruckpage", method = RequestMethod.GET)
     String addNewTruckPage(Model ui){
         LOGGER.info("Controller: ManagerController, metod = addNewTruckPage,  action = \"/addnewtruckpage\", request = GET");
@@ -367,6 +469,14 @@ public class ManagerController {
         return "/manager/addnewtruckpage";
     }
 
+    /**
+     * Add new truck page post string.
+     *
+     * @param truckDTO      the truck dto
+     * @param bindingResult the binding result
+     * @param ui            the ui
+     * @return the string
+     */
     @RequestMapping(value = "/addnewtruckpage", method = RequestMethod.POST)
     String addNewTruckPagePost(TruckDTO truckDTO, BindingResult bindingResult, Model ui){
         LOGGER.info("Controller: ManagerController, metod = addNewTruckPage,  action = \"/addnewtruckpage\", request = POST");
@@ -402,6 +512,12 @@ public class ManagerController {
         }
     }
 
+    /**
+     * Cargo change page string.
+     *
+     * @param ui the ui
+     * @return the string
+     */
     @RequestMapping(value = "/cargochangepage", method = RequestMethod.GET)
     String cargoChangePage(Model ui){
         LOGGER.info("Controller: ManagerController, metod = cargoChangePage,  action = \"/cargochangepage\", request = GET");
@@ -410,6 +526,14 @@ public class ManagerController {
         return "/manager/cargochangepage";
     }
 
+    /**
+     * Cargo change page post string.
+     *
+     * @param cargoDTO      the cargo dto
+     * @param bindingResult the binding result
+     * @param ui            the ui
+     * @return the string
+     */
     @RequestMapping(value = "/cargochangepage", method = RequestMethod.POST)
     String cargoChangePagePost(CargoDTO cargoDTO, BindingResult bindingResult, Model ui){
         LOGGER.info("Controller: ManagerController, metod = cargoChangePage,  action = \"/cargochangepage\", request = POST");
@@ -431,6 +555,12 @@ public class ManagerController {
         }
     }
 
+    /**
+     * Driver change page string.
+     *
+     * @param ui the ui
+     * @return the string
+     */
     @RequestMapping(value = "/driverchangepage", method = RequestMethod.GET)
     String driverChangePage(Model ui){
         LOGGER.info("Controller: ManagerController, metod = driverChangePage,  action = \"/driverchangepage\", request = GET");
@@ -441,6 +571,14 @@ public class ManagerController {
         return "/manager/driverchangepage";
     }
 
+    /**
+     * Driver change page post string.
+     *
+     * @param driverDTO     the driver dto
+     * @param bindingResult the binding result
+     * @param ui            the ui
+     * @return the string
+     */
     @RequestMapping(value = "/driverchangepage", method = RequestMethod.POST)
     String driverChangePagePost(DriverDTO driverDTO, BindingResult bindingResult, Model ui){
         LOGGER.info("Controller: ManagerController, metod = driverChangePage,  action = \"/driverchangepage\", request = POST");
@@ -469,7 +607,12 @@ public class ManagerController {
     }
 
 
-
+    /**
+     * Truck change page string.
+     *
+     * @param ui the ui
+     * @return the string
+     */
     @RequestMapping(value = "/truckchangepage", method = RequestMethod.GET)
     String truckChangePage(Model ui){
         LOGGER.info("Controller: ManagerController, metod = truckChangePage,  action = \"/truckchangepage\", request = GET");
@@ -481,6 +624,14 @@ public class ManagerController {
         return "/manager/truckchangepage";
     }
 
+    /**
+     * Truck change page post string.
+     *
+     * @param truckDTO      the truck dto
+     * @param bindingResult the binding result
+     * @param ui            the ui
+     * @return the string
+     */
     @RequestMapping(value = "/truckchangepage", method = RequestMethod.POST)
     String truckChangePagePost(TruckDTO truckDTO, BindingResult bindingResult,Model ui){
 
@@ -504,11 +655,23 @@ public class ManagerController {
     }
 
 
+    /**
+     * Success string.
+     *
+     * @param ui the ui
+     * @return the string
+     */
     @RequestMapping(value = "/success", method = RequestMethod.GET)
     String success(Model ui){
         return "success";
     }
 
+    /**
+     * Failure string.
+     *
+     * @param ui the ui
+     * @return the string
+     */
     @RequestMapping(value = "/failure", method = RequestMethod.GET)
     String failure(Model ui){
         return "failure";

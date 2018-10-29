@@ -13,11 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.List;
 
-/** Implementation of {@link UserRepository} interface
+/**
+ * Implementation of {@link UserRepository} interface
+ *
  * @author Reaper
  * @version 1.0
  */
-
 @Repository
 @Transactional
 public class UserRepositoryImpl implements UserRepository {
@@ -25,6 +26,11 @@ public class UserRepositoryImpl implements UserRepository {
     private SessionFactory sessionFactory;
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(UserRepositoryImpl.class);
 
+    /**
+     * Instantiates a new User repository.
+     *
+     * @param sessionFactory the session factory
+     */
     @Autowired
     public UserRepositoryImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;

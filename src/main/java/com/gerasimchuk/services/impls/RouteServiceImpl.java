@@ -12,7 +12,9 @@ import com.gerasimchuk.validators.DTOValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/** Implementation for {@link RouteService} interface
+/**
+ * Implementation for {@link RouteService} interface
+ *
  * @author Reaper
  * @version 1.0
  */
@@ -26,6 +28,13 @@ public class RouteServiceImpl implements RouteService {
     private DTOValidator dtoValidator;
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(RouteServiceImpl.class);
 
+    /**
+     * Instantiates a new Route service.
+     *
+     * @param routeRepository the route repository
+     * @param cityRepository  the city repository
+     * @param dtoValidator    the dto validator
+     */
     @Autowired
     public RouteServiceImpl(RouteRepository routeRepository, CityRepository cityRepository, DTOValidator dtoValidator) {
         this.routeRepository = routeRepository;

@@ -11,11 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.List;
 
-/** Implementation of {@link RouteRepository} interface
+/**
+ * Implementation of {@link RouteRepository} interface
+ *
  * @author Reaper
  * @version 1.0
  */
-
 @Repository
 @Transactional
 public class RouteRepositoryImpl implements RouteRepository {
@@ -23,6 +24,11 @@ public class RouteRepositoryImpl implements RouteRepository {
     private SessionFactory sessionFactory;
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(RouteRepositoryImpl.class);
 
+    /**
+     * Instantiates a new Route repository.
+     *
+     * @param sessionFactory the session factory
+     */
     @Autowired
     public RouteRepositoryImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;

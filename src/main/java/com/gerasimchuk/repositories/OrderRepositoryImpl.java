@@ -13,11 +13,12 @@ import java.sql.ResultSet;
 import java.util.Collection;
 import java.util.List;
 
-/** Implementation of {@link OrderRepository} interface
+/**
+ * Implementation of {@link OrderRepository} interface
+ *
  * @author Reaper
  * @version 1.0
  */
-
 @Repository
 @Transactional
 public class OrderRepositoryImpl implements OrderRepository {
@@ -25,6 +26,11 @@ public class OrderRepositoryImpl implements OrderRepository {
     private SessionFactory sessionFactory;
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(OrderRepositoryImpl.class);
 
+    /**
+     * Instantiates a new Order repository.
+     *
+     * @param sessionFactory the session factory
+     */
     @Autowired
     public OrderRepositoryImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;

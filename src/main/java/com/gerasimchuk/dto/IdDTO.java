@@ -1,24 +1,43 @@
 package com.gerasimchuk.dto;
 
-/** Id Data Transfer Object
+/**
+ * Id Data Transfer Object
+ *
  * @author Reaper
  * @version 1.0
  */
-
 public class IdDTO {
     private String id;
 
+    /**
+     * Instantiates a new Id dto.
+     */
     public IdDTO() {
     }
 
+    /**
+     * Instantiates a new Id dto.
+     *
+     * @param id the id
+     */
     public IdDTO(String id) {
         this.id = id;
     }
 
+    /**
+     * Gets id.
+     *
+     * @return the id
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Sets id.
+     *
+     * @param id the id
+     */
     public void setId(String id) {
         this.id = id;
     }

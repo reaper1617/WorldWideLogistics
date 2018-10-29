@@ -27,11 +27,12 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-/** Admin Controller
+/**
+ * Admin Controller
+ *
  * @author Reaper
  * @version 1.0
  */
-
 @Controller
 public class AdminController {
 
@@ -62,6 +63,32 @@ public class AdminController {
    // private AmqpTemplate amqpTemplate;
 //    private RabbitMQReceiver rabbitMQReceiver;
 
+    /**
+     * Instantiates a new Admin controller.
+     *
+     * @param orderRepository     the order repository
+     * @param truckRepository     the truck repository
+     * @param userRepository      the user repository
+     * @param cargoRepository     the cargo repository
+     * @param cityRepository      the city repository
+     * @param routeRepository     the route repository
+     * @param driverRepository    the driver repository
+     * @param userService         the user service
+     * @param orderService        the order service
+     * @param cargoService        the cargo service
+     * @param truckService        the truck service
+     * @param cityService         the city service
+     * @param routeService        the route service
+     * @param rabbitMQSender      the rabbit mq sender
+     * @param messageConstructor  the message constructor
+     * @param statisticService    the statistic service
+     * @param orderToDTOConverter the order to dto converter
+     * @param truckToDTOConverter the truck to dto converter
+     * @param userToDTOConverter  the user to dto converter
+     * @param cargoToDTOConverter the cargo to dto converter
+     * @param cityToDTOConverter  the city to dto converter
+     * @param routeToDTOConverter the route to dto converter
+     */
     @Autowired
     public AdminController(OrderRepository orderRepository, TruckRepository truckRepository, UserRepository userRepository, CargoRepository cargoRepository, CityRepository cityRepository, RouteRepository routeRepository, DriverRepository driverRepository, UserService userService, OrderService orderService, CargoService cargoService, TruckService truckService, CityService cityService, RouteService routeService, RabbitMQSender rabbitMQSender, MessageConstructor messageConstructor, StatisticService statisticService, OrderToDTOConverter orderToDTOConverter, TruckToDTOConverter truckToDTOConverter, UserToDTOConverter userToDTOConverter, CargoToDTOConverter cargoToDTOConverter, CityToDTOConverter cityToDTOConverter, RouteToDTOConverter routeToDTOConverter) {
         this.orderRepository = orderRepository;
@@ -91,6 +118,11 @@ public class AdminController {
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(AdminController.class);
 
 
+    /**
+     * Set up admin page attributes.
+     *
+     * @param ui the ui
+     */
     public void setUpAdminPageAttributes(Model ui){
         LOGGER.info("Controller: AdminController, metod = setUpAdminPageAttributes ");
         Collection<Order> ordersPgntd = orderRepository.getOrdersForOnePage(2,0);
@@ -127,6 +159,14 @@ public class AdminController {
         LOGGER.info("Controller: AdminController, out from setUpAdminPageAttributes metod ");
     }
 
+    /**
+     * Admin main page string.
+     *
+     * @param id  the id
+     * @param ui  the ui
+     * @param req the req
+     * @return the string
+     */
     @RequestMapping(value = "/adminmainpage/{id}", method = RequestMethod.GET)
     public String adminMainPage(@PathVariable("id") int id, Model ui, HttpServletRequest req) {
         LOGGER.info("Controller: AdminController, metod = adminMainPage,  action = \"/adminmainpage\", request = GET");
@@ -224,6 +264,13 @@ public class AdminController {
 //        return "admin/adminmainpage";
 //    }
 
+    /**
+     * Gets paginated orders list.
+     *
+     * @param pageSize the page size
+     * @param pageNum  the page num
+     * @return the paginated orders list
+     */
     @RequestMapping(value = "/getpaginatedorderslist", method = RequestMethod.GET)
     @ResponseBody
     public String getPaginatedOrdersList(@RequestParam(name = "pageSize") int pageSize, @RequestParam(name = "pageNumber") int pageNum){
@@ -238,6 +285,13 @@ public class AdminController {
         return s;
     }
 
+    /**
+     * Gets paginated trucks list.
+     *
+     * @param pageSize the page size
+     * @param pageNum  the page num
+     * @return the paginated trucks list
+     */
     @RequestMapping(value = "/getpaginatedtruckslist", method = RequestMethod.GET)
     @ResponseBody
     public String getPaginatedTrucksList(@RequestParam(name = "pageSize") int pageSize, @RequestParam(name = "pageNumber") int pageNum){
@@ -254,6 +308,13 @@ public class AdminController {
         return s;
     }
 
+    /**
+     * Gets paginated users list.
+     *
+     * @param pageSize the page size
+     * @param pageNum  the page num
+     * @return the paginated users list
+     */
     @RequestMapping(value = "/getpaginateduserslist", method = RequestMethod.GET)
     @ResponseBody
     public String getPaginatedUsersList(@RequestParam(name = "pageSize") int pageSize, @RequestParam(name = "pageNumber") int pageNum){
@@ -267,6 +328,13 @@ public class AdminController {
         return s;
     }
 
+    /**
+     * Gets paginated cargos list.
+     *
+     * @param pageSize the page size
+     * @param pageNum  the page num
+     * @return the paginated cargos list
+     */
     @RequestMapping(value = "/getpaginatedcargoslist", method = RequestMethod.GET)
     @ResponseBody
     public String getPaginatedCargosList(@RequestParam(name = "pageSize") int pageSize, @RequestParam(name = "pageNumber") int pageNum){
@@ -280,6 +348,13 @@ public class AdminController {
         return s;
     }
 
+    /**
+     * Gets paginated cities list.
+     *
+     * @param pageSize the page size
+     * @param pageNum  the page num
+     * @return the paginated cities list
+     */
     @RequestMapping(value = "/getpaginatedcitieslist", method = RequestMethod.GET)
     @ResponseBody
     public String getPaginatedCitiesList(@RequestParam(name = "pageSize") int pageSize, @RequestParam(name = "pageNumber") int pageNum){
@@ -293,6 +368,13 @@ public class AdminController {
         return s;
     }
 
+    /**
+     * Gets paginated routes list.
+     *
+     * @param pageSize the page size
+     * @param pageNum  the page num
+     * @return the paginated routes list
+     */
     @RequestMapping(value = "/getpaginatedrouteslist", method = RequestMethod.GET)
     @ResponseBody
     public String getPaginatedRoutesList(@RequestParam(name = "pageSize") int pageSize, @RequestParam(name = "pageNumber") int pageNum){
@@ -306,6 +388,13 @@ public class AdminController {
         return s;
     }
 
+    /**
+     * Gets order route for chosen cargos.
+     *
+     * @param vals    the vals
+     * @param truckId the truck id
+     * @return the order route for chosen cargos
+     */
     @RequestMapping(value = "/getorderroute", method = RequestMethod.GET)
     @ResponseBody
     public String getOrderRouteForChosenCargos(@RequestParam("selectedVal") String[] vals, @RequestParam("truck") int truckId){
@@ -338,6 +427,13 @@ public class AdminController {
         return out;
     }
 
+    /**
+     * Gets drivers with hours worked over limit.
+     *
+     * @param vals    the vals
+     * @param truckId the truck id
+     * @return the drivers with hours worked over limit
+     */
     @RequestMapping(value = "/getdrivershoursoverlimit", method = RequestMethod.GET)
     @ResponseBody
     public String getDriversWithHoursWorkedOverLimit(@RequestParam("selectedVal") String[] vals, @RequestParam("truck") int truckId){
@@ -410,6 +506,12 @@ public class AdminController {
         return orderDTOS;
     }
 
+    /**
+     * Gets top orders.
+     *
+     * @param size the size
+     * @return the top orders
+     */
     @RequestMapping(value = "/gettoporders")
     @ResponseBody
     public String getTopOrders(@RequestParam(name = "size")  int size){
@@ -432,6 +534,12 @@ public class AdminController {
         return res;
     }
 
+    /**
+     * Delete order by id string.
+     *
+     * @param orderId the order id
+     * @return the string
+     */
     @RequestMapping(value = "/deleteorder", method = RequestMethod.POST)
     @ResponseBody
     public String deleteOrderById(@RequestParam(name = "orderId") int orderId){
@@ -446,6 +554,12 @@ public class AdminController {
         return new Gson().toJson(result);
     }
 
+    /**
+     * Delete truck by id string.
+     *
+     * @param truckId the truck id
+     * @return the string
+     */
     @RequestMapping(value = "/deletetruck", method = RequestMethod.POST)
     @ResponseBody
     public String deleteTruckById(@RequestParam(name = "truckId") int truckId){
@@ -461,6 +575,12 @@ public class AdminController {
         return s;
     }
 
+    /**
+     * Delete user by id string.
+     *
+     * @param userId the user id
+     * @return the string
+     */
     @RequestMapping(value = "/deleteuser", method = RequestMethod.POST)
     @ResponseBody
     public String deleteUserById(@RequestParam(name = "userId") int userId){
@@ -476,6 +596,12 @@ public class AdminController {
         return s;
     }
 
+    /**
+     * Delete cargo by id string.
+     *
+     * @param cargoId the cargo id
+     * @return the string
+     */
     @RequestMapping(value = "/deletecargo", method = RequestMethod.POST)
     @ResponseBody
     public String deleteCargoById(@RequestParam(name = "cargoId") int cargoId){
@@ -490,6 +616,12 @@ public class AdminController {
         return s;
     }
 
+    /**
+     * Delete city by id string.
+     *
+     * @param cityId the city id
+     * @return the string
+     */
     @RequestMapping(value = "/deletecity", method = RequestMethod.POST)
     @ResponseBody
     public String deleteCityById(@RequestParam(name = "cityId") int cityId){
@@ -504,6 +636,12 @@ public class AdminController {
         return s;
     }
 
+    /**
+     * Delete route by id string.
+     *
+     * @param routeId the route id
+     * @return the string
+     */
     @RequestMapping(value = "/deleteroute", method = RequestMethod.POST)
     @ResponseBody
     public String deleteRouteById(@RequestParam(name = "routeId") int routeId){
@@ -519,6 +657,11 @@ public class AdminController {
     }
 
 
+    /**
+     * Get google map string.
+     *
+     * @return the string
+     */
     @RequestMapping(value = "/adminmainpagegoogle", method = RequestMethod.GET)
     public String getGoogleMap(){
         return "/admin/adminmainpagegoogle";
@@ -536,9 +679,16 @@ public class AdminController {
     }
 
 
-
-
-    // todo: replace OrderDTO with IdDTO !
+    /**
+     * Admin main page post string.
+     *
+     * @param action        the action
+     * @param orderDTO      the order dto
+     * @param bindingResult the binding result
+     * @param ui            the ui
+     * @return the string
+     */
+// todo: replace OrderDTO with IdDTO !
     @RequestMapping(value = "/adminmainpage/{id}", method = RequestMethod.POST)
     public String adminMainPagePost(@PathVariable("id") int action, OrderDTO orderDTO, BindingResult bindingResult, Model ui) {
         LOGGER.info("Controller: AdminController, metod = adminMainPage,  action = \"/adminmainpage\", request = POST");
@@ -805,6 +955,12 @@ public class AdminController {
         return "failure";
     }
 
+    /**
+     * Change route string.
+     *
+     * @param ui the ui
+     * @return the string
+     */
     @RequestMapping(value = "/changeroutepage", method = RequestMethod.GET)
     public String changeRoute(Model ui){
         LOGGER.info("Controller: AdminController, metod = changeRoute,  action = \"/changeroutepage\", request = GET");
@@ -813,6 +969,14 @@ public class AdminController {
         return "/admin/changeroutepage";
     }
 
+    /**
+     * Change route post string.
+     *
+     * @param routeDTO      the route dto
+     * @param bindingResult the binding result
+     * @param ui            the ui
+     * @return the string
+     */
     @RequestMapping(value = "/changeroutepage", method = RequestMethod.POST)
     public String changeRoutePost(RouteDTO routeDTO, BindingResult bindingResult,Model ui){
         LOGGER.info("Controller: AdminController, metod = changeRoute,  action = \"/changeroutepage\", request = POST");
@@ -835,6 +999,12 @@ public class AdminController {
     }
 
 
+    /**
+     * User change page string.
+     *
+     * @param ui the ui
+     * @return the string
+     */
     @RequestMapping(value = "/userchangepage", method = RequestMethod.GET)
     public String userChangePage(Model ui){
         LOGGER.info("Controller: AdminController, metod = userChangePage,  action = \"/userchangepage\", request = GET");
@@ -845,6 +1015,14 @@ public class AdminController {
         return "/admin/userchangepage";
     }
 
+    /**
+     * User change page post string.
+     *
+     * @param userDTO       the user dto
+     * @param bindingResult the binding result
+     * @param ui            the ui
+     * @return the string
+     */
     @RequestMapping(value = "/userchangepage", method = RequestMethod.POST)
     public String userChangePagePost(UserDTO userDTO, BindingResult bindingResult,Model ui){
         LOGGER.info("Controller: AdminController, metod = userChangePagePost,  action = \"/userchangepage\", request = POST");
@@ -868,13 +1046,27 @@ public class AdminController {
     }
 
 
+    /**
+     * Order change page string.
+     *
+     * @param ui the ui
+     * @return the string
+     */
     @RequestMapping(value = "/orderchangepage", method = RequestMethod.GET)
     public String orderChangePage(Model ui) {
         LOGGER.info("Controller: AdminController, metod = orderChangePage,  action = \"/orderchangepage\", request = GET");
         return "/admin/orderchangepage";
     }
 
-    //todo: refactor!!
+    /**
+     * Order change page post string.
+     *
+     * @param orderDTO      the order dto
+     * @param bindingResult the binding result
+     * @param ui            the ui
+     * @return the string
+     */
+//todo: refactor!!
     @RequestMapping(value = "/orderchangepage", method = RequestMethod.POST)
     public String orderChangePagePost(OrderDTO orderDTO, BindingResult bindingResult, Model ui) {
         LOGGER.info("Controller: AdminController, metod = orderChangePage,  action = \"/orderchangepage\", request = POST");
@@ -950,6 +1142,12 @@ public class AdminController {
     }
 
 
+    /**
+     * Reassign truck to order page string.
+     *
+     * @param ui the ui
+     * @return the string
+     */
     @RequestMapping(value = "/reassigntrucktoorderpage", method = RequestMethod.GET)
     public String reassignTruckToOrderPage(Model ui) {
         LOGGER.info("Controller: AdminController, metod = reassignTruckToOrderPage,  action = \"/reassigntrucktoorderpage\", request = GET");
@@ -957,6 +1155,14 @@ public class AdminController {
         return "/admin/reassigntrucktoorderpage";
     }
 
+    /**
+     * Reassign truck to order page post string.
+     *
+     * @param orderDTO      the order dto
+     * @param bindingResult the binding result
+     * @param ui            the ui
+     * @return the string
+     */
     @RequestMapping(value = "/reassigntrucktoorderpage", method = RequestMethod.POST)
     public String reassignTruckToOrderPagePost(OrderDTO orderDTO, BindingResult bindingResult, Model ui) {
         LOGGER.info("Controller: AdminController, metod = reassignTruckToOrderPagePost,  action = \"/reassigntrucktoorderpage\", request = POST");
@@ -987,6 +1193,12 @@ public class AdminController {
     }
 
 
+    /**
+     * Add new user page string.
+     *
+     * @param ui the ui
+     * @return the string
+     */
     @RequestMapping(value = "/addnewuserpage", method = RequestMethod.GET)
     String addNewUserPage(Model ui) {
         LOGGER.info("Controller: AdminController, metod = addNewUserPage,  action = \"/addnewuserpage\", request = GET");
@@ -999,6 +1211,14 @@ public class AdminController {
         return "/admin/addnewuserpage";
     }
 
+    /**
+     * Add new user page post string.
+     *
+     * @param userDTO       the user dto
+     * @param bindingResult the binding result
+     * @param ui            the ui
+     * @return the string
+     */
     @RequestMapping(value = "/addnewuserpage", method = RequestMethod.POST)
     String addNewUserPagePost(UserDTO userDTO, BindingResult bindingResult, Model ui) {
         LOGGER.info("Controller: AdminController, metod = addNewUserPage,  action = \"/addnewuserpage\", request = POST");
@@ -1020,12 +1240,25 @@ public class AdminController {
         }
     }
 
+    /**
+     * Add new city string.
+     *
+     * @return the string
+     */
     @RequestMapping(value = "/addnewcitypage", method = RequestMethod.GET)
     public String addNewCity(){
         LOGGER.info("Controller: AdminController, metod = addNewCityPage,  action = \"/addnewcitypage\", request = GET");
         return "/admin/addnewcitypage";
     }
 
+    /**
+     * Add new city post string.
+     *
+     * @param cityDTO       the city dto
+     * @param bindingResult the binding result
+     * @param ui            the ui
+     * @return the string
+     */
     @RequestMapping(value = "/addnewcitypage", method = RequestMethod.POST)
     public String addNewCityPost(CityDTO cityDTO, BindingResult bindingResult, Model ui){
         LOGGER.info("Controller: AdminController, metod = addNewCityPage,  action = \"/addnewcitypage\", request = POST");
@@ -1047,12 +1280,25 @@ public class AdminController {
         }
     }
 
+    /**
+     * Change city string.
+     *
+     * @return the string
+     */
     @RequestMapping(value = "/changecitypage", method = RequestMethod.GET)
     public String changeCity(){
         LOGGER.info("Controller: AdminController, metod = changeCityPage,  action = \"/addnewcitypage\", request = GET");
         return "/admin/changecitypage";
     }
 
+    /**
+     * Change city post string.
+     *
+     * @param cityDTO       the city dto
+     * @param bindingResult the binding result
+     * @param ui            the ui
+     * @return the string
+     */
     @RequestMapping(value = "/changecitypage", method = RequestMethod.POST)
     public String changeCityPost(CityDTO cityDTO, BindingResult bindingResult, Model ui){
         LOGGER.info("Controller: AdminController, metod = changeCityPage,  action = \"/changecitypage\", request = POST");
@@ -1074,6 +1320,12 @@ public class AdminController {
         }
     }
 
+    /**
+     * Add new route string.
+     *
+     * @param ui the ui
+     * @return the string
+     */
     @RequestMapping(value = "/addnewroutepage", method = RequestMethod.GET)
     public String addNewRoute(Model ui){
         LOGGER.info("Controller: AdminController, metod = addNewRoute,  action = \"/addnewroutepage\", request = GET");
@@ -1082,6 +1334,14 @@ public class AdminController {
         return "/admin/addnewroutepage";
     }
 
+    /**
+     * Add new route post string.
+     *
+     * @param routeDTO      the route dto
+     * @param bindingResult the binding result
+     * @param ui            the ui
+     * @return the string
+     */
     @RequestMapping(value = "/addnewroutepage", method = RequestMethod.POST)
     public String addNewRoutePost(RouteDTO routeDTO, BindingResult bindingResult, Model ui){
         LOGGER.info("Controller: AdminController, metod = addNewRoute,  action = \"/addnewroutepage\", request = POST");

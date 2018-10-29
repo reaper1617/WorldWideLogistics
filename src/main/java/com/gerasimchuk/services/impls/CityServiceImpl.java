@@ -12,11 +12,12 @@ import org.springframework.stereotype.Service;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 
-/** Implementation for {@link CityService} interface
+/**
+ * Implementation for {@link CityService} interface
+ *
  * @author Reaper
  * @version 1.0
  */
-
 @Service
 public class CityServiceImpl implements CityService {
 
@@ -24,6 +25,12 @@ public class CityServiceImpl implements CityService {
     private DTOValidator dtoValidator;
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(CityServiceImpl.class);
 
+    /**
+     * Instantiates a new City service.
+     *
+     * @param cityRepository the city repository
+     * @param dtoValidator   the dto validator
+     */
     @Autowired
     public CityServiceImpl(CityRepository cityRepository, DTOValidator dtoValidator) {
         this.cityRepository = cityRepository;

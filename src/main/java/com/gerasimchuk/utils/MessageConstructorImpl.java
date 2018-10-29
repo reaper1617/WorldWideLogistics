@@ -5,6 +5,9 @@ import com.gerasimchuk.services.interfaces.StatisticService;
 import org.springframework.stereotype.Component;
 
 
+/**
+ * The type Message constructor.
+ */
 @Component
 public class MessageConstructorImpl implements MessageConstructor {
     @Override

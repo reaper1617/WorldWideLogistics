@@ -8,11 +8,17 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
+/**
+ * The type Rabbit mq sender.
+ */
 @Component
 public class RabbitMQSenderImpl implements RabbitMQSender {
 
     private final static String QUEUE_NAME = "hello";
 
+    /**
+     * Instantiates a new Rabbit mq sender.
+     */
     public RabbitMQSenderImpl() {
         init();
     }
@@ -44,6 +50,9 @@ public class RabbitMQSenderImpl implements RabbitMQSender {
         System.out.println(" [x] Sent '" + message + "'");
     }
 
+    /**
+     * Close.
+     */
     public void close(){
         try {
             channel.close();

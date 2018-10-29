@@ -21,11 +21,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-/** Implementation for {@link TruckService} interface
+/**
+ * Implementation for {@link TruckService} interface
+ *
  * @author Reaper
  * @version 1.0
  */
-
 @Service
 public class TruckServiceImpl implements TruckService {
 
@@ -39,6 +40,17 @@ public class TruckServiceImpl implements TruckService {
     private DTOValidator dtoValidator;
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(TruckServiceImpl.class);
 
+    /**
+     * Instantiates a new Truck service.
+     *
+     * @param truckRepository  the truck repository
+     * @param cityRepository   the city repository
+     * @param driverRepository the driver repository
+     * @param userRepository   the user repository
+     * @param orderRepository  the order repository
+     * @param userService      the user service
+     * @param dtoValidator     the dto validator
+     */
     @Autowired
     public TruckServiceImpl(TruckRepository truckRepository, CityRepository cityRepository, DriverRepository driverRepository, UserRepository userRepository, OrderRepository orderRepository, UserService userService, DTOValidator dtoValidator) {
         this.truckRepository = truckRepository;

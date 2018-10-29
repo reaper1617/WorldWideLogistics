@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * The type City to dto converter.
+ */
 @Component
 public class CityToDTOConverterImpl implements CityToDTOConverter {
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(CityToDTOConverterImpl.class);

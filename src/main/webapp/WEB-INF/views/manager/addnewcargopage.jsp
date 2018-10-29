@@ -70,7 +70,7 @@
       							</select>
 						</div>
 						<div>
-							<button type="submit" class="btn btn-primary" form="addNewCargoForm">Save changes</button>
+							<button id="commitAddNewCargo" type="submit" class="btn btn-primary" form="addNewCargoForm">Add new cargo</button>
 							<button type="submit" class="btn btn-primary" form="rollback">Rollback changes</button>
 						</div>
 					</form>

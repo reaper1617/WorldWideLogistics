@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Truck to dto converter.
+ */
 @Component
 public class TruckToDTOConverterImpl implements TruckToDTOConverter {
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(TruckToDTOConverterImpl.class);

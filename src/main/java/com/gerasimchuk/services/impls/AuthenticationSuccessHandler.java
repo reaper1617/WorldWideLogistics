@@ -7,7 +7,9 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Custom authentication success handler class extends {@link SavedRequestAwareAuthenticationSuccessHandler} class
+/**
+ * Custom authentication success handler class extends {@link SavedRequestAwareAuthenticationSuccessHandler} class
+ *
  * @author Reaper
  * @version 1.0
  */

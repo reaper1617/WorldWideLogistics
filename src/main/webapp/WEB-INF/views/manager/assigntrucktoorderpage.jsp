@@ -83,7 +83,7 @@
       							<%--</select>--%>
 						<%--</div>--%>
 						<div>
-							<button type="submit" class="btn btn-primary">Create order with chosen truck</button>
+							<button id="commitAddNewOrder" type="submit" class="btn btn-primary">Create order with chosen truck</button>
 							<button type="submit" class="btn btn-primary" form="rollback">Rollback changes</button>
 						</div>
 					</form>

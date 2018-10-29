@@ -21,9 +21,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
-/** Implementation for {@link UserService} interface
- * @author Reaper
- * @version 1.0
+/**
+ * The type User service.
  */
 
 
@@ -40,6 +39,18 @@ public class UserServiceImpl implements UserService {
     private DTOValidator dtoValidator;
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(UserServiceImpl.class);
 
+    /**
+     * Instantiates a new User service.
+     *
+     * @param userRepository        the user repository
+     * @param driverRepository      the driver repository
+     * @param managerRepository     the manager repository
+     * @param adminRepository       the admin repository
+     * @param cityRepository        the city repository
+     * @param truckRepository       the truck repository
+     * @param bCryptPasswordEncoder the b crypt password encoder
+     * @param dtoValidator          the dto validator
+     */
     @Autowired
     public UserServiceImpl(UserRepository userRepository, DriverRepository driverRepository, ManagerRepository managerRepository, AdminRepository adminRepository, CityRepository cityRepository, TruckRepository truckRepository, BCryptPasswordEncoder bCryptPasswordEncoder, DTOValidator dtoValidator) {
         this.userRepository = userRepository;

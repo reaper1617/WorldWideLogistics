@@ -39,7 +39,7 @@
         <intercept-url pattern="/gettoporders" access="isFullyAuthenticated() or isAnonymous()"/>
 
         <form-login login-page="/WEB-INF/views/login.jsp" default-target-url="/" authentication-failure-url="/" authentication-success-handler-ref="authenticationSuccessHandler"/>
-                    <!--default-target-url="/login/logged.jsp"-->
+
          <access-denied-handler error-page="/error.jsp"/>
 
         <!--<logout logout-success-url="/logout.jsp"/>-->

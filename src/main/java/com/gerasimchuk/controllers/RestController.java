@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * The type Rest controller.
+ */
 @org.springframework.web.bind.annotation.RestController
 public class RestController {
 
@@ -28,6 +31,13 @@ public class RestController {
 
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(RestController.class);
 
+    /**
+     * Instantiates a new Rest controller.
+     *
+     * @param orderRepository     the order repository
+     * @param orderToDTOConverter the order to dto converter
+     * @param statisticService    the statistic service
+     */
     @Autowired
     public RestController(OrderRepository orderRepository, OrderToDTOConverter orderToDTOConverter, StatisticService statisticService) {
         this.orderRepository = orderRepository;
@@ -35,6 +45,11 @@ public class RestController {
         this.statisticService = statisticService;
     }
 
+    /**
+     * Get last orders string.
+     *
+     * @return the string
+     */
     @RequestMapping(value = "/orders", method = RequestMethod.GET)
     @ResponseBody
     public String getLastOrders(){
@@ -53,6 +68,11 @@ public class RestController {
         return res;
     }
 
+    /**
+     * Get stats string.
+     *
+     * @return the string
+     */
     @RequestMapping(value = "/stats", method = RequestMethod.GET)
     @ResponseBody
     public String getStats(){

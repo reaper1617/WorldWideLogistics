@@ -120,7 +120,7 @@ function updateCargoStatus(cargoId) {
             }
         }
     };
-    var url = "/updatecargostatus?cargoId=" + cargoId + "&newStatus=" + newStatusVal;
+    var url = contextName + "/updatecargostatus?cargoId=" + cargoId + "&newStatus=" + newStatusVal;
     xmlReq.open("POST", url, true);
     xmlReq.send();
 }

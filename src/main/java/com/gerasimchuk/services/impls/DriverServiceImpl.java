@@ -19,7 +19,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 
-/** Implementation for {@link DriverService} interface
+/**
+ * Implementation for {@link DriverService} interface
+ *
  * @author Reaper
  * @version 1.0
  */
@@ -34,6 +36,14 @@ public class DriverServiceImpl implements DriverService {
 
     private DriverRepository driverRepository;
 
+    /**
+     * Instantiates a new Driver service.
+     *
+     * @param userService        the user service
+     * @param rabbitMQSender     the rabbit mq sender
+     * @param messageConstructor the message constructor
+     * @param driverRepository   the driver repository
+     */
     @Autowired
     public DriverServiceImpl(UserService userService, RabbitMQSender rabbitMQSender, MessageConstructor messageConstructor, DriverRepository driverRepository) {
         this.userService = userService;

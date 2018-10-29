@@ -11,11 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 
-/** Implementation of {@link DriverRepository} interface
+/**
+ * Implementation of {@link DriverRepository} interface
+ *
  * @author Reaper
  * @version 1.0
  */
-
 @Repository
 @Transactional
 public class DriverRepositoryImpl implements DriverRepository {
@@ -23,6 +24,11 @@ public class DriverRepositoryImpl implements DriverRepository {
     private SessionFactory sessionFactory;
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(DriverRepositoryImpl.class);
 
+    /**
+     * Instantiates a new Driver repository.
+     *
+     * @param sessionFactory the session factory
+     */
     @Autowired
     public DriverRepositoryImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;

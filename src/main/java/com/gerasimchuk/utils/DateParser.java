@@ -1,11 +1,20 @@
 package com.gerasimchuk.utils;
 
+/**
+ * The type Date parser.
+ */
 public class DateParser {
 
     // Tue Sep 18 02:35:39 MSK 2018
     // Ddd MMM dd hh:mm:ss z yyyy
 
 
+    /**
+     * Parse year int.
+     *
+     * @param s the s
+     * @return the int
+     */
     public static int parseYear(String s) {
         String sYear = s.substring(24,28);
         int year = 0;
@@ -19,6 +28,12 @@ public class DateParser {
         return year;
     }
 
+    /**
+     * Parse month int.
+     *
+     * @param s the s
+     * @return the int
+     */
     public static int parseMonth(String s){
         String month =  s.substring(4,7);
         if (month.equals("Jan")) return 0;
@@ -37,6 +52,12 @@ public class DateParser {
     }
 
 
+    /**
+     * Parse day int.
+     *
+     * @param s the s
+     * @return the int
+     */
     public static int parseDay(String s){
         String sDay =  s.substring(8,10);
         int day = 0;
@@ -52,7 +73,12 @@ public class DateParser {
     }
 
 
-
+    /**
+     * Parse hour int.
+     *
+     * @param s the s
+     * @return the int
+     */
     public static int parseHour(String s) {
         String sHour = s.substring(11,13);
         int hour = 0;
@@ -67,6 +93,12 @@ public class DateParser {
     }
 
 
+    /**
+     * Parse minutes int.
+     *
+     * @param s the s
+     * @return the int
+     */
     public static int parseMinutes(String s) {
         String sMinutes = s.substring(14,16);
         int minutes = 0;
@@ -80,6 +112,12 @@ public class DateParser {
         return minutes;
     }
 
+    /**
+     * Parse seconds int.
+     *
+     * @param s the s
+     * @return the int
+     */
     public static int parseSeconds(String s){
         String sSeconds = s.substring(17,19);
         int seconds = 0;
