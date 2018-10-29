@@ -126,16 +126,21 @@ public class AdminController {
     public void setUpAdminPageAttributes(Model ui){
         LOGGER.info("Controller: AdminController, metod = setUpAdminPageAttributes ");
         Collection<Order> ordersPgntd = orderRepository.getOrdersForOnePage(2,0);
-        List<OrderWithRouteDTO> orderWithRouteDTOS = new ArrayList<OrderWithRouteDTO>();
-        for(Order o: ordersPgntd){
-            try {
-                orderWithRouteDTOS.add(orderToDTOConverter.convertToDTOWithRoute(o));
-            } catch (RouteException e) {
-                LOGGER.info("Controller: AdminController, metod = setUpAdminPageAttributes, catched exception:" + e.getMessage());
-                e.printStackTrace();
+        if (ordersPgntd != null) {
+            List<OrderWithRouteDTO> orderWithRouteDTOS = new ArrayList<OrderWithRouteDTO>();
+            for (Order o : ordersPgntd) {
+                try {
+                    orderWithRouteDTOS.add(orderToDTOConverter.convertToDTOWithRoute(o));
+                } catch (RouteException e) {
+                    LOGGER.info("Controller: AdminController, metod = setUpAdminPageAttributes, catched exception:" + e.getMessage());
+                    e.printStackTrace();
+                }
             }
+            ui.addAttribute("ordersPgntd", orderWithRouteDTOS);
         }
-        ui.addAttribute("ordersPgntd", orderWithRouteDTOS);
+        else {
+            ui.addAttribute("ordersPgntd", null);
+        }
         // trucks
         List<Truck> trucksPgntd = (List<Truck>)truckRepository.getTrucksForOnePage(2,0);
         List<TruckDTO> truckDTOS = truckToDTOConverter.convert(trucksPgntd);
