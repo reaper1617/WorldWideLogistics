@@ -29,7 +29,7 @@
   			<div id="manageorders" class="tab-pane active ">
     				<div class = "sticky-top">
 						<form action="${pageContext.request.contextPath}/addneworderpage", method="get">
-							<h3>Orders <button class = "btn btn-primary" type = "submit">Add new</button> <button class = "btn btn-primary" type = "submit" form="googlePageForm">Show on map</button> </h3>
+							<h3>Orders <button class = "btn btn-primary" type = "submit" id="addNewOrderBtn">Add new</button> <button class = "btn btn-primary" type = "submit" form="googlePageForm">Show on map</button> </h3>
 						</form>
 						<form action="${pageContext.request.contextPath}/adminmainpagegoogle" method="get" id="googlePageForm"></form>
 				<div><input class="form-control" id="myInput" type="text" placeholder="Search.."></div>
@@ -133,7 +133,7 @@
   			<div id="managetrucks" class="tab-pane fade">
     				<div class = "sticky-top">
 						<form action="${pageContext.request.contextPath}/addnewtruckpage" method="get">
-							<h3>Trucks <button class = "btn btn-primary" type = "submit">Add new</button></h3>
+							<h3>Trucks <button id="addNewTruckBtn" class = "btn btn-primary" type = "submit">Add new</button></h3>
 						</form>
 				<div><input class="form-control" id="myInput2" type="text" placeholder="Search.."></div>
 				</div>
@@ -212,7 +212,7 @@
   			<div id="manageusers" class="tab-pane fade">
     				<div class = "sticky-top">
 						<form action="${pageContext.request.contextPath}/addnewuserpage" method="get">
-							<h3>Users <button class = "btn btn-primary" type = "submit">Add new</button></h3>
+							<h3>Users <button id="addNewUserBtn" class = "btn btn-primary" type = "submit">Add new</button></h3>
 						</form>
 				<div><input class="form-control" id="myInput3" type="text" placeholder="Search.."></div>
 				</div>
@@ -274,7 +274,7 @@
 			<div id="managecargos" class="tab-pane fade">
 				<div class = "sticky-top">
 					<form action="${pageContext.request.contextPath}/addnewcargopage" method="get">
-						<h3>Cargos <button class = "btn btn-primary" type="submit">Add new</button></h3>
+						<h3>Cargos <button class = "btn btn-primary" type="submit" id="addNewCargoBtn">Add new</button></h3>
 					</form>
 				<div><input class="form-control" id="myInput4" type="text" placeholder="Search.."></div>
 				</div>

@@ -24,11 +24,12 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Array;
 import java.util.*;
 
-/** Implementation for {@link OrderService} interface
+/**
+ * Implementation for {@link OrderService} interface
+ *
  * @author Reaper
  * @version 1.0
  */
-
 @Service
 public class OrderServiceImpl implements OrderService {
 
@@ -45,6 +46,19 @@ public class OrderServiceImpl implements OrderService {
     private MessageConstructor messageConstructor;
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(OrderServiceImpl.class);
 
+    /**
+     * Instantiates a new Order service.
+     *
+     * @param cargoRepository    the cargo repository
+     * @param truckRepository    the truck repository
+     * @param orderRepository    the order repository
+     * @param cityRepository     the city repository
+     * @param routeRepository    the route repository
+     * @param dtoValidator       the dto validator
+     * @param driverRepository   the driver repository
+     * @param rabbitMQSender     the rabbit mq sender
+     * @param messageConstructor the message constructor
+     */
     @Autowired
     public OrderServiceImpl(CargoRepository cargoRepository, TruckRepository truckRepository, OrderRepository orderRepository, CityRepository cityRepository, RouteRepository routeRepository, DTOValidator dtoValidator, DriverRepository driverRepository, RabbitMQSender rabbitMQSender, MessageConstructor messageConstructor) {
         this.cargoRepository = cargoRepository;

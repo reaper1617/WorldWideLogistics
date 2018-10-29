@@ -20,13 +20,13 @@ function myMap() {
                 const orderItem = ordersArr[i];
                 // adding markers
 
-                alert("Gonna count route");
+                // alert("Gonna count route");
                 // creating google map route for current order
                 const routeArr = orderItem.route;
                 const routeSize = routeArr.length;
                 const routePointOrigin = routeArr[0];
                 const routePointDestination = routeArr[routeSize - 1];
-                alert("from " + routePointOrigin + " to " + routePointDestination);
+                // alert("from " + routePointOrigin + " to " + routePointDestination);
                 const wayPoints = [];
                 for(let m=1; m < routeSize-1; m++){
                     wayPoints.push({
@@ -34,9 +34,9 @@ function myMap() {
                         stopover: false
                     });
                 }
-                alert("wayPoints size = " + wayPoints.length);
+                // alert("wayPoints size = " + wayPoints.length);
                 for(let d = 0; d < wayPoints.length; d++){
-                    alert("wp[d] = " + wayPoints[d].location);
+                    // alert("wp[d] = " + wayPoints[d].location);
                 }
                 const request = {
                     origin: routePointOrigin, //точка старта
@@ -55,7 +55,7 @@ function myMap() {
                     }
                 );
                 directionsService.route(request, function(response, status) {
-                    alert("direction status: " + status);
+                    // alert("direction status: " + status);
                     if (status === google.maps.DirectionsStatus.OK) {
                         directionsDisplay.setDirections(response);
                     }

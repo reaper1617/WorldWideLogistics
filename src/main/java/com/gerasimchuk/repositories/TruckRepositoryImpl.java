@@ -16,11 +16,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-/** Implementation of {@link TruckRepository} interface
+/**
+ * Implementation of {@link TruckRepository} interface
+ *
  * @author Reaper
  * @version 1.0
  */
-
 @Repository
 @Transactional
 public class TruckRepositoryImpl implements TruckRepository {
@@ -28,6 +29,11 @@ public class TruckRepositoryImpl implements TruckRepository {
     private SessionFactory sessionFactory;
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(TruckRepositoryImpl.class);
 
+    /**
+     * Instantiates a new Truck repository.
+     *
+     * @param sessionFactory the session factory
+     */
     @Autowired
     public TruckRepositoryImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;

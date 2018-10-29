@@ -38,6 +38,16 @@
             <set />
           </value>
         </entry>
+        <entry key="$USER_HOME$/Downloads/seleniumForWWL/pom.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Downloads/seleniumForWWL/src/main/java/com/gerasimchuk/selenium/SeleniumScenario.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/mywwldatabase.txt">
           <value>
             <set />
@@ -629,6 +639,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/gerasimchuk/webservices/MainService.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/resources/appContextForTests.xml">
           <value>
             <set />
           </value>

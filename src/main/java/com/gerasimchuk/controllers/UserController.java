@@ -14,11 +14,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
-/** User Controller
+/**
+ * User Controller
+ *
  * @author Reaper
  * @version 1.0
  */
-
 @Controller
 public class UserController {
 
@@ -56,6 +57,14 @@ public class UserController {
         return null;
     }
 
+    /**
+     * Instantiates a new User controller.
+     *
+     * @param userRepository    the user repository
+     * @param adminController   the admin controller
+     * @param driverController  the driver controller
+     * @param managerController the manager controller
+     */
     @Autowired
     public UserController(UserRepository userRepository, AdminController adminController, DriverController driverController, ManagerController managerController) {
         this.userRepository = userRepository;
@@ -64,6 +73,12 @@ public class UserController {
         this.managerController = managerController;
     }
 
+    /**
+     * Index string.
+     *
+     * @param ui the ui
+     * @return the string
+     */
     @RequestMapping(value = {"/","/index"}, method = RequestMethod.GET)
     public String index(Model ui) {
         LOGGER.info("Controller: UserController, metod = index,  action = \"/\", request = GET");
@@ -83,6 +98,13 @@ public class UserController {
         return "failure";
     }
 
+    /**
+     * Login string.
+     *
+     * @param error the error
+     * @param ui    the ui
+     * @return the string
+     */
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(@RequestParam(value = "login_error", required = false)String error, Model ui){
         LOGGER.info("Controller: UserController, metod = login,  action = \"/login\", request = GET");
@@ -96,6 +118,13 @@ public class UserController {
         return url;
     }
 
+    /**
+     * Login post string.
+     *
+     * @param error the error
+     * @param ui    the ui
+     * @return the string
+     */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public String loginPost(@RequestParam(value = "login_error", required = false)String error, Model ui){
         LOGGER.info("Controller: UserController, metod = login,  action = \"/login\", request = POST");
@@ -107,12 +136,17 @@ public class UserController {
         return "/login";
     }
 
-    @RequestMapping(value = "/logged", method = RequestMethod.GET)
-    public String logged(){
-        LOGGER.info("Controller: UserController, metod = logged,  action = \"/logged\", request = GET");
-        return "/login/logged";
-    }
+//    @RequestMapping(value = "/logged", method = RequestMethod.GET)
+//    public String logged(){
+//        LOGGER.info("Controller: UserController, metod = logged,  action = \"/logged\", request = GET");
+//        return "/login/logged";
+//    }
 
+    /**
+     * Login error string.
+     *
+     * @return the string
+     */
     @RequestMapping(value = "/loginerror", method = RequestMethod.GET)
     public String loginError(){
         LOGGER.info("Controller: UserController, metod = loginError,  action = \"/loginerror\", request = GET");

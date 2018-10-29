@@ -10,18 +10,18 @@
     <nav class="nav nav-tabs bg-dark navbar-dark fixed-top">
         <a class="navbar-brand" href="${pageContext.request.contextPath}/adminmainpage/0">WorldWideLogistics</a>
         <!-- Nav tabs -->
-        <ul class="nav nav-tabs " role="tablist">
+        <ul class="nav nav-tabs " role="tablist" id="adminActionsList">
             <li class="nav-item">
                 <a class="nav-link active bg-dark" data-toggle="tab" href="#manageorders">Manage orders</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link bg-dark" data-toggle="tab" href="#managetrucks">Manage trucks</a>
+                <a class="nav-link bg-dark" data-toggle="tab" href="#managetrucks" id="manageTrucksHref">Manage trucks</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link bg-dark" data-toggle="tab" href="#manageusers">Manage users</a>
+                <a class="nav-link bg-dark" data-toggle="tab" href="#manageusers" id="manageUsersHref">Manage users</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link bg-dark" data-toggle="tab" href="#managecargos">Manage cargos</a>
+                <a class="nav-link bg-dark" data-toggle="tab" href="#managecargos" id="manageCargosHref">Manage cargos</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link bg-dark" data-toggle="tab" href="#managecities">Manage cities</a>

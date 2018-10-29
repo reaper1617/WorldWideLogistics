@@ -104,7 +104,7 @@ function showMoreOrders() {
                 row.appendChild(tdAssignedTruck);
                 row.appendChild(tdAssignedDrivers);
                 row.appendChild(tdRoute);
-                tdEditBtn.innerHTML = "<form action=\"/adminmainpage/1\" method=\"post\" >\n" +
+                tdEditBtn.innerHTML = "<form action=\"" + contextName + "/adminmainpage/1\" method=\"post\" >\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t\t<button type=\"submit\" class=\"btn btn-primary\">Edit</button>\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" hidden name=\"id\" value=\"" + item.id + "\">\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t</form>";
@@ -250,7 +250,7 @@ function showMoreTrucks() {
                 row.appendChild(tdCurrentCity);
                 row.appendChild(tdAssignedDrivers);
                 row.appendChild(tdOrder);
-                tdEditBtn.innerHTML = "<form action=\"/adminmainpage/3\" method=\"post\" >\n" +
+                tdEditBtn.innerHTML = "<form action=\""+ contextName+"/adminmainpage/3\" method=\"post\" >\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t<button type=\"submit\" class=\"btn btn-primary\">Edit</button>\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" hidden name=\"id\" value=\"" + item.id +"\">\n" +
                     "\t\t\t\t\t\t\t\t\t\t</form>";
@@ -329,10 +329,10 @@ function deleteTruck(truckId) {
                 var res = JSON.parse(this.responseText);
                 // alert("resp:" + res);
                 if (res === "TRUCK_DELETED"){
-                    alert("Truck del!");
+                    alert("Truck deleted successfully!");
                 }
                 else {
-                    alert("res not TRUCK_DELETED");
+                    alert("Truck not deleted: " + res);
                 }
                 //             if (res === "ERROR_CAN_NOT_DELETE_ORDER_WITH_SUCH_STATUS"){
                 //                 alert("Can not delete order! Error message: " + res);
@@ -395,7 +395,7 @@ function showMoreUsers() {
                 row.appendChild(tdCity);
                 row.appendChild(tdTruck);
                 row.appendChild(tdOrder);
-                tdEditBtn.innerHTML = "<form action=\"/adminmainpage/5\" method=\"post\" >\n" +
+                tdEditBtn.innerHTML = "<form action=\""+ contextName+"/adminmainpage/5\" method=\"post\" >\n" +
                     "                                            <button type=\"submit\" class=\"btn btn-primary\">Edit</button>\n" +
                     "                                            <input type=\"text\" hidden name=\"id\" value=\""+item.id+"\">\n" +
                     "                                        </form>";
@@ -503,7 +503,7 @@ function showMoreCargos() {
                 row.appendChild(tdCityTo);
                 row.appendChild(tdStatus);
 
-                tdEditBtn.innerHTML = "<form action=\"/adminmainpage/7\" method=\"post\" >\n" +
+                tdEditBtn.innerHTML = "<form action=\""+contextName +"/adminmainpage/7\" method=\"post\" >\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t<button type=\"submit\" class=\"btn btn-primary\">Edit</button>\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" hidden name=\"id\" value=\""+item.id+"\">\n" +
                     "\t\t\t\t\t\t\t\t\t\t</form>";
@@ -607,7 +607,7 @@ function showMoreCities() {
                 row.appendChild(tdDrivers);
                 row.appendChild(tdTrucks);
 
-                tdEditBtn.innerHTML = " <form action=\"/adminmainpage/9\" method=\"post\" >\n" +
+                tdEditBtn.innerHTML = " <form action=\""+contextName+"/adminmainpage/9\" method=\"post\" >\n" +
                     "\t\t\t\t\t\t\t\t\t <button type=\"submit\" class=\"btn btn-primary\">Edit</button>\n" +
                     "\t\t\t\t\t\t\t\t\t <input type=\"text\" hidden name=\"id\" value=\""+item.id+"\">\n" +
                     "\t\t\t\t\t\t\t\t </form>";
@@ -749,7 +749,7 @@ function showMoreRoutes() {
                 row.appendChild(tdCityTo);
                 row.appendChild(tdDistance);
 
-                tdEditBtn.innerHTML ="<form action=\"/adminmainpage/11\" method=\"post\" >\n" +
+                tdEditBtn.innerHTML ="<form action=\""+contextName+"/adminmainpage/11\" method=\"post\" >\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t<button type=\"submit\" class=\"btn btn-primary\">Edit</button>\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" hidden name=\"id\" value=\""+item.id+"\">\n" +
                     "\t\t\t\t\t\t\t\t\t\t</form>";

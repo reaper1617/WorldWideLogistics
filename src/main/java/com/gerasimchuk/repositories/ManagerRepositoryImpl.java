@@ -8,11 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 
-/** Implementation of {@link ManagerRepository} interface
+/**
+ * Implementation of {@link ManagerRepository} interface
+ *
  * @author Reaper
  * @version 1.0
  */
-
 @Repository
 @Transactional
 public class ManagerRepositoryImpl implements ManagerRepository {
@@ -21,6 +22,11 @@ public class ManagerRepositoryImpl implements ManagerRepository {
     private SessionFactory sessionFactory;
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(ManagerRepositoryImpl.class);
 
+    /**
+     * Instantiates a new Manager repository.
+     *
+     * @param sessionFactory the session factory
+     */
     @Autowired
     public ManagerRepositoryImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;

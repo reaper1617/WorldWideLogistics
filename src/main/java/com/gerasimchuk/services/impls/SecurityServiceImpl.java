@@ -13,10 +13,10 @@ import org.springframework.stereotype.Service;
 
 /**
  * Implementation of {@link SecurityService} interface
+ *
  * @author Reaper
  * @version 1.0
  */
-
 @Service
 public class SecurityServiceImpl implements SecurityService {
 
@@ -24,6 +24,12 @@ public class SecurityServiceImpl implements SecurityService {
     private UserDetailsService userDetailsService;
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(SecurityServiceImpl.class);
 
+    /**
+     * Instantiates a new Security service.
+     *
+     * @param authenticationManager the authentication manager
+     * @param userDetailsService    the user details service
+     */
     @Autowired
     public SecurityServiceImpl(AuthenticationManager authenticationManager, UserDetailsService userDetailsService) {
         this.authenticationManager = authenticationManager;
@@ -51,6 +57,12 @@ public class SecurityServiceImpl implements SecurityService {
         return null;
     }
 
+    /**
+     * Auto login.
+     *
+     * @param username the username
+     * @param password the password
+     */
     public void autoLogin(String username, String password) {
         LOGGER.info("Class: " + this.getClass().getName() + " method: autoLogin");
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);

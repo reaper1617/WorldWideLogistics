@@ -10,11 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.List;
 
-/** Implementation of {@link CityRepository} interface
+/**
+ * Implementation of {@link CityRepository} interface
+ *
  * @author Reaper
  * @version 1.0
  */
-
 @Repository
 @Transactional
 public class CityRepositoryImpl implements CityRepository {
@@ -22,6 +23,11 @@ public class CityRepositoryImpl implements CityRepository {
     private SessionFactory sessionFactory;
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(CityRepositoryImpl.class);
 
+    /**
+     * Instantiates a new City repository.
+     *
+     * @param sessionFactory the session factory
+     */
     @Autowired
     public CityRepositoryImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;

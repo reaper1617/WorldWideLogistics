@@ -8,11 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 
-/** Implementation of {@link AdminRepository} interface
+/**
+ * Implementation of {@link AdminRepository} interface
+ *
  * @author Reaper
  * @version 1.0
  */
-
 @Repository
 @Transactional
 public class AdminRepositoryImpl implements AdminRepository {
@@ -20,6 +21,11 @@ public class AdminRepositoryImpl implements AdminRepository {
     private SessionFactory sessionFactory;
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(AdminRepositoryImpl.class);
 
+    /**
+     * Instantiates a new Admin repository.
+     *
+     * @param sessionFactory the session factory
+     */
     @Autowired
     public AdminRepositoryImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;

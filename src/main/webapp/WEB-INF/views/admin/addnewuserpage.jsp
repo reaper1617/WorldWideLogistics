@@ -100,7 +100,7 @@
 							</div>
 						</div>
 						<div>
-							<button type="submit" class="btn btn-primary">Save changes</button>
+							<button id="commitAddNewUser" type="submit" class="btn btn-primary">Save changes</button>
 							<button type="submit" class="btn btn-primary" form="rollback">Rollback changes</button>
 						</div>
 					</form>

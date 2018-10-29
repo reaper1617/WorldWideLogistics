@@ -7,19 +7,28 @@ import com.gerasimchuk.entities.Route;
 import com.gerasimchuk.entities.Truck;
 import org.springframework.stereotype.Service;
 
-/** Validator for Data Transfer Objects
+/**
+ * Validator for Data Transfer Objects
+ *
  * @author Reaper
  * @version 1.0
  */
-
 @Service
 public class DTOValidatorImpl implements DTOValidator {
 
     private DTOValidator currentDtoValidator;
 
+    /**
+     * Instantiates a new Dto validator.
+     */
     public DTOValidatorImpl() {
     }
 
+    /**
+     * Instantiates a new Dto validator.
+     *
+     * @param currentDtoValidator the current dto validator
+     */
     public DTOValidatorImpl(DTOValidator currentDtoValidator) {
         this.currentDtoValidator = currentDtoValidator;
     }
@@ -130,6 +139,7 @@ public class DTOValidatorImpl implements DTOValidator {
         orderIdValid = (orderId == null ||orderId.length()==0 || checkId(orderId));
         return driverIdValid && cargoIdValid && orderIdValid;
     }
+
 
     private boolean validateDriverDTO(DriverDTO dto){
         String id = dto.getId();
@@ -297,7 +307,7 @@ public class DTOValidatorImpl implements DTOValidator {
             e.printStackTrace();
             return false;
         }
-        if (dHoursWorked == 0) return false;
+        if (dHoursWorked < 0) return false;
         if (dHoursWorked > WWLConstants.MAX_DRIVER_HOURS_WORKED_IN_MONTH) return false;
         return true;
     }

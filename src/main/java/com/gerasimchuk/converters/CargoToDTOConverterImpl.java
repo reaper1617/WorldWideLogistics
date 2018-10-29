@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Cargo to dto converter.
+ */
 @Component
 public class CargoToDTOConverterImpl implements CargoToDTOConverter {
 

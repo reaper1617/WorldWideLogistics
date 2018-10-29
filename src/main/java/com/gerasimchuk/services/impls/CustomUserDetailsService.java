@@ -14,11 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashSet;
 import java.util.Set;
 
-/** Implementation for {@link UserDetailsService} interface
+/**
+ * Implementation for {@link UserDetailsService} interface
+ *
  * @author Reaper
  * @version 1.0
  */
-
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -26,6 +27,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private UserRepository userRepository;
 
+    /**
+     * Instantiates a new Custom user details service.
+     *
+     * @param userRepository the user repository
+     */
     @Autowired
     public CustomUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;

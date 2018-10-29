@@ -20,7 +20,9 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/** Implementation for {@link CargoService} interface
+/**
+ * Implementation for {@link CargoService} interface
+ *
  * @author Reaper
  * @version 1.0
  */
@@ -35,6 +37,14 @@ public class CargoServiceImpl implements CargoService {
     private DTOValidator dtoValidator;
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(CargoServiceImpl.class);
 
+    /**
+     * Instantiates a new Cargo service.
+     *
+     * @param cargoRepository the cargo repository
+     * @param routeRepository the route repository
+     * @param cityRepository  the city repository
+     * @param dtoValidator    the dto validator
+     */
     @Autowired
     public CargoServiceImpl(CargoRepository cargoRepository, RouteRepository routeRepository, CityRepository cityRepository, DTOValidator dtoValidator) {
         this.cargoRepository = cargoRepository;

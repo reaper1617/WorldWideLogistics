@@ -13,11 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.List;
 
-/** Implementation of {@link CargoRepository} interface
+/**
+ * Implementation of {@link CargoRepository} interface
+ *
  * @author Reaper
  * @version 1.0
  */
-
 @Repository
 @Transactional
 public class CargoRepositoryImpl implements CargoRepository {
@@ -25,6 +26,11 @@ public class CargoRepositoryImpl implements CargoRepository {
     private SessionFactory sessionFactory;
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(CargoRepositoryImpl.class);
 
+    /**
+     * Instantiates a new Cargo repository.
+     *
+     * @param sessionFactory the session factory
+     */
     @Autowired
     public CargoRepositoryImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;

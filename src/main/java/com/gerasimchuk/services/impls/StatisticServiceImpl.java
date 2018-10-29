@@ -7,12 +7,21 @@ import com.gerasimchuk.utils.JSONconvertable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * The type Statistic service.
+ */
 @Service
 public class StatisticServiceImpl implements StatisticService, JSONconvertable {
 
     private DriverRepository driverRepository;
     private TruckRepository truckRepository;
 
+    /**
+     * Instantiates a new Statistic service.
+     *
+     * @param driverRepository the driver repository
+     * @param truckRepository  the truck repository
+     */
     @Autowired
     public StatisticServiceImpl(DriverRepository driverRepository, TruckRepository truckRepository) {
         this.driverRepository = driverRepository;

@@ -33,11 +33,12 @@ import java.util.List;
 import java.util.Set;
 
 
-/** Driver Controller
+/**
+ * Driver Controller
+ *
  * @author Reaper
  * @version 1.0
  */
-
 @Controller
 public class DriverController {
 
@@ -55,6 +56,21 @@ public class DriverController {
     private StatisticService statisticService;
     private MessageConstructor messageConstructor;
 
+    /**
+     * Instantiates a new Driver controller.
+     *
+     * @param userRepository     the user repository
+     * @param truckRepository    the truck repository
+     * @param driverRepository   the driver repository
+     * @param orderRepository    the order repository
+     * @param cargoRepository    the cargo repository
+     * @param driverService      the driver service
+     * @param orderService       the order service
+     * @param cargoService       the cargo service
+     * @param rabbitMQSender     the rabbit mq sender
+     * @param statisticService   the statistic service
+     * @param messageConstructor the message constructor
+     */
     @Autowired
     public DriverController(UserRepository userRepository, TruckRepository truckRepository, DriverRepository driverRepository, OrderRepository orderRepository, CargoRepository cargoRepository, DriverService driverService, OrderService orderService, CargoService cargoService, RabbitMQSender rabbitMQSender, StatisticService statisticService, MessageConstructor messageConstructor) {
         this.userRepository = userRepository;
@@ -77,6 +93,12 @@ public class DriverController {
 
     }
 
+    /**
+     * Set driver main page attributes string.
+     *
+     * @param ui the ui
+     * @return the string
+     */
     public String setDriverMainPageAttributes(Model ui){
         LOGGER.info("Controller: DriverController, metod = setDriverMainPageAttributes");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -139,6 +161,13 @@ public class DriverController {
         return "/driver/drivermainpage";
     }
 
+    /**
+     * Driver main page string.
+     *
+     * @param id the id
+     * @param ui the ui
+     * @return the string
+     */
     @RequestMapping(value = "/drivermainpage/{id}", method = RequestMethod.GET)
     String driverMainPage(@PathVariable("id") int id, Model ui){
         LOGGER.info("Controller: DriverController, metod = driverMainPage,  action = \"/drivermainpage\", request = GET");
@@ -154,6 +183,15 @@ public class DriverController {
 //        return resultUrl;
 //    }
 
+    /**
+     * Driver main page post string.
+     *
+     * @param action           the action
+     * @param driverAccountDTO the driver account dto
+     * @param bindingResult    the binding result
+     * @param ui               the ui
+     * @return the string
+     */
     @RequestMapping(value = "/drivermainpage/{id}", method = RequestMethod.POST)
     public String driverMainPagePost(@PathVariable("id") int action, DriverAccountDTO driverAccountDTO, BindingResult bindingResult, Model ui){
         LOGGER.info("Controller: DriverController, metod = driverMainPagePost,  action = \"/drivermainpage\", request = POST");
@@ -302,6 +340,13 @@ public class DriverController {
         return "failure";
     }
 
+    /**
+     * Update driver status string.
+     *
+     * @param driverId  the driver id
+     * @param newStatus the new status
+     * @return the string
+     */
     @RequestMapping(value = "/updatedriverstatus", method = RequestMethod.POST)
     @ResponseBody
     public String updateDriverStatus(@RequestParam("driverId") int driverId, @RequestParam("newStatus") String newStatus){
@@ -325,6 +370,13 @@ public class DriverController {
         return res;
     }
 
+    /**
+     * Update order status string.
+     *
+     * @param orderId   the order id
+     * @param newStatus the new status
+     * @return the string
+     */
     @RequestMapping(value = "/updateorderstatus", method = RequestMethod.POST)
     @ResponseBody
     public String updateOrderStatus(@RequestParam("orderId") int orderId, @RequestParam("newStatus") String newStatus){
@@ -349,6 +401,13 @@ public class DriverController {
         return res;
     }
 
+    /**
+     * Update cargo status string.
+     *
+     * @param cargoId   the cargo id
+     * @param newStatus the new status
+     * @return the string
+     */
     @RequestMapping(value = "/updatecargostatus", method = RequestMethod.POST)
     @ResponseBody
     public String updateCargoStatus(@RequestParam("cargoId") int cargoId, @RequestParam("newStatus") String newStatus){
