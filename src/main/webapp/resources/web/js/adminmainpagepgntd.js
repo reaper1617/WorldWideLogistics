@@ -201,6 +201,7 @@ function deleteOrder(orderId) {
                 }
                 else {
                     alert("Order deleted successfully!");
+                    location=location;
                 }
             }
         }
@@ -330,6 +331,7 @@ function deleteTruck(truckId) {
                 // alert("resp:" + res);
                 if (res === "TRUCK_DELETED"){
                     alert("Truck deleted successfully!");
+                    location=location;
                 }
                 else {
                     alert("Truck not deleted: " + res);
@@ -452,6 +454,7 @@ function deleteUser(userId) {
                 // alert("resp:" + res);
                 if (res === "USER_DELETED"){
                     alert("User succesfully deleted!");
+                    location=location;
                 }
                 else {
                     alert("User not deleted:" + res);
@@ -557,6 +560,7 @@ function deleteCargo(cargoId) {
                 // alert("resp:" + res);
                 if (res === "CARGO_DELETED"){
                     alert("Cargo succesfully deleted!");
+                    location=location;
                 }
                 else {
                     alert("Cargo not deleted:" + res);
@@ -701,6 +705,7 @@ function deleteCity(cityId) {
                 // alert("res:" + res);
                 if (res === "CITY_DELETED"){
                     alert("City succesfully deleted!");
+                    location=location;
                 }
                 else {
                     alert("City not deleted: " + res);
@@ -798,6 +803,7 @@ function deleteRoute(routeId) {
                 // alert("res:" + res);
                 if (res === "ROUTE_DELETED"){
                     alert("Route succesfully deleted!");
+                    location=location;
                 }
                 else {
                     alert("Route not deleted: " + res);

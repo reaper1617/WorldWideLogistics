@@ -124,7 +124,7 @@ public class DriverController {
                 OrderDTO orderDTO = OrderToDTOConverterImpl.convert(order);
                 try {
                     List<City> cities =  (List<City>)orderService.getOrderRoute(orderDTO, null);
-                    if (order.getAssignedTruck() != null) cities.add(0, order.getAssignedTruck().getCurrentCity());
+                   // if (order.getAssignedTruck() != null) cities.add(0, order.getAssignedTruck().getCurrentCity());
                     OrderWithRoute orderWithRoute = new OrderWithRoute(order, cities);
                     ui.addAttribute("orderWithRoute", orderWithRoute);
                 }
@@ -396,8 +396,15 @@ public class DriverController {
         if (o!=null && result.equals(UpdateMessageType.ORDER_STATUS_UPDATED)){
             rabbitMQSender.sendMessage(messageConstructor.createMessage(UpdateMessageType.ORDER_EDITED, o));
         }
-        Gson gson = new Gson();
-        String res = gson.toJson(result);
+        String res = null;
+        if (result.equals(UpdateMessageType.ORDER_STATUS_UPDATED) && orderStatus.equals(OrderStatus.EXECUTED)){
+           res = "{\"status\":\"ORDER_STATUS_UPDATED\",\"refresh\":\"TRUE\"}";
+        }
+        else {
+           // Gson gson = new Gson();
+            //res = gson.toJson(result);
+            res = "{\"status\":\"ORDER_STATUS_UPDATED\",\"refresh\":\"FALSE\"}";
+        }
         return res;
     }
 

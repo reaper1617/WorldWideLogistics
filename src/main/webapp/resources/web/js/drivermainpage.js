@@ -63,7 +63,8 @@ function updateOrderStatus(orderId) {
             // alert("resp = " + this.responseText);
             var resp = JSON.parse(this.responseText);
             // alert("parsed resp = " + resp);
-            if (resp === 'ORDER_STATUS_UPDATED'){
+            if (resp.status === 'ORDER_STATUS_UPDATED'){
+
                 var resStr = "<select class=\"form-control\" id=\"order_status\" name=\"orderStatus\" style=\"width: 400px\">\n" +
                     "\t\t\t\t\t\t\t\t\t\t<option style=\"color: #0ed61f\">"+newStatusVal+"</option>";
                 for(var j = 0; j < statusesArr.length; j++){
@@ -73,7 +74,10 @@ function updateOrderStatus(orderId) {
                 }
                 resStr += "\t\t\t\t\t\t\t</select>";
                 document.getElementById('orderStatusSelect').innerHTML = resStr;
-                alert("Order status updated successfully!")
+                alert("Order status updated successfully!");
+                if (resp.refresh === 'TRUE'){
+                    location = location;
+                }
             }
             else {
                 alert("Order status can not be updated, reason: " + resp);
@@ -103,7 +107,7 @@ function updateCargoStatus(cargoId) {
             var resp = JSON.parse(this.responseText);
             //         // alert("parsed resp = " + resp);
             if (resp === 'CARGO_STATUS_UPDATED'){
-                var resStr = "<select class=\"form-control\"  name=\"cargoStatus\" style=\"width: 200px\" id=\"cargoStatusSelect_${cargo.id}\">\n" +
+                var resStr = "<select class=\"form-control\"  name=\"cargoStatus\" style=\"width: 200px\" id=\"cargoStatusSelect_"+cargoId+"\">\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option style=\"color: #0ed61f\">"+newStatusVal+"</option>\n";
                 for(var i=0; i < statusesArr.length; i++){
                     if (statusesArr[i]!==newStatusVal){
