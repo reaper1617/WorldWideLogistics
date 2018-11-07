@@ -1,0 +1,234 @@
+-- MySQL Workbench Forward Engineering
+drop database if exists `mywwldatabase`;
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+
+-- -----------------------------------------------------
+-- Schema mywwldatabase
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema mywwldatabase
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `mywwldatabase` DEFAULT CHARACTER SET utf8 ;
+USE `mywwldatabase` ;
+
+-- -----------------------------------------------------
+-- Table `mywwldatabase`.`admins`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mywwldatabase`.`admins` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mywwldatabase`.`cities`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mywwldatabase`.`cities` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(50) NOT NULL,
+  `has_agency` boolean NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mywwldatabase`.`trucks`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mywwldatabase`.`trucks` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `registration_number` VARCHAR(50) NOT NULL,
+  `num_of_drivers` VARCHAR(50) NOT NULL,
+  `capacity` DOUBLE NOT NULL,
+  `state` ENUM('READY', 'NOT_READY') NOT NULL DEFAULT 'NOT_READY',
+  `current_city_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+  UNIQUE INDEX `registration_number_UNIQUE` (`registration_number` ASC),
+  INDEX `current_city_id_fk_idx` (`current_city_id` ASC),
+  CONSTRAINT `current_city_id_fk`
+    FOREIGN KEY (`current_city_id`)
+    REFERENCES `mywwldatabase`.`cities` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mywwldatabase`.`orders`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mywwldatabase`.`orders` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `personal_number` VARCHAR(50) NOT NULL,
+  `description` VARCHAR(50) NOT NULL,
+  `date` VARCHAR(45) NOT NULL,
+  `status` ENUM('NOT_PREPARED', 'PREPARED', 'EXECUTING', 'EXECUTED') NOT NULL DEFAULT 'NOT_PREPARED',
+  `assigned_truck_id` INT(11) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+  UNIQUE INDEX `personal_number_UNIQUE` (`personal_number` ASC),
+  INDEX `assigned_truck_id_fk_idx` (`assigned_truck_id` ASC),
+  CONSTRAINT `assigned_truck_id_fk`
+    FOREIGN KEY (`assigned_truck_id`)
+    REFERENCES `mywwldatabase`.`trucks` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mywwldatabase`.`routes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mywwldatabase`.`routes` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `city_from_id` INT(11) NOT NULL,
+  `city_to_id` INT(11) NOT NULL,
+  `distance` DOUBLE NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+  INDEX `city_from_id_fk_idx` (`city_from_id` ASC),
+  INDEX `city_to_id_fk_idx` (`city_to_id` ASC),
+  CONSTRAINT `city_from_id_fk`
+    FOREIGN KEY (`city_from_id`)
+    REFERENCES `mywwldatabase`.`cities` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `city_to_id_fk`
+    FOREIGN KEY (`city_to_id`)
+    REFERENCES `mywwldatabase`.`cities` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mywwldatabase`.`cargos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mywwldatabase`.`cargos` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `personal_number` VARCHAR(50) NOT NULL,
+  `name` VARCHAR(50) NOT NULL,
+  `weight` DOUBLE NOT NULL,
+  `status` ENUM('PREPARED', 'LOADED', 'SHIPPING', 'DELIVERED') NOT NULL DEFAULT 'PREPARED',
+  `route_id` INT(11) NOT NULL,
+  `assigned_order_id` INT(11) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+  UNIQUE INDEX `personal_number_UNIQUE` (`personal_number` ASC),
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC),
+  INDEX `route_id_fk_idx` (`route_id` ASC),
+  INDEX `assigned_order_id_fk_idx` (`assigned_order_id` ASC),
+  CONSTRAINT `assigned_order_id_fk`
+    FOREIGN KEY (`assigned_order_id`)
+    REFERENCES `mywwldatabase`.`orders` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `route_id_fk`
+    FOREIGN KEY (`route_id`)
+    REFERENCES `mywwldatabase`.`routes` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mywwldatabase`.`drivers`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mywwldatabase`.`drivers` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `hours_worked` DOUBLE NOT NULL,
+  `status` ENUM('FREE', 'RESTING', 'DRIVING', 'SECOND_DRIVER', 'LOAD_UNLOAD_WORKS') NOT NULL DEFAULT 'FREE',
+  `current_city_id` INT(11) NOT NULL,
+  `current_truck_id` INT(11) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+  INDEX `current_city_id_fk_idx` (`current_city_id` ASC),
+  INDEX `current_truck_id_fk_idx` (`current_truck_id` ASC),
+  CONSTRAINT `current_city_id_fk2`
+    FOREIGN KEY (`current_city_id`)
+    REFERENCES `mywwldatabase`.`cities` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `current_truck_id_fk`
+    FOREIGN KEY (`current_truck_id`)
+    REFERENCES `mywwldatabase`.`trucks` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mywwldatabase`.`hibernate_sequence`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mywwldatabase`.`hibernate_sequence` (
+  `next_val` BIGINT(20) NULL DEFAULT NULL)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mywwldatabase`.`managers`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mywwldatabase`.`managers` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC))
+ENGINE = InnoDB
+AUTO_INCREMENT = 6
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mywwldatabase`.`users`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mywwldatabase`.`users` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(50) NOT NULL,
+  `middlename` VARCHAR(50) NOT NULL,
+  `lastname` VARCHAR(50) NOT NULL,
+  `personal_number` VARCHAR(50) NOT NULL,
+  `password` VARCHAR(50) NOT NULL,
+  `driver_id` INT(11) NULL DEFAULT NULL,
+  `manager_id` INT(11) NULL DEFAULT NULL,
+  `admin_id` INT(11) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+  UNIQUE INDEX `personal_number_UNIQUE` (`personal_number` ASC),
+  INDEX `driver_id_fk_idx` (`driver_id` ASC),
+  INDEX `manager_id_fk_idx` (`manager_id` ASC),
+  INDEX `admin_id_fk_idx` (`admin_id` ASC),
+  CONSTRAINT `admin_id_fk`
+    FOREIGN KEY (`admin_id`)
+    REFERENCES `mywwldatabase`.`admins` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `driver_id_fk`
+    FOREIGN KEY (`driver_id`)
+    REFERENCES `mywwldatabase`.`drivers` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `manager_id_fk`
+    FOREIGN KEY (`manager_id`)
+    REFERENCES `mywwldatabase`.`managers` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
